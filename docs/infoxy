@@ -1,0 +1,55 @@
+#!/usr/local/bin/perl
+$|=1;
+use strict;
+use lib "../lib";
+use GUARDIOES;
+my $cfg = new GUARDIOES();
+
+# utilitário usado tanto pelo site quanto pelo app para prover dados de localidade, município, estado e país
+# a partir de uma lat,long
+#
+# usa um layer baixado de [ https://gadm.org/download_world.html ] como shapefile e carregado no banco de
+# dados principal dos guardiões para o mundo todo
+
+my $lat = ''; my $lon = '';
+my $pi = $ENV{'PATH_INFO'}; $pi =~ s'/+'/'g; $pi =~s'^/+|/+$''g;
+my @p = split('/',$pi);
+
+foreach (0..$#p)
+{ $lat = $p[$_+1] if $p[$_] =~ /lat/i;
+  $lon = $p[$_+1] if $p[$_] =~ /lon/i;
+}
+
+if ($lat =~ /^\-?\d+(\.\d+)?$/ && $lon =~ /^\-?\d+(\.\d+)?$/)
+{
+  my $sql = $cfg->connect();
+  $sql->exec("set client_encoding='UTF8'");
+
+  my $table = 'map_world';
+
+  my $cmd = <<EOM;
+select  name_0		as country,
+	name_1		as stateProvince,
+	name_2		as municipality,
+	name_3		as locality
+from    $table
+where   ( ST_CONTAINS( geom , ( ST_GeomFromText('POINT($lon $lat)', 4326) ) ) )
+limit 1;
+EOM
+
+
+  my %p = $sql->query($cmd);
+  error($sql->message,$cmd) if $sql->error; 
+
+  print "Content-type: text/plain; charset=utf-8\n\n$p{0}{'country'};$p{0}{'stateprovince'};$p{0}{'municipality'};$p{0}{'locality'}\n";
+}
+else { error(3,$lat,$lon) }
+
+sub error
+{ print "Content-type: text/plain; charset=utf-8\n\n;;;\n";
+  print @_;
+  exit 0
+}
+__END__
+https://guardioes.cria.org.br/infoxy/lat/-22.9041/long/-47.0575
+https://guardioes.cria.org.br/infoxy/lat/-21.3921/long/-47.3538

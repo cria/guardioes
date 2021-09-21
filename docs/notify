@@ -1,0 +1,219 @@
+#!/usr/local/bin/perl
+$|=1;
+use strict;
+use lib "../lib";
+use GUARDIOES;
+use Encode;
+use Mail::Sendmail;
+use MIME::Base64;
+
+my $cfg = new GUARDIOES({ loginRequired => 1 });
+
+my $par = $cfg->parameters();
+my $dic = $cfg->dic();
+my $user = $cfg->get_user_info();
+
+if ($user->{'user_level'} <= 1) { exit 0 } # not a specialist. Get out!!!
+
+if ($par->{'action'} eq 'send')
+{ print $cfg->html_head();
+  sendEmail();
+}
+else 
+{ my $script = <<EOM;
+<script type="text/javascript" src="/js/autosuggest_v2.1.3/js/bsn.AutoSuggest_2.1.3_comp.js" charset="utf-8"></script>
+<link rel="stylesheet" href="/js/autosuggest_v2.1.3/css/autosuggest_inquisitor.css" type="text/css" media="screen" charset="utf-8" />
+EOM
+  print $cfg->html_head({ script => $script });
+  form();
+}
+  print $cfg->html_foot();
+
+#===============================================================
+sub form
+{ my $record_id = $par->{'rid'};
+  my $taxgrp = $par->{'taxgrp'};
+
+
+  my $data = $cfg->get_record($record_id);
+  my $record = $cfg->format_record($data);
+
+  my $message = $cfg->fill_variables($dic->{'notify_message_body'},
+					{ especialista => 'especialista',
+					  record_data	=> $record,
+					  rid		=> $cfg->format_record_id($record_id)
+					});
+  my $foot = $cfg->fill_variables($dic->{'notify_message_foot'},
+					{ username	=> $user->{'name'}
+					});
+
+  print <<EOM;
+<div id='divTopBanner'>
+<table class='w100' cellspacing='0' cellpadding='0' border='0'>
+<tr class='mainMenuBg'>
+    <td width='100px'><a href='/'><img src='/imgs/marca_$cfg->{'palette_id'}.png' align='left' height='30px' hspace='10px'/></a></td>
+</tr>
+</table>
+</div>
+
+<div id='divMain'>
+<blockquote>
+<form name='notifyForm' id='notifyForm' method='post' enctype='multipart/form-data' action='notify'>
+<input type='hidden' name='action' value='send'/>
+<input type='hidden' name='rid' value='$record_id'/>
+<input type='hidden' name='taxgrp' value='$taxgrp'/>
+
+<table class='w100 noBorder'>
+<tr><td colspan='1'><span class='h2'>$dic->{'notify_title'}</span><br/>
+		    <span class='small'>$dic->{'notify_explain'}</span><br/><br/></td>
+</tr>
+
+<tr>
+<td>
+	<table class='w100 noBorder'>
+	<tr><td><label><b>$dic->{'Email_to'}</b></label></td>
+	    <td><table class='w100' noBorder'>
+		<tr><td><label><b>$dic->{'Email_name'}</b></label></td>
+		    <td><input type='text' name='name' id='name' class='w80' value='' autocomplete='off'/></td>
+		</tr>
+		<tr><td><label><b>$dic->{'Email_email'}</b></label></td>
+		    <td><input type='text' name='email' id='email' class='w80' value='' autocomplete='off'/></td>
+		</tr>
+		</table>
+	   </td>
+	<tr>
+	<tr><td><label><b>$dic->{'Email_subject'}</b></label></td>
+	    <td><input type='text' name='subject' id='subject' class='w80' value='$dic->{'Email_subject_text'}'/></td>
+	</tr>
+	<tr><td colspan='2'><label><b>$dic->{'Email_message'}</b></label><br/>
+	<blockquote>
+	$message<p/>
+        <label>$dic->{'observations'}</label>
+	    <textarea name='obs' class='w90 h100px' height='100px'></textarea>
+	$foot
+	</blockquote>
+	</td>
+	</tr>
+	</table>
+</td>
+</tr>
+<tr>
+	    <td align='right'><input type='button' value='$dic->{'send'}' onClick="document.notifyForm.submit()" class='send'/></td>
+</tr>
+</table>
+</form>
+<script type="text/javascript">
+         var    email_options = { script: "/suggestions/explore_specialists_emails?",
+                                varname: "email",
+                                json: true,
+                                minchars: 1,
+                                delay: 10,
+                                offsety: 0,
+                                timeout: 10000,
+				shownoresults: false,
+                                noresults: "$dic->{'notify_new_specialist'}",
+                                cache: false,
+                                maxresults: 35,
+                                callback: function(obj) { document.getElementById('name').value = obj.info }
+                        };
+         var   email = new bsn.AutoSuggest('email', email_options);
+
+         var    name_options = { script: "/suggestions/explore_specialists_names?",
+                                varname: "name",
+                                json: true,
+                                minchars: 1,
+                                delay: 10,
+                                offsety: 0,
+                                timeout: 10000,
+				shownoresults: false,
+                                noresults: "$dic->{'notify_new_specialist'}",
+                                cache: false,
+                                maxresults: 35,
+                                callback: function(obj) { document.getElementById('email').value = obj.info }
+                        };
+          var   name = new bsn.AutoSuggest('name', name_options);
+</script>
+
+
+</blockquote>
+EOM
+}
+
+#===============================================================
+sub sendEmail
+{ my $record_id	= $par->{'rid'};
+  my $taxgrp	= $par->{'taxgrp'};
+  my $to_name	= $par->{'name'};
+  my $to_email	= $par->{'email'};
+  my $subject	= $par->{'subject'};
+  my $obs	= $par->{'obs'};	$obs = "<p/><span class='high'>$obs</span>" if $obs;
+
+  my $data = $cfg->get_record($record_id);
+  my $record = $cfg->format_record($data);
+
+  my $message = $cfg->fill_variables($dic->{'notify_message_body'},
+					{ especialista => $to_name,
+					  record_data	=> $record,
+					  rid		=> $cfg->format_record_id($record_id)
+					});
+  my $foot = $cfg->fill_variables($dic->{'notify_message_foot'},
+					{ username	=> $user->{'name'}
+					});
+
+  my $body = <<EOM;
+<html>
+<head>
+<style type='text/css'>
+body	{ font-family: Courier New, fixed; font-size: 12px; }
+a	{ color: #c03; font-weight: bold }
+.high	{ color: #c03; font-weight: bold }
+.tag	{ color: #c93; }
+h1	{ font-size: 14px; font-weight: bold; }
+</style>
+</head>
+<body>
+<blockquote>
+<h1>Guardiões da Biodiversidade</h1><br clear='all'/><p/>
+
+$message
+$obs
+$foot
+</blockquote>
+</body>
+</html>
+EOM
+
+  my %mail = (	To              => $to_email,
+		'Reply-to'	=> $user->{'email'},
+		From            => 'web@guardioes.cria.org.br',
+		Subject         => $subject,
+		Message         => $body,
+		'Content-type'  => 'text/html; charset=utf-8',
+		smtp            => 'zimbra.cria.org.br'
+	     );
+
+  my $result = "<p/><b class='success'>".$cfg->fill_variables($dic->{'notify_success'}, { to => $to_email })."</b>";
+
+  if (!sendmail(%mail) )
+  { $result =  "<p/><b class='error'>$dic->{'notify_error'}<br/>$Mail::Sendmail::error</b>" }
+
+  print <<EOM;
+<div id='divTopBanner'>
+<table class='w100' cellspacing='0' cellpadding='0' border='0'>
+<tr class='mainMenuBg'>
+    <td width='100px'><a href='/'><img src='/imgs/marca_$cfg->{'palette_id'}.png' align='left' height='30px' hspace='10px'/></a></td>
+</tr>
+</table>
+</div>
+
+<div id='divMain'>
+<blockquote>
+$body
+$result
+
+</blockquote>
+EOM
+}
+
+#===============================================================
+

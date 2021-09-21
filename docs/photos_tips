@@ -1,0 +1,47 @@
+#!/usr/local/bin/perl
+$|=1;
+use strict;
+use lib "../lib";
+use GUARDIOES;
+
+my $cfg = new GUARDIOES();
+
+my $script = <<EOM;
+<script type="text/javascript" src="/js/highslide/highslide/highslide-with-gallery.js"></script>
+<link rel="stylesheet" type="text/css" href="/js/highslide/highslide/highslide.css" />
+<script type="text/javascript">
+
+        hs.graphicsDir = '/js/highslide/highslide/graphics/';
+
+        hs.align = 'center';
+        hs.transitions = ['expand', 'crossfade'];
+        hs.outlineType = 'rounded-white';
+        hs.fadeInOut = true;
+        hs.numberPosition = 'caption';
+        hs.dimmingOpacity = 0.75;
+
+        if (hs.addSlideshow) hs.addSlideshow(
+        {       interval: 5000,
+                repeat: false,
+                useControls: true,
+                fixedControls: 'fit',
+                overlayOptions:
+                {       opacity: .75,
+                        position: 'bottom center',
+                        hideOnMouseOut: true
+                }
+        });
+</script>
+EOM
+
+print $cfg->html_head({ script => $script });
+
+print $cfg->div_top_banner({ page => 'about', sub_page => 'faq' });
+
+
+print "<div id='divMain'>";
+print $cfg->get_page({ imgs => '' });
+
+print $cfg->html_foot();
+
+

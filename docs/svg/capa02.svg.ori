@@ -1,0 +1,46 @@
+<svg width="486" height="500" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg">
+<defs>
+	<clipPath id="circ01">
+		<circle cx="412"  cy="425" r="72"
+			 style="fill: transparent; stroke: transparent; stroke-width: 3"
+			 myID="bottom black  circ"/>
+	</clipPath>
+	
+	<clipPath id="hex02">
+		<polygon points="177,182, 259,104, 370,131, 398,237, 315,315, 205,287"
+			 style="fill: transparent; stroke: transparent; stroke-width: 3"
+			 myID="midle black hex"/>
+	</clipPath>
+</defs>
+
+<polygon points="234,251, 334,226, 406,301, 377,400, 277,424, 205,350"
+	 style="fill: var(--svg-C); stroke: var(--svg-C); stroke-width: 3"
+	 myID="hex 06"/>
+<circle	 cx="109"  cy="288" r="74"
+	 style="fill: transparent; stroke: var(--svg-D); stroke-width: 3"
+	 myID="circ 05"/>
+<polygon points="63,45, 132,6, 201,46, 201,127, 132,165, 62,125"
+	 style="fill: var(--svg-D); stroke: var(--svg-D); stroke-width: 3"
+	 myID="hex 02"/>
+<polygon points="132,80, 280,81, 354,210, 279,339, 131,337, 57,209"
+	 style="fill: var(--svg-A); stroke: var(--svg-A); stroke-width: 3"
+	 myID="hex 03"/>
+<polygon points="2,25, 43,1, 84,24, 84,73, 43,97, 1,73"
+	 style="fill: var(--svg-C); stroke: var(--svg-C); stroke-width: 3"
+	 myID="hex 01"/>
+
+<polygon points="303,360, 346,319, 403,336, 417,395, 374,435, 316,418"
+	 style="fill: transparent; stroke: var(--svg-A); stroke-width: 3"
+	 myID="hex 07"/>
+
+<image x="174" y="101" width="225" height="216" clip-path="url(#hex02)" xlink:href="__IMG_HEX__" myID="image 04 hex"/>
+
+<image x="335" y="349" width="151" height="150" clip-path="url(#circ01)" xlink:href="__IMG_CIRC__" myID="image 08 circ"/>
+
+</svg>
+
+<cover	title_x='400' title_y='23'
+	box01_x='500' box01_y='100' box01_w='400' box01_h='400'
+	box02_x='15'  box02_y='400' box02_w='300' box02_h='150'
+	box03_x='650' box03_y='450' box03_w='250' box03_h='100'
+/>

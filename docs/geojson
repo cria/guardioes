@@ -1,0 +1,37 @@
+#!/usr/local/bin/perl
+$|=1;
+use strict;
+use JSON;
+use lib "../lib";
+use GUARDIOES;
+my $cfg = new GUARDIOES();
+
+# table name is mandatory
+my $table = $ARGV[0] || die;
+
+# gid is mandatory for all layers but map_projects as the projects are always displayed
+my $gid   = $ARGV[1];
+die if !$gid && $table ne 'map_projects';
+
+my $color = $table eq 'map_ucsfi'	? '#cc9933' :	# mustard
+	    $table eq 'map_ufs'		? '#669966' :	# green
+	    $table eq 'map_projects'	? '#3366cc' :	# blue
+	    '#666666';
+
+my $json = new JSON();
+my $sql = $cfg->connect();
+
+my $cmd = "select gid, ST_AsGeoJSON(geom) as json from $table ";
+
+if ($gid && $table ne 'map_projects') { $cmd .= " where gid = $gid;" }
+
+my %p = $sql->query($cmd);
+
+my $hash = { type => "FeatureCollection", features => [ ] };
+
+foreach (0..$sql->nRecords-1)
+{ my $c = $table eq 'map_projects' ? $gid == $p{$_}{'gid'} ? '#cc0033' : $color : $color;
+  push @{$hash->{'features'}}, { type => "Feature", properties => { color => $c, fillColor => $c }, geometry => $json->decode($p{$_}{'json'}) }
+}
+
+print "Content-Type: application/json\n\n".$json->encode( $hash );

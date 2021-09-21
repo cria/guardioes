@@ -1,0 +1,85 @@
+#!/usr/local/bin/perl
+use Net::Facebook::Oauth2;
+use lib "../lib";
+use GUARDIOES;
+use Data::Dumper;
+
+my $cfg = new GUARDIOES();
+
+my $id = $cfg->{'facebook_id'};
+my $secret = $cfg->{'facebook_secret'};
+
+my $par = $cfg->param();
+
+my $code = $par->data('code');
+
+# URL deste script
+my $server_url = $cfg->{'home_url'};
+
+my $fb = Net::Facebook::Oauth2->new(
+                application_id     => $id,
+                application_secret => $secret,
+                callback           => $server_url . '/facebookLogin'
+        );
+
+if ($code)
+{ my $access_token = $fb->get_access_token(code => $code);
+
+  my $info = $fb->get(
+      "https://graph.facebook.com/v3.3/me?fields=id,name,email,birthday"   # Facebook API URL 
+      )->as_hash;
+
+  if ($info) {
+
+      my $context = '';
+
+      my $data = {
+          'network' => 'facebook',
+          'netid' => $info->{'id'},
+          'name' => $info->{'name'},
+          'email' => $info->{'email'},
+	  'picture' => 'https://graph.facebook.com/v2.12/' . $info->{'id'} . '/picture',
+          'birthday' => $info->{'birthday'},
+          'access_token' => $access_token,
+      };
+
+      my $state = $par->data('state');
+
+      if (length $state > 4 && substr($state, 0, 3) eq 'ac_')
+      { $data->{'appcode'} = substr($state, 3);
+        # Don't use if $cfg->{'mobile'} because login scripts will always run in root directory
+        $context = 'mobile/';
+      }
+
+      #my $d = Dumper $data;
+      #print "Content-type: text/plain\n\n";
+      #print "OK [$d]\n";
+      #exit 0;
+      #open(OUT,'>>/tmp/face.log'); print OUT "$d\n\n"; close(OUT);
+
+      my ($session_id,$user_status) = $cfg->login($data);
+
+      my $location = $user_status eq 'new' ? 'register' : 'welcome';
+
+      print $cfg->set_cookie($session_id,$context.$location);
+  }
+  else
+  { print "Falha na comunicação com o Facebook" }
+}
+else
+{ my $appcode = $par->data('ac');
+
+  my $state_param = 'ts_'.time();
+
+  if ($appcode)
+  { $state_param = "ac_$appcode";
+  }
+
+  # get the authorization URL for your application
+  my $url = $fb->get_authorization_url(
+      scope => [ 'public_profile', 'email', 'user_birthday' ],
+      display => 'page',
+      state => $state_param
+      );
+  print "Location: $url\n\n";
+}

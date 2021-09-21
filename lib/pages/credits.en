@@ -1,0 +1,58 @@
+<table class='w100'>
+<tr><td colspan='2' class='h1'>Credits</td></tr>
+<tr class='top'>
+<td class='w50'>
+  <table width='w100'>
+  <tr>
+    <td class='w50 pad15'>
+<h2>Funding and technical support</h2>
+<a href='http://www.abelha.org.br' target='other'><img src='/imgs/partners/abelha.png' class='partner_img' align='left'/></a>
+The <b>Associação Brasileira de Estudo das Abelhas (A.B.E.L.H.A.)</b> is a nonprofit civil association with no political or ideological connotation,
+with the objective of leading the creation of a network for the conservation of bees and other pollinators.
+</p>
+Its main mission is to gather, produce and disseminate scientifically-based information through the collaboration of a network of partners, 
+aimed at the conservation of bees and other pollinators in Brazil, promoting their role in biodiversity and harmonious and sustainable 
+coexistence with the different crops.
+  </td>
+  </tr><tr>
+  <td class='w50 pad15'>
+<h2>System development and maintenance</h2>
+<a href='http://www.cria.org.br' target='other'><img src='/imgs/partners/cria.png' class='partner_img' align='left'/></a>
+The <b>Reference Center on Environmental Information, CRIA</b>, has as its goal and strategy the dissemination of electronic information as a 
+tool in the organization of the country's scientific and technological community. It acts specifically in the field of biological information, of 
+industrial and environmental interest, and intends, through its action, to contribute directly to the conservation and rational use of biodiversity in Brazil.
+A sustainable society presupposes an informed society, in which the various segments produce and have access to qualified information, 
+using it in decision making processes and in elaborating policies. 
+  </td>
+  </tr><tr>
+  </tr>
+  </table>
+</td>
+<td class='w50'>
+  <table class='w100'>
+  <tr>
+  <td class='w50 pad15'>
+<h2>Partnerships and technical support</h2><p/>
+<a href='https://www.facebook.com/inctintree/' target='intree'><img src='/imgs/inct_in_tree.png' height='100px' class='partner_img' align='left'/></a>
+
+The <b>National Institute of Science and Technology in Inter and Transdisciplinary Studies in Ecology and Evolution (INCT IN-TREE)</b>, led by the Federal 
+University of Bahia (UFBA), is formed by a network of 49 associated laboratories and more than 250 active researchers, belonging to dozens of 
+Brazilian and foreign universities and research institutes. <p/>
+
+The Institute aims to develop projects on research questions in ecology and evolution in an interdisciplinary approach, from integrative projects 
+of mathematical modeling, computational, statistics and epistemology, ethics, and a transdisciplinary approach, from integrative projects of 
+interaction and communication with society, involving collaborative work with social actors from non-academic institutions (including public 
+agencies, NGOs and companies) and from basic education schools.
+  </td>
+  </tr><tr>
+  <td class='w50 pad15'>
+	<h2>Desenvolvimento e manutenção do aplicativo móvel</h2>
+	<a href='http://www.linearsm.com.br' target='other'><img src='/imgs/partners/linearsm.png' class='partner_img' align='left' width='100px' /></a>
+	<b>Linear Softwares Matemáticos</b> is responsible for the development and maintenance of the mobile apps that allow the record of the interactions in the field
+	(pictures and associated data), even when there is no Internet access, to be sent later to the central system.
+  </td>
+  </tr>
+  </table>
+</td>
+</tr>
+</table>

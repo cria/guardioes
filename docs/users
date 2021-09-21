@@ -1,0 +1,358 @@
+#!/usr/local/bin/perl
+$|=1;
+use strict;
+use lib "../lib";
+use GUARDIOES;
+
+my $cfg = new GUARDIOES();
+my $user = $cfg->get_user_info();
+my $dic = $cfg->dic();
+my $par = $cfg->param();
+
+if ($par->method() eq 'post' && $par->data('change_field'))
+{ $cfg->update_user_status_category({
+		user	=> $user,
+		user_id	=> $par->data('user_id'),
+		field	=> $par->data('change_field'),
+		value	=> $par->data('change_value') })
+}
+my $filter = $cfg->unaccent($par->data('filter'));
+my $uid    = $par->data('uid');
+my $sort   = $par->data('sort') || ($cfg->{'user_level'} > 1 ? 'ALPHA' : 'TOP_REC');
+
+my %sel = ( $sort => 'selected="true"' );
+
+my $script = <<EOM;
+<script type="text/javascript" src="/js/users_v2.js"></script>
+<script type="text/javascript" src="/js/highslide/highslide/highslide.js"></script>
+<link rel="stylesheet" type="text/css" href="/js/highslide/highslide/highslide.css" />
+<script type="text/javascript">
+    hs.graphicsDir = '/js/highslide/highslide/graphics/';
+    hs.outlineType = null;
+    hs.wrapperClassName = 'colored-border';
+</script>
+EOM
+
+print $cfg->html_head({ script => $script });
+
+print $cfg->div_top_banner({ page => 'users' });
+
+my $topLines =	$cfg->{'user_level'} <= 1 ? 5 :
+		$cfg->{'user_level'} <= 3 ? 4 : 3; 
+
+my $sub_title = $sort eq 'ALPHA' ? '' :$dic->{"guardioesTitle_$sort"};
+
+print <<EOM;
+<div id='divMain'>
+<form name='usersForm' id='usersForm' method='post' enctype='multipart/form-data'>
+<input type='hidden' name='user_id' value=''/>
+<input type='hidden' name='change_field' value=''/>
+<input type='hidden' name='change_value' value=''/>
+
+<TABLE width='100%' cellpadding='px' cellspacing='3px' class='noBorder'>
+<TR>
+<TD class='w50'><span class='h2'>$dic->{'guardioesTitle'}</span><br/>
+		<select name='sort' onChange='document.usersForm.submit()' class='h3 noBorder'>
+		<option value='ALPHA'    $sel{'ALPHA'}>$dic->{'guardioesTitle_ALPHA'}</option>
+		<option value='TOP_REC'  $sel{'TOP_REC'}>$dic->{'guardioesTitle_TOP_REC'}</option>
+		<option value='TOP_ID'   $sel{'TOP_ID'}>$dic->{'guardioesTitle_TOP_ID'}</option>
+		<option value='RANK_REC' $sel{'RANK_REC'}>$dic->{'guardioesTitle_RANK_REC'}</option>
+		<option value='RANK_ID'  $sel{'RANK_ID'}>$dic->{'guardioesTitle_RANK_ID'}</option>
+		</select>
+</TD>
+<TD align='right'>
+	    <label>$dic->{'UsersFilter'}</label>: <input type='text' name='filter' value='$filter'/>
+    </TD>
+</TR>
+</TABLE><br/><br/>
+<TABLE width='100%' cellpadding='3px' cellspacing='3px' class='noBorder'>
+EOM
+
+my $users  = $cfg->users_list();
+my $counts = $cfg->counts();
+my %number = ();
+
+# saving counts to show in list
+foreach my $u (keys %$users)
+{ my $nident_tag = $cfg->{'user_level'} <= 1 ? 'pub_idents_by' : 'idents_by';
+  $users->{$u}{'nrecs'}   = $counts->{$u}{'num_rec'};   # numero de registros enviados pelo usuario
+  $users->{$u}{'nidents'} = $counts->{$u}{$nident_tag.':animalia'} + $counts->{$u}{$nident_tag.':plantae'}; #numero de identificacoes feitas pelo usuario
+}
+
+# defining sorting data
+
+if ($sort eq 'RANK_REC')
+{ foreach my $u (keys %$users)
+  { $number{$u} = $counts->{$u}{'num_rec'} if $counts->{$u}{'num_rec'}; }   # numero de registros enviados pelo usuario
+}
+elsif ($sort eq 'RANK_ID')	#numero de identificacoes feitas pelo usuario
+{ my $nident_tag = $cfg->{'user_level'} <= 1 ? 'pub_idents_by' : 'idents_by';
+  foreach my $u (keys %$users)
+  { my $num = $counts->{$u}{$nident_tag.':animalia'} + $counts->{$u}{$nident_tag.':plantae'};
+    $number{$u} = $num if $num;
+  }
+}
+
+# -------------------------------------------------------------------------------
+# caso especial. São mostrados apenas usuarios que contribuíram com registros ou
+# identificacoes nos últimos 30 dias
+# -------------------------------------------------------------------------------
+
+elsif ($sort eq 'TOP_REC')
+{ my $sql = $cfg->connect();
+  my $restr = ($user->{'user_level'} < 7) ? " and u.status != 'inativo' " : '';
+
+# selecionamos os usuarios que enviaram registros nos últimos 30 dias
+# ordenamos pelo número de registros enviados, ordem decrescente
+  my $cmd = <<EOM;
+ select  r.user_id, count(1) as num
+        from    record r left join users u on (r.user_id = u.id)
+        where   r.record_date >= (now() - interval '1 month')
+                $restr
+        group by 1 order by 2 desc
+EOM
+
+  my $prev_num = 0;
+
+  my %p = $sql->query($cmd);
+  foreach (0..$sql->nRecords-1)
+  { $number{$p{$_}{'user_id'}} = $p{$_}{'num'};
+    $users->{$p{$_}{'user_id'}}{'nrecs'} = $p{$_}{'num'};
+  }
+}
+# -------------------------------------------------------------------------------
+
+elsif ($sort eq 'TOP_ID')
+{ my $sql = $cfg->connect();
+  my $restr = ($user->{'user_level'} < 7) ? " and u.status != 'inativo' " : '';
+
+# selecionamos os usuarios que fizeram identificações nos últimos 30 dias
+# ordenamos pelo número de identificações, ordem decrescente
+  my $cmd = <<EOM;
+-- select  i.user_id, count(1) as num from    ident i left join users u on (i.user_id = u.id) where   i.dateidentified >= (now() - interval '1 month') $restr group by 1 order by 2 desc
+select	i.identifiedby_id,count(1) as num
+from	ident i left join users u on (u.id = i.identifiedby_id)
+where	i.dateidentified >= (now() - interval '1 month') $restr
+group by 1
+order by 2 desc
+EOM
+
+  my $prev_num = 0;
+
+  my %p = $sql->query($cmd);
+  foreach (0..$sql->nRecords-1)
+  { $number{$p{$_}{'identifiedby_id'}} = $p{$_}{'num'};
+    $users->{$p{$_}{'identifiedby_id'}}{'nidents'} = $p{$_}{'num'};
+  }
+}
+# -------------------------------------------------------------------------------
+# usuario selecionado para destaque na pagina
+
+my @uids = $sort eq 'ALPHA' ? keys %$users : keys %number;
+my $selected_user_id = $uids[int(rand($#uids))];
+
+#print <<EOM;
+#<tt>
+#[@uids]
+#[$#uids]
+#[$selected_user_id]
+#</tt>
+#EOM
+
+my $svg = $cfg->user_svg($selected_user_id);
+   $svg .= "<p/><i>$users->{$selected_user_id}{'name'}";
+
+   $svg .= ", $users->{$selected_user_id}{'nrecs'} ".
+	($users->{$selected_user_id}{'nrecs'} > 1 ? $dic->{'observations'} : $dic->{'observation'}) if $users->{$selected_user_id}{'nrecs'};
+   $svg .= ", $users->{$selected_user_id}{'nidents'} ".
+	($users->{$selected_user_id}{'nidents'} > 1 ? $dic->{'Identifications:lc'} : $dic->{'Identification:lc'}) if $users->{$selected_user_id}{'nidents'};
+   $svg .= '</i>';
+
+# start big loop
+# ------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------------
+@uids = $sort eq 'ALPHA' ?
+		sort { lc $users->{$a}{'uname'} cmp lc $users->{$b}{'uname'} } keys %$users :
+		reverse sort { $number{$a} <=> $number{$b} } keys %number;
+
+my $prev_num = 0; my %rank = ();
+
+my $r = 1; my $k = 0;
+
+foreach my $u (@uids)	# BIG LOOP
+{ next if $uid && ($u != $uid);	# usuário único
+
+  my $fid = $cfg->format_user_id($u);
+
+  if ($filter)
+  { my $ok = 0;
+    my $this_user = $cfg->get_user_info({ user_id => $u });
+    $ok |= $cfg->unaccent($this_user->{'name'})     =~ /$filter/i;
+    $ok |= $cfg->unaccent($this_user->{'nickname'}) =~ /$filter/i;
+    if ($user->{'user_level'} > 1)
+    { $ok |= $cfg->unaccent($this_user->{'email'})    =~ /$filter/i;
+      
+      foreach my $e (keys %{$this_user->{'expertise'}})
+      { $ok |= $cfg->unaccent($this_user->{'expertise'}{$e}) =~ /$filter/i }
+    }
+
+    next if !$ok;
+  } 
+
+  if ($sort ne 'ALPHA')
+  { $rank{$u} = $number{$u} < $prev_num ? $r++ : $r;
+    $prev_num = $number{$u};
+  }
+  
+  $k++;
+  my $bg = $users->{$u}{'status'} eq 'inativo' ? ' userBorderAlert ' : ' userBorder ';  
+  print "<TR>" if (($k%2) == (($topLines+1)%2)) || ($k < ($topLines+1));
+  print "<TD class='$bg'><table class='w100'>"; # big table
+
+  my $pic = $users->{$u}{'picture'} ? "<img src='$users->{$u}{'picture_url'}' class='user_pic'/>" : '';
+
+  my $name = $users->{$u}{'name'};
+     $name = "$u. $name" if $cfg->{'user_level'} > 3;
+
+   my $bg = '';
+
+  my $g = $cfg->{'user_level'} > 1 ? $users->{$u}{'gender'} eq 'male' ? '<sup class="fgGray">M</sup>' : '<sup class="fgGray">F</sup>' : '';
+
+  print <<EOM;
+<tr id='$fid'>
+    <td width='80px'>$pic</td>
+    <td$bg><span class='h4 fgDarkGray'>$name</span> $g
+EOM
+
+  print $users->{$u}{'age'} ? "<br/><label class='tag'>$dic->{'born'}</label> $users->{$u}{'formatted_birthday'} ($users->{$u}{'age'})" : '' if $cfg->{'user_level'} > 3;
+
+  print "<br/><label class='tag'>email: </label><i>$users->{$u}{'email'}</i>" if $cfg->{'user_level'} > 1;
+
+  if ($user->{'is_super'} || $user->{'is_admin'})
+  { if ($users->{$u}{'curriculum'})
+    { $users->{$u}{'curriculum'} = 'http://'.$users->{$u}{'curriculum'} if $users->{$u}{'curriculum'} !~ /https?\:\/\//;
+      print "<br/><a href='$users->{$u}{'curriculum'}' target='curriculum'>$dic->{'see_curriculum'}</a>";
+    }
+    else
+    { print "<br/><label class='alert'>$dic->{'no_curriculum'}</label>" if $users->{$u}{'category'} eq 'especialista'; }  
+
+    if ($users->{$u}{'category'} eq 'especialista')
+    { my $signed_in = '';
+      if ($users->{$u}{'terms_especialista'} =~ /(\d{4})\-(\d{2})\-(\d{2}) (\d{2}:\d{2})/)
+      { $signed_in = $cfg->format_date({ day => $3, month => $2, year => $1 }) }
+
+      print $users->{$u}{'agreement'} ? "&#160;&#149;&#160;<label>$dic->{'agreement'} $signed_in</label>" : ", <label class='alert'>$dic->{'no_agreement'}</label>";
+    }
+  }
+
+  if ($cfg->{'user_level'} > 1  && $users->{$u}{'category'} eq 'especialista')
+  { my $exp = '';
+    foreach (keys %{$users->{$u}{'expertise'}}) { $exp .= "$users->{$u}{'expertise'}{$_}, " }
+    $exp =~ s/, $//;
+
+    print "<br/><label class='tag'>especialista em:</label> ";
+    print $exp ? "<i>$exp</i>" : "<label class='alert'>$dic->{'no_expertise'}</label>";
+  }
+
+  if ($users->{$u}{'since'})
+  { print "<br/><label class='tag'>$dic->{'since'}</label> $users->{$u}{'formatted_since'}"; }
+
+  if ($user->{'is_super'} || $user->{'is_admin'})
+  { if ($users->{$u}{'last_seen'})
+    { print "&#160;&#149;&#160;<label  class='tag'>$dic->{'last_seen'}</label> $users->{$u}{'formatted_last_seen'}"; }
+  }
+
+# números de registros e identificações
+
+  print "<br/>" if $users->{$u}{'nrecs'} | $users->{$u}{'nidents'};
+
+  if ($users->{$u}{'nrecs'} && $sort !~ /_ID/)
+  { print "<br/><a href='search?usr_id=$u&action=search'>$users->{$u}{'nrecs'} ";
+    print $users->{$u}{'nrecs'} == 1 ? $dic->{'record:lc'} : $dic->{'records:lc'};
+    print "</a>";
+  }
+  
+  if ($users->{$u}{'nrecs'} && $users->{$u}{'nidents'} && $sort eq 'ALPHA') { print "<span class='fgGray'>&#160;&#x25cf;&#160;</span>" } 
+
+  if ($users->{$u}{'nidents'} && $sort !~ /_REC/)
+  { print "<a href='search?idf_id=$u&action=search'>$users->{$u}{'nidents'} ";
+    print $users->{$u}{'nidents'} == 1 ? $dic->{'Identification:lc'} : $dic->{'Identifications:lc'};
+    print "</a>";
+  } 
+
+# ---
+
+  if ($user->{'is_super'})
+  { my $ucat = $users->{$u}{'category'};
+    my $ust  = $users->{$u}{'status'};
+
+    if ($ucat eq 'super')
+    { print "<br/><span style='float: right'>$dic->{'super'}</span>" }
+    else
+    { my %sel = ();
+      $sel{$ucat} = " selected='true'";
+      $sel{$ust}  = " selected='true'";
+
+      my $alert  = ($users->{$u}{'status'} ne 'ativo' && $user->{'user_level'} > 3) ?  "alert" : 'noBorder';	# usuário pendente
+
+      my $st = $cfg->status();
+      my $stOpt =  "<select name='status' onChange=\"top.update('$u',this)\" class='control $alert bgWhite'>";
+      foreach my $k (keys %$st)
+      { $stOpt .= "<option value='$k'$sel{$k}>$dic->{$k}</option>"; }
+      $stOpt .= "</select>";
+
+      my $ct = $cfg->category();
+      my $catOpt = "<select name='category' onChange=\"top.update('$u',this)\" class='control noBorder bgWhite'>";
+      foreach my $k (keys %$ct)
+      { next if $k eq 'super' && !$user->{'is_super'}; # só super pode criar outro super
+        $catOpt .= "<option value='$k'$sel{$k}>$dic->{$k}</option>";
+      }
+      $catOpt .= "</select>";
+
+      print "<br/><span style='float: right'>$catOpt&#160;$stOpt</span>";
+    }
+  }
+  elsif ($user->{'is_admin'})
+  { 
+    if ($users->{$u}{'is_super'}) # || $users->{$u}{'is_admin'}) 
+    { print "<span style='float: right'>$dic->{$users->{$u}{'category'}}&#160;&#x25c6;&#160;$users->{$u}{'status'}</span>" }
+    else
+    { my %sel = ( $users->{$u}{'status'} => " selected='true'" );
+
+      my $alert  = $users->{$u}{'status'} ne 'ativo' ?  "alert" : 'noBorder';	# usuário pendente
+
+      my $st = $cfg->status();
+      my $stOpt =  "<select name='status' onChange=\"top.update('$u',this)\" class='control $alert bgWhite'>";
+      foreach my $k (keys %$st)
+      { $stOpt .= "<option value='$k'$sel{$k}>$dic->{$k}</option>"; }
+      $stOpt .= "</select>";
+
+      print "<span style='float: right'>$dic->{$users->{$u}{'category'}}&#160;&#x25c6;&#160;$stOpt</span>";
+    }
+  }
+
+  print "</td>";
+  if ($rank{$u})
+  { print "<td class='userRank'>$rank{$u}</td>";
+    print "<td class='userMarkerRank'>&#160;</td>";
+  }
+  print "</tr></table>\n";
+
+  if ($svg)
+  { print <<EOM;
+</TD><TD rowspan='$topLines' class='centro'>$svg
+EOM
+    $svg ='';
+  }
+
+  print "</TD>\n";
+  print "</TR>" if (($k%2) != (($topLines+1)%2)) || ($k < ($topLines+1));
+}
+
+print <<EOM;
+</TABLE>
+<form>
+EOM
+
+print $cfg->html_foot();
+

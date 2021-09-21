@@ -1,0 +1,22 @@
+#!/usr/local/bin/perl
+$|=1;
+use strict;
+use lib "../lib";
+use GUARDIOES;
+
+my $cfg = new GUARDIOES();
+my $dic = $cfg->dic();
+
+print $cfg->html_head();
+
+print $cfg->div_top_banner();
+
+my $page = $cfg->get_page({ page => 'terms_guardiao' });
+
+print <<EOM;
+<div id='divMain'>
+$page
+</div>
+EOM
+
+print $cfg->html_foot();

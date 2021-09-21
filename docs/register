@@ -1,0 +1,419 @@
+#!/usr/local/bin/perl
+$|=1;
+use strict;
+use lib "../lib";
+use GUARDIOES;
+
+my $cfg = new GUARDIOES({ debug => 1 });
+my $dic = $cfg->dic();
+
+my $session_id = $cfg->current_session_id();
+my $action = '';
+
+my $user = {};
+my $data = {}; 
+my $par = $cfg->param();
+
+# -------------------- form was submitted
+if ($par->method() eq 'post')
+{ $data = prepare_data();
+
+  # ---------------- user already logged in
+  if ($session_id)
+  { $data->{'network'} = $cfg->{'network'};
+
+    if ($cfg->update_user_info($data))	# update OK
+    { print "Location: $cfg->{'home_url'}/welcome\n\n";
+    }
+    else # update failed
+    { print "Location: $cfg->{'home_url'}/register\n\n";
+    }
+  }
+  else # new user registering directly
+  { $data->{'network'} = 'guardioes';
+    my ($session_id,$user_status) = $cfg->login($data);
+
+    if ($user_status eq 'retry') { form($data,'register',$dic->{'userRegisteredMsg'}) }
+    else
+    { my $location = $user_status eq 'new' ? 'register' : 'welcome';
+      print  $cfg->set_cookie($session_id,$location); # this makes the Location
+    }
+  }
+}
+else # not a post, so lets fill in the form
+{ if ($session_id) # old user
+  { $user = $cfg->get_user_info();
+    $dic = $cfg->dic();
+
+    form($user,'save');
+  }
+  else # new user
+  { form($data,'register') }
+}
+
+# -----------------------------------------------------
+sub form
+{ my ($user,$action,$msg) = @_;
+
+  my $script = <<EOM;
+<script src='/js/messages_v2.js'></script>
+<script src='/js/register_v3.js'></script>
+EOM
+  print $cfg->html_head({ script => $script });
+
+  if ($session_id && (!$user->{'terms_guardiao'} || !$user->{'email'}) && !$msg)
+  { $msg = $cfg->{'user_lang'} eq 'pt' ? 'Por favor, complete os campos assinalados e tente novamente' : 'Please check the highlighted fields and try again' }
+
+  if ($msg)
+  { print <<EOM
+<script type='text/javascript'>
+	message({ msg: '$msg', type: 'error' });
+</script>
+EOM
+  }
+
+  print $cfg->div_top_banner({ page => $session_id  ? 'register' : 'login' });
+
+  my $required = "&#160;<span class='tip'><sup class='obrigatorio'>$dic->{'required'}</sup><span>$dic->{'required_field'}</span></span>";
+  my $optional = "&#160;<span class='tip'><sup class='opcional'>$dic->{'optional'}</sup><span>$dic->{'optional_field'}</span></span>";
+  my $optional2 = "&#160;<span class='tip'><sup class='opcional'>$dic->{'optional'}</sup><span>$dic->{'optional_filling'}</span></span>";
+  my $automatic = "&#160;<span class='tip'><sup class='automatico'>$dic->{'automatic'}</sup><span>$dic->{'automatic_field'}</span></span>";
+
+
+  my %sel = ();
+  if ($user->{'gender'}) { $sel{$user->{'gender'}} = " checked='true'" } else { $sel{'female'} = " checked='true'" }
+  $sel{$user->{'language'}} = " selected='true'";
+
+# user prefered language
+  my $language_options = '';
+  my $languages = $cfg->languages();
+  $sel{$user->{'language'}} = " selected='true'";
+  foreach (sort { $languages->{$a} <=> $languages->{$b} } keys %$languages)
+  { $language_options .= "<option value='$_'$sel{$_}>$dic->{$_}</option>\n" }
+
+# education 
+  my $education_options = '';
+  my $education = $cfg->education();
+  $sel{$user->{'education'}} = " selected='true'";
+
+  foreach (sort { $education->{$a} <=> $education->{$b} } keys %$education)
+  { $education_options .= "<option value='$_'$sel{$_}>$dic->{$_}</option>\n" }
+
+  if ($cfg->{'network'} eq 'guardioes') { $sel{'email'} = " readonly='true'" }
+
+  my $user_picture = $user->{'picture'} ? "<img src='$user->{'picture_url'}' class='user_pic' align='right'/>" : '';
+
+# theme
+
+  $sel{"theme_$cfg->{'palette_id'}"} = " selected='true'";;
+# form 
+
+  print <<EOM;
+<center>
+<div id='divMain'>
+
+<form name='formRegistration' id='formRegistration' method='post' enctype='multipart/form-data' autocomplete='off'>
+<input type='hidden' name='action' value='$action'/>
+<table width='90%' cellpadding='5px' cellspacing='5px'>
+<tr><td colspan='3'>$user_picture<h1>$dic->{'cadastro_guardiao'}</h1>
+</td></tr>
+
+<tr><td colspan='2' class='h4'>$dic->{'dados_pessoais'}</td>
+EOM
+
+print "<td class='h4'>redes sociais</td>" if $session_id;
+
+print <<EOM;
+</tr>
+<tr>
+    <!-- ********************************************** column 1 -->
+    <td class='w30'>
+	<table class='w100'>
+		<tr><td><label for='name'>$dic->{'whats_your_name'}</label>$required<br/>
+			<input type='text' name='name' id='name' style='width: 90%' value='$user->{'name'}' required='true'/>
+		    </td>
+		</tr>
+		<tr><td><label for='nickname'>$dic->{'your_nickname'}</label>$required<br/>
+			<input type='text' name='nickname' id='nickname' style='width: 90%' value='$user->{'nickname'}' required='true'/>
+		    </td>
+		</tr>
+		<tr><td><label>$dic->{'birthdate'}</label>$required<br/>
+			<input type='text' name='birth_day'   id='birth_day'   value='$user->{'birth_day'}'   size='2' style='width: 50px'/>
+			<input type='text' name='birth_month' id='birth_month' value='$user->{'birth_month'}' size='2' style='width: 50px'/>
+			<input type='text' name='birth_year'  id='birth_year'  value='$user->{'birth_year'}'  size='4' style='width: 50px'/>
+		    </td>
+		</tr>
+		<tr><td><br/><label for='gender'>$dic->{'gender'}</label>$required<br/>
+			<input type='radio' name='gender' id='gender' value='male'$sel{'male'} required='true'/>$dic->{'male'}
+			<input type='radio' name='gender' id='gender' value='female'$sel{'female'} required='true'/>$dic->{'female'}
+		    </td>
+		</tr>
+		<tr><td><br/><label>$dic->{'education'}</label>$required<br/>
+			<select name='education' id='education'>
+			$education_options
+			</select>
+		    </td>
+		</tr>
+	</table>
+    </td>
+    <!-- ********************************************** column 2 -->
+    <td class='w30'>
+	<table class='w100'>
+		<tr><td><label for='email'>$dic->{'whats_your_email'}</label>$required<br/>
+			<input type='email' name='email' id='email' style='width: 60%' value='$user->{'email'}' autocomplete='off' autocorrect='off' autocapitalize='off'$sel{'email'}/>
+		    </td>
+		</tr>
+		<tr><td><label for='password'>$dic->{'your_password'}</label>$required<br/>
+			<input type='password' name='password' id='password' value='' style='width: 90%' autocomplete='off' autocorrect='off' autocapitalize='off'/>
+		    </td>
+		</tr>
+		<tr><td><label for='password2'> $dic->{'your_password_again'}</label>$required<br/>
+			<input type='password' name='password2' id='password2' value='' style='width: 90%' autocomplete='off' autocorrect='off' autocapitalize='off'/>
+		    </td>
+		</tr>
+
+		<tr><td>
+		    </td>
+		</tr>
+
+		<tr><td><br/><label>$dic->{'language'}</label>$required<br/>
+		        <select name='language' id='language'>
+				$language_options
+			</select>
+		    </td>
+		</tr>
+
+		<tr><td><br/><label>$dic->{'theme_choose_title'}</label><br/>
+		        <select name='theme' onChange="switchTheme(this)" class='sp'>
+				<option value='1'$sel{'theme_1'}>Salvia splendens</option>
+				<option value='2'$sel{'theme_2'}> Bougainvillea spectabilis</option>
+				<option value='3'$sel{'theme_3'}>Commelina erecta</option>
+			</select>
+		    </td>
+		</tr>
+	</table>
+    </td>
+EOM
+ 
+  # quando o usuário escolhe fazer o registro diretamente nos guardioes, não faz sentido disponibilizar as vinculações nesse momento
+  # depois que fizer o cadastro convencional, poderá associar as redes sociais
+
+  my %net = ( google => "<a href='googleLogin' class='warning'>$dic->{'link'}</a>",
+		facebook => "<a href='facebookLogin' class='warning'>$dic->{'link'}</a>",
+		instagram => "<a href='instagramLogin' class='warning'>$dic->{'link'}</a>",
+		twitter => "<a href='twitterLogin' class='warning'>$dic->{'link'}</a>"
+	    );
+  foreach (keys %{$user->{'netids'}}) { $net{$_} = "<span class='success'>$dic->{'linked'}</span>" }
+
+  if ($session_id)
+  { print <<EOM;
+    <!-- ********************************************** column 3 -->
+    <td class='w30 direita'>
+	<table class='w100 esquerda'>
+		<tr><td colspan='2'>$dic->{'linkNetworks'}$optional2
+		    </td>
+		</tr>
+		<tr><td><img src='/imgs/icons/google_icon.png'/> Google</td>
+		    <td>$net{'google'}</td>
+		</tr>
+		<tr><td><img src='/imgs/icons/facebook_icon.png'/> Facebook</td>
+		    <td>$net{'facebook'}</td>
+		</tr>
+		<tr><td><img src='/imgs/icons/instagram_icon.png'/> Instagram</td>
+		    <td>$net{'instagram'}</td>
+		</tr>
+		<tr><td><img src='/imgs/icons/twitter_icon.png'/> Twitter</td>
+		    <td>$net{'twitter'}</td>
+		</tr>
+	</table><br/><br/>
+	<input type='button' name='login' value='$dic->{$action}' class='send' onClick="consist('$cfg->{'user_lang'}')"/>
+    </td>
+EOM
+  }
+
+  print <<EOM;
+</tr>
+EOM
+
+  if (!$user->{'terms_guardiao'})
+  { my $cl = $session_id ? " style='background-color: #fee'" : '';
+    print <<EOM;
+<tr><td colspan='3' id='terms_guardiao'>
+    <table class='w100'><tr><td$cl><input type='checkbox' name='terms_guardiao' value='1'/> <b>$dic->{'terms_guardiao'}</b></td>
+EOM
+    if (!$session_id)
+    { print <<EOM;
+	       <td class='direita'><input type='button' name='login' value='$dic->{$action}' class='send' onClick="consist('$cfg->{'user_lang'}')"/></td>
+EOM
+    }
+    print <<EOM;
+	   </tr>
+    </table>
+    </td>
+</tr>
+EOM
+  }
+  else
+  { my $signed_in = '';
+    if ($user->{'terms_guardiao'} =~ /(\d{4})\-(\d{2})\-(\d{2}) (\d{2}:\d{2})/)
+    { $signed_in = $cfg->format_date({ day => $3, month => $2, year => $1 }) }
+    print <<EOM;
+<tr><td colspan='3' id='terms_guardiao' class='direita'>$dic->{'terms_guardiao_signed_in'} $signed_in.</td></tr>
+EOM
+  }
+
+  print <<EOM;
+</table>
+
+EOM
+
+  $sel{$user->{'alert_period'}} = " selected='true'";
+
+  my $expertise = $cfg->expertise();
+  my $exp_table = "<table><tr><td><b>$dic->{'plantae'}</b><br/>";
+
+# --- plantae 
+  my $p_table = "<table>";
+  foreach my $k (sort { $expertise->{$a}{'key'} cmp $expertise->{$b}{'key'} } keys %$expertise)
+  { next if $expertise->{$k}{'group'} ne 'plantae';
+    my $chk = $user->{'expertise'}{$k} ? " checked='true'" : '';
+    $p_table .= "<tr>";
+    $p_table .= "<td><input type='checkbox' name='expertise' value='$k'$chk/></td>";
+    $p_table .= "<td>$dic->{$expertise->{$k}{'key'}}</td>";
+    $p_table .= "</tr>";
+  }
+  $p_table .= "</table>";
+
+  $exp_table .= "$p_table</td><td width='50px'>&#160;</td><td><b>$dic->{'animalia'}</b><br/>";
+
+# --- animalia 
+  my $p_table = "<table>"; my $i = 0;
+  foreach my $k (sort { $expertise->{$a}{'key'} cmp $expertise->{$b}{'key'} } keys %$expertise)
+  { next if $expertise->{$k}{'group'} ne 'animalia';
+    if (!($i++ % 3)) { $p_table .= "</tr>" if $i; $p_table .= "<tr>" }
+    my $chk = $user->{'expertise'}{$k} ? " checked='true'" : '';
+    $p_table .= "<td><input type='checkbox' name='expertise' value='$k'$chk/></td>";
+    $p_table .= "<td>$dic->{$expertise->{$k}{'key'}}</td>";
+  }
+  $p_table .= "</tr></table>";
+
+  $exp_table .= "$p_table</td></tr></table>";
+
+# ------------------------------------------------------------------------------ specialist section
+
+  print <<EOM;
+ <hr><p/>
+<table width='90%' cellpadding='5px' cellspacing='5px'>
+<tr><td><h1>$dic->{'cadastro_especialista'}</h1>
+$dic->{'cadastro_especialista_explain'}</td></tr>
+
+EOM
+
+  if (!$user->{'terms_especialista'})
+  { print <<EOM;
+<tr><td><h4>$dic->{'agreement_title'}$required</h4>
+    <table><tr><td><input type='checkbox' name='agreement' value='1'$sel{'agreement'} onChange='pintaExpertInfo()'/>
+               <td><b>$dic->{'especialist_confirmation'}</b>
+		</td>
+           </tr>
+    </table>
+</td></tr>
+EOM
+  }
+
+  print <<EOM;
+<tr><td><h4>$dic->{'curriculum_title'}$required</h4><label for='curriculum'>$dic->{'curriculum_label'}</label><br/>
+	<input type='text' name='curriculum' id='curriculum' value='$user->{'curriculum'}' style='width: 90%'/>
+    </td>
+</tr>
+<tr><td id='expertiseTable'><h4>$dic->{'my_expertise_title'}$required</h4><label for='expertise'>$dic->{'my_expertise'}</label><br>$exp_table
+    </td>
+</tr>
+<tr>
+		<td><h4>$dic->{'alert_period_title'}$required</h4><label for='alert_period'>$dic->{'alert_period_label'}</label>
+			<select name='alert_period'>
+				<option value='never'>$dic->{'alert_never'}</option>
+				<option value='day' $sel{'day'}>$dic->{'alert_day'}</option>
+				<option value='week' $sel{'week'}>$dic->{'alert_week'}</option>
+				<option value='month' $sel{'month'}>$dic->{'alert_month'}</option>
+			</select>
+		</td>
+</tr>
+<tr><td><h4>$dic->{'comments'}$optional2</h4>
+	<textarea name='comments' id='comments' style='width: 90%; height: 100px'>$user->{'comments'}</textarea>
+    </td>
+    <td class='direita embaixo'><input type='button' name='login' value='$dic->{$action}' class='send' onClick="consist('$cfg->{'user_lang'}')"/></td></tr> 
+</tr>
+EOM
+
+  if ($user->{'terms_especialista'})
+  { print <<EOM;
+EOM
+    my $signed_in = '';
+    if ($user->{'terms_especialista'} =~ /(\d{4})\-(\d{2})\-(\d{2}) (\d{2}:\d{2})/)
+    { $signed_in = $cfg->format_date({ day => $3, month => $2, year => $1 }) }
+    print <<EOM;
+<tr><td colspan='3' id='terms_especialista' class='direita'>$dic->{'terms_especialista_signed_in'} $signed_in.</td></tr>
+</table>
+
+<hr><p/>
+<table width='90%' cellpadding='5px' cellspacing='5px'>
+<tr><td><h1 class='alert'>$dic->{'specialist_off_title'}</h1>
+    <input type='checkbox' name='specialist_off' id='specialist_off' value='1'/>
+	$dic->{'specialist_off_text'}
+    </td>
+</tr>
+EOM
+  }
+  print <<EOM;
+</table>
+EOM
+
+
+# ------------------------------------------------------------------------------ unsubscribe section
+
+  print <<EOM;
+<hr><p/>
+<table width='90%' cellpadding='5px' cellspacing='5px'>
+<tr><td><h1 class='alert'>$dic->{'unsubscribe'}</h1>
+$dic->{'unsubscribeCall'}
+</td>
+</tr>
+</table>
+</form>
+<br/>
+EOM
+
+  print $cfg->html_foot();
+}
+
+#-------------------------------------
+sub prepare_data
+{ my $data = {};
+  $data->{'name'}		= $par->data('name'); $data->{'name'} =~ s/^\s+|\s+$//g;
+  $data->{'nickname'}		= $par->data('nickname');
+  $data->{'email'}		= $par->data('email');
+  $data->{'password'}		= $par->data('password') ? crypt($par->data('password'),time()) : '';
+  $data->{'gender'}		= $par->data('gender');
+  $data->{'education'}		= $par->data('education');
+  $data->{'agreement'}		= $par->data('agreement') || 0;
+  $data->{'specialist_off'}	= $par->data('specialist_off') || 0;
+  $data->{'curriculum'}		= $par->data('curriculum');
+  $data->{'comments'}		= $par->data('comments');
+  $data->{'language'}		= $par->data('language');
+  $data->{'alert_period'}	= $par->data('alert_period');
+
+  $data->{'expertise'} = {};
+  my $k = -1;
+  while (my $v = $par->data('expertise',++$k)) { $data->{'expertise'}{$v} = 1 }
+
+  $data->{'birthday'}	= sprintf("%04d%02d%02d",$par->data('birth_year'),$par->data('birth_month'),$par->data('birth_day'));
+
+# para compatibilizar com o $user caso seja necessario usar no form
+  $data->{'birth_day'}	= $par->data('birth_day');
+  $data->{'birth_month'}= $par->data('birth_month');
+  $data->{'birth_year'}	= $par->data('birth_year');
+
+  return $data;
+}
+#-------------------------------------

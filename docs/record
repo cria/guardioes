@@ -1,0 +1,568 @@
+#!/usr/local/bin/perl
+$|=1;
+use strict;
+use lib "../lib";
+use GUARDIOES;
+
+my $cfg = new GUARDIOES({ loginRequired => 1, debug => 0 });
+
+my $par = $cfg->param();
+my $dic = $cfg->dic();
+
+my $user = $cfg->get_user_info();
+
+if ($par->method() eq 'post') { save() }
+else
+{ print $cfg->html_head( { script => script() } );
+  print $cfg->div_top_banner({ page => 'record', sub_page => 'form' });
+  form();
+  print $cfg->html_foot();
+}
+
+
+# ================================================================================================
+sub form
+{ my $rec = {}; my %sel = ();
+
+  if ($par->data('record_id')) # editing
+  { $rec = $cfg->get_record($par->data('record_id')) }
+  else # creating a new one
+  { $rec->{'record_id'} = 0; $rec->{'decimallatitude'} = -12.8732; $rec->{'decimallongitude'} = -41.3751 }
+
+  my $required	= "&#160;<span class='tip'><sup class='obrigatorio'>$dic->{'required'}</sup><span>$dic->{'required_field'}</span></span>";
+  my $optional	= "&#160;<span class='tip'><sup class='opcional'>$dic->{'optional'}</sup><span>$dic->{'optional_field'}</span></span>";
+  my $automatic = "&#160;<span class='tip'><sup class='automatico'>$dic->{'automatic'}</sup><span>$dic->{'automatic_field'}</span></span>";
+  my $sci_info	= "&#160;<span class='tip'><sup class='automatico'>$dic->{'info'}</sup><span>$dic->{'sci_info'}</span></span>";
+  my $fam_info	= "&#160;<span class='tip'><sup class='automatico'>$dic->{'info'}</sup><span>$dic->{'fam_info'}</span></span>";
+
+# new identification slots
+
+  my $help = $cfg->get_page({ page => 'record_help' });
+  my $glossary = $cfg->get_page({ page => 'record_glossary' });
+
+   print <<EOM;
+<div id='divHelp'>$help</div>
+<div id='divGlossary'>$glossary</div>
+<div id='divMain'>
+
+<blockquote>
+
+<form name='recordForm' id='recordForm' method='post' enctype='multipart/form-data'>
+<input type='hidden' name='record_id' value='$rec->{'id'}'/>
+<input type='hidden' name='user_id' value='$rec->{'user_id'}'/>
+<TABLE class='bigTable'>
+<TR><TD class='h1 direita red' style='padding-right: 50px; color: red' id='msg'></TD>
+</TR>
+<!-- ================================================================================================== -->
+
+<TR><TD style='padding-bottom: 40px'>
+    <table class='w100'>
+    <tr><td><span class='h2'>$dic->{'Photos_interaction'}$required</span><br/>$dic->{'Photos_interaction_explain'}</td>
+        <td rowspan='3'>
+		<table class='w100' cellspacing='0' cellpadding='0'>
+		<tr><td class='h4'>$dic->{'animal_identification'}$optional</td></tr>
+		<tr><td><label for='a_vernacularname'>$dic->{'vernacular'}</label><br/>
+		        <input type='text' name='a_vernacularname' id='a_vernacularname' value='' class='w90'/></td>
+		</tr>
+		<tr><td><label for='a_scientificname'>$dic->{'scientificName'}</label>$sci_info<br/>
+		        <input type='text' name='a_scientificname' id='a_scientificname' value='' class='w90'/></td>
+		</tr>
+		<tr><td>
+			<label for='a_family'>$dic->{'family'}</label>$fam_info<br/>
+			<input type='text' name='a_family' id='a_family' value='' class='w90'/>
+		    </td>
+		</tr>
+		<tr><td><label for='a_identificationremarks'>$dic->{'notes'}</label><br/>
+                        <textarea name='a_identificationremarks' class='w90'></textarea></td>
+                </tr>
+		</table>
+        </td>
+    </tr>
+
+    <tr><td>
+	<table border='0'>
+	<tr>
+EOM
+
+  foreach my $i (0..3)
+  { my $img = "/imgs/upload_bgn_$i.png";
+    my $svg = $cfg->build_svg_hex( {  image_id => "output_$i",
+                                      thumb_url => $img,
+                                      radius => 60,
+                                      mode => 'flat'
+                                   } );
+    print <<EOM;
+<td align='center'>
+    <div id='img_$i' class='imgUpload'>
+      <input type='file' multiple='' accept='image/*' on-change='openFile(event,$i)' onChange='getExif(event,$i)' value='' name='foto_$i' id='foto_$i' class='inputFile'/>
+      <label for="foto_$i">
+      $svg
+      </label>
+    </div>
+</td>
+EOM
+  }
+
+  $sel{$rec->{'eventtime'}} = " selected='true'";
+  print <<EOM;
+	</tr>
+	</table>
+        </td>
+    </tr>
+<!-- ================================================================================================== -->
+    <tr><td><span class='h2'>$dic->{'queBicho'}$required</span><br/>$dic->{'queBicho_explain'}
+		        <select name='taxgrp'>
+			<option value=''></option>
+EOM
+  my $expertise = $cfg->expertise();
+  foreach (sort { $expertise->{$a}{'key'} cmp $expertise->{$b}{'key'} } keys %$expertise)
+  { next if $expertise->{$_}{'group'} ne 'animalia';
+    print <<EOM;
+<option value='$expertise->{$_}{'key'}'>$dic->{$expertise->{$_}{'key'}}</option>
+EOM
+  }
+  print <<EOM;
+			</select>
+    </td></tr>
+    </table>
+</TD></TR>
+<!-- ================================================================================================== -->
+<TR><TD style='padding-bottom: 40px'>
+    <table class='w100'>
+    <tr><td><span class='h2'>$dic->{'Photos_plant'}$required</span><br/>$dic->{'Photos_plant_explain'}</td>
+        <td rowspan='3'>
+		<table class='w100' cellspacing='0' cellpadding='0'>
+		<tr><td class='h4'>$dic->{'plant_identification'}$optional</td></tr>
+		<tr><td><label for='p_vernacularname'>$dic->{'vernacular'}</label><br/>
+		        <input type='text' name='p_vernacularname' id='p_vernacularname' value='' class='w90'/></td>
+		</tr>
+		<tr><td><label for='p_scientificname'>$dic->{'scientificName'}</label><br/>
+		        <input type='text' name='p_scientificname' id='p_scientificname' value='' class='w90'/></td>
+		</tr>
+		<tr><td>
+			<label for='p_family'>$dic->{'family'}</label><br/>
+			<input type='text' name='p_family' id='p_family' value='' class='w90'/>
+		    </td>
+		</tr>
+		<tr><td><label for='p_identificationremarks'>$dic->{'notes'}</label><br/>
+                        <textarea name='p_identificationremarks' class='w90'></textarea></td>
+                </tr>
+		</table>
+        </td>
+    </tr>
+    <tr><TD>
+        <table border='0'>
+        <tr>
+EOM
+
+  foreach my $i (4..7)
+  { my $img = "/imgs/upload_bgn_$i.png";
+    my $svg = $cfg->build_svg_circ( { image_id => "output_$i",
+                                      thumb_url => $img,
+                                      radius => 50
+                                    } );
+    print <<EOM;
+<td align='center'>
+    <div id='img_$i' class='imgUpload'>
+      <input type='file' multiple='' accept='image/*' on-change='openFile(event,$i)' onChange='getExif(event,$i)' value='' name='foto_$i' id='foto_$i' class='inputFile'/>
+      <label for="foto_$i">
+      $svg
+      $dic->{'click_to_load'}
+      </label>
+    </div>
+</td>
+EOM
+  }
+
+  print <<EOM;
+        </tr>
+        </table>
+        </td>
+    </tr>
+<!-- ================================================================================================== -->
+    <tr><td><span class='h2'>$dic->{'habito'}$optional</span><br/>$dic->{'habito_explain'}
+		        <select name='habit'>
+			<option value=''></option>
+EOM
+  my $habit = $cfg->habit();
+  foreach (sort { $habit->{$a} <=> $habit->{$b} } keys %$habit)
+  { print <<EOM;
+<option value='$_'>$dic->{$_}</option>
+EOM
+  }
+  print <<EOM;
+			</select>
+    </td></tr>
+    </table>
+</TD></TR>
+<!-- ================================================================================================== -->
+<TR><TD><span class='h2'>$dic->{'Location'}$required</span><br/>$dic->{'Location_explain'}</TD>
+</TR>
+<TR><TD style='padding-bottom: 40px'>
+	<table width='100%'>
+	<tr>
+
+<td><div id="form_map"></div>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=$cfg->{'google_maps_api_key'}&callback=initMap"></script>
+</td>
+
+
+            <td>
+		<table width='100%'>
+		<tr><td><label for='country'>$dic->{'country'}$automatic</label><br/>
+		        <input class='noBorder' type='text' name='country' value='$rec->{'country'}' readonly='true'/></td>
+		</tr>
+		<tr><td><label for='stateprovince'>$dic->{'stateProvince'}$automatic</label><br/>
+		        <input class='noBorder' type='text' name='stateprovince' value='$rec->{'stateprovince'}' readonly='true'/></td>
+		</tr>
+		<tr><td><label for='municipality'>$dic->{'municipality'}$automatic</label><br/>
+		        <input class='noBorder' type='text' name='municipality' value='$rec->{'municipality'}' readonly='true'/></td>
+		</tr>
+		<tr><td><label for='locality'>$dic->{'location'}$optional</label><br/>
+		        <input type='text' name='locality' value='$rec->{'locality'}'/></td>
+		</tr>
+		<tr><td><label for='eventdate'>$dic->{'date'}$required</label><br/>
+		        <input id='eventdate' type='text' name='eventdate' value='$rec->{'eventdate'}'/><span> <img id="calendar_icon" src="/imgs/calendar.png" border="0"></span></td>
+		</tr>
+		<tr><td><label for='eventtime'>$dic->{'period'}$required</label><br/>
+		        <select name='eventtime'>
+EOM
+  for (my $i=0;$i<=22;$i+=2)
+  { my $tag = sprintf('%02d h - %02d h',$i,$i+2);
+    my $val = sprintf('%02d%02d',$i,$i+2);
+    print "<option value='$val'$sel{$val}>$tag</option>\n";
+  }
+
+  print <<EOM;
+			</select>
+			<input type='hidden' name='verbatimeventdate' value=''/>
+		    </td>
+		</tr>
+		</table>
+	    </td>
+	</tr>
+	</table>
+	<div id="inputs">
+		<input type='hidden' name='decimallatitude' id='decimallatitude' value='$rec->{'decimallatitude'}' style='width: 100px' readonly='true'/>
+		<input type='hidden' name='decimallongitude' id='decimallongitude' value='$rec->{'decimallongitude'}' style='width: 100px' readonly='true'/>
+		<input type='hidden' name='elevation' value='$rec->{'elevation'}' style='width: 100px' readonly='true'/>
+		<input type='hidden' name='datum' value='$rec->{'datum'}' style='width: 100px' readonly='true'/>
+		<input type='hidden' name='wkt' value='$rec->{'wkt'}' style='width: 100px' readonly='true'/>
+	</div>
+    </TD>
+</TR>
+<!-- ================================================================================================== -->
+
+<TR><TD><span class='h2'>$dic->{'interacao'}$optional</span><br/>$dic->{'interacao_explain'}
+		        <select name='interaction'>
+			<option value=''></option>
+EOM
+  my ($interaction) = $cfg->interaction();
+  foreach (sort { $interaction->{$a} <=> $interaction->{$b} } keys %$interaction)
+  { print <<EOM;
+<option value='$_'>$dic->{$_}</option>
+EOM
+  }
+  print <<EOM;
+			</select>
+</TD></TR>
+<!-- ================================================================================================== -->
+<TR><TD><table class='w100'>
+	<tr>
+	   <td><span class='h2'>$dic->{'Observations'}$optional</span><br/>$dic->{'Observations_explain'}</td>
+	   <td align='right'><input type='button' onClick="top.consist('$cfg->{'user_lang'}')" value='$dic->{'send'}' class='send'/></td>
+	</tr>
+	</table>
+    </TD>
+</TR>
+<TR>
+    <TD><textarea name='eventremarks' style='width: 90%; height: 100px'>$rec->{'eventremarks'}</textarea></TD>
+</TR>
+</TABLE>
+<script type="text/javascript">
+	 var	p_s_options = {	script: "/suggestions/dictionary_scinames?kingdom=plantae&", 
+				varname: "sciname", 
+				json: true,
+				minchars: 1,
+				delay: 10,
+				offsety: 0,
+				timeout: 10000,
+				noresults: "Nome não encontrado",
+				cache: false,
+				maxresults: 35,
+				callback: function(obj)
+				{ d = document.recordForm;
+				  e = obj.info.split(':');
+				  d.p_family.value = e[0];
+				}
+			};
+	 var	p_s = new bsn.AutoSuggest('p_scientificname', p_s_options);
+
+	 var	p_f_options = {	script: "/suggestions/dictionary_scinames?kingdom=plantae&", 
+				varname: "family", 
+				json: true,
+				minchars: 1,
+				delay: 10,
+				offsety: 0,
+				timeout: 10000,
+				noresults: "Nome não encontrado",
+				cache: false,
+				maxresults: 35,
+				callback: function(obj) { }
+			};
+	 var	p_f = new bsn.AutoSuggest('p_family', p_f_options);
+
+	 var	a_s_options = {	script: "/suggestions/dictionary_scinames?kingdom=animalia&", 
+				varname: "sciname", 
+				json: true,
+				minchars: 1,
+				delay: 10,
+				offsety: 0,
+				timeout: 10000,
+				noresults: "Nome não encontrado",
+				cache: false,
+				maxresults: 35,
+				callback: function(obj)
+				{ d = document.recordForm;
+				  e = obj.info.split(':');
+				  d.a_family.value = e[0];
+				}
+			};
+	  var	a_s = new bsn.AutoSuggest('a_scientificname', a_s_options);
+
+	 var	a_f_options = {	script: "/suggestions/dictionary_scinames?kingdom=animalia&", 
+				varname: "family", 
+				json: true,
+				minchars: 1,
+				delay: 10,
+				offsety: 0,
+				timeout: 10000,
+				noresults: "Nome não encontrado",
+				cache: false,
+				maxresults: 35,
+				callback: function(obj) { }
+			};
+	  var	a_f = new bsn.AutoSuggest('a_family', a_f_options);
+</script>
+</form>
+</blockquote>
+EOM
+}
+# ================================================================================================
+sub save
+{ my $data = { };
+
+  my $old_rec = {};
+  if ( $par->data('record_id') ) # is update
+  { $old_rec = $cfg->get_record($par->data('record_id')) }
+
+  foreach ( qw (record_id country stateprovince municipality locality user_id
+		decimallatitude decimallongitude elevation taxgrp interaction habit
+		verbatimeventdate eventdate eventtime eventremarks)
+	  )
+  { $data->{$_} = $par->data($_) }
+
+  $data->{'user_id'} = $cfg->{'user_id'} if !$data->{'user_id'};
+  my $lon = $data->{'decimallongitude'};
+  my $lat = $data->{'decimallatitude'};
+  my $datum = $data->{'datum'};
+  # Aqui seria o lugar de eventualmente converter datum, mas por hora vamos assumir
+  # que as coordenadas estarao sempre em lat/long wgs84, que parece ser o padrão
+  # obs1: a especificacao do formato exif nao exige datum
+  # obs2: quando presente, o conteúdo do datum não segue nenhum padrão!
+  # obs3: srid 4326=lat/long wgs84, srid 4618=SAD69
+  $data->{'point'} = "ST_GeomFromText('POINT($lon $lat)',4326)";
+
+print STDERR "[$data->{'eventdate'}]\n";
+
+  if (!$data->{'eventdate'} && $data->{'verbatimeventdate'} =~ /^(\d{4}):(\d{2}):(\d{2})/) { $data->{'eventdate'} = "$3/$2/$1" }
+
+# fotos 
+  $data->{'images'} = [];
+
+# como cada container pode ter várias fotos, 
+# pegamos a primeira de cada container
+# depois a segunda, depois a terceira e quarta
+# até que se completem 4 de cada grupo
+
+# fotos de interacao
+
+  my $max = 0;
+  foreach my $k (0..3)
+  { foreach my $i (0..3)
+    { my $key = 'foto_'.$i;
+      if ($max < 4 && $par->data($key,$k))
+      { push @{$data->{'images'}},
+		$cfg->save_image({	content	 => $par->content($key,$k),
+					data	 => $par->data($key,$k),
+					filename => $par->filename($key,$k),
+					image_of => 'interacao'
+				});	# $data->{'image'}[0] ...
+	$max++;
+      }
+    }
+  }
+
+# fotos da planta
+
+  my $max = 0;
+  foreach my $k (0..3)
+  { foreach my $i (4..7)
+    { my $key = 'foto_'.$i;
+      if ($max < 4 && $par->data($key,$k))
+      { push @{$data->{'images'}},
+		$cfg->save_image({	content	 => $par->content($key,$k),
+					data	 => $par->data($key,$k),
+					filename => $par->filename($key,$k),
+					image_of => 'planta'
+				});	# $data->{'image'}[0] ...
+	$max++;
+      }
+    }
+  }
+
+  my $record_id = $data->{'record_id'} ? $cfg->update_record($data) : $cfg->put_record($data);
+
+  if ($par->data('p_vernacularname') || $par->data('p_scientificname') || $par->data('p_identificationremarks'))
+  { $data = {	record_id		=> $record_id,
+		user_id			=> $cfg->{'user_id'},
+		kingdom			=> 'plantae',
+		status			=> $user->{'category'} eq 'especialista' ? 'valido' : 'pendente',
+		identifiedby_id		=> $cfg->{'user_id'},
+		family			=> $par->data('p_family'),
+		vernacularname		=> $par->data('p_vernacularname'),
+		scientificname		=> $par->data('p_scientificname'),
+		identificationremarks	=> $par->data('p_identificationremarks')
+	    };
+    my $ident_id = $cfg->put_ident($data);
+    $cfg->validate_ident($ident_id) if $user->{'category'} eq 'especialista'; # apenas identificacoes de guardioes precisam ser validadas   
+  }
+
+  if ($par->data('a_vernacularname') || $par->data('a_scientificname') || $par->data('a_identificationremarks'))
+  { $data = {	record_id		=> $record_id,
+		user_id			=> $cfg->{'user_id'},
+		kingdom			=> 'animalia',
+		status			=> $user->{'category'} eq 'especialista' ? 'valido' : 'pendente',
+		identifiedby_id		=> $cfg->{'user_id'},
+		family			=> $par->data('a_family'),
+		vernacularname		=> $par->data('a_vernacularname'),
+		scientificname		=> $par->data('a_scientificname'),
+		identificationremarks	=> $par->data('a_identificationremarks')
+	    };
+    my $ident_id = $cfg->put_ident($data);
+    $cfg->validate_ident($ident_id) if $user->{'category'} eq 'especialista'; # apenas identificacoes de guardioes precisam ser validadas   
+  }
+
+  my $rid = $cfg->format_record_id($record_id);
+
+  print "Location: /$rid\n\n";
+}
+
+# ================================================================================================
+sub script
+{ return <<EOM;
+<script type='text/javascript' src='/js/ajax_v1.js'></script>
+<script type='text/javascript' src='/js/messages_v2.js'></script>
+<link rel="stylesheet" href="/css/dhtmlx.css" type="text/css"> 
+<script src="/js/dhtmlx.js" type="text/javascript"></script>
+<script type='text/javascript'>
+	var map;
+	var pinPosition = { lat: -10.1419, lng: -50.9765 }; // default
+	var zoomLevel = 4; // default
+	var marker = null;
+
+//	=================================================================
+	function initMap(lt,lg, zl)
+	{ 
+	  if (lt && lg) { pinPosition = { lat: lt, lng: lg } }
+	  if (zl) { zoomLevel = zl }
+
+	  map = new google.maps.Map(
+			document.getElementById('form_map'),
+			{ zoom: zoomLevel,
+			  mapTypeId: google.maps.MapTypeId.HYBRID,
+			  center: pinPosition
+			});
+
+// polígonos dos projetos associados
+	  map.data.loadGeoJson('/geojson?map_projects');
+	  map.data.setStyle({ fillColor: 'red', strokeColor: 'red', fillOpacity: 0.05, strokeWeight: 1.0, clickable: false });
+// fim dos polígonos e estilos
+
+	  google.maps.event.addListener(map, 'click', function(e) { placeMarker(e.latLng, map); });
+
+	}
+
+//	=================================================================
+	  function placeMarker(position, map)
+	  { if (marker) { marker.setMap(null) }
+
+	    marker = new google.maps.Marker({
+			position: position,
+			draggable: true,
+			map: map });  
+
+//	    map.panTo(position);
+
+	    google.maps.event.addListener(
+		marker, 'dragend',
+		function (event)
+		{ document.getElementById("decimallatitude").value  = this.getPosition().lat();
+		  document.getElementById("decimallongitude").value = this.getPosition().lng();
+		  fillGeoInfo(true);
+		});
+
+		document.getElementById("decimallatitude").value  = position.lat();
+		document.getElementById("decimallongitude").value = position.lng();
+
+		fillGeoInfo(true);
+	  }
+
+// =================================================================
+      window.onload = function()
+	{ // Drag & Drop stuff for pics
+          var dropZone = false;
+	  for (i=0;i<=3;i++)
+	  { dropZone = document.getElementById('img_'+i);
+	    dropZone.addEventListener('dragenter', handleDragEnter, false);
+	    dropZone.addEventListener('dragleave', handleDragLeave, false);
+	    //dropZone.addEventListener('dragover', handleDragOver, false);
+	    dropZone.addEventListener('drop', handleFileDrop, false);
+	  }
+          // Calendar widget
+          dhtmlXCalendarObject.prototype.langData["pt"] = {
+            // date format for inputs
+            dateformat: "%d/%m/%Y",
+            // header format
+            hdrformat: "%F %Y",
+            // full names of months
+            monthesFNames: ["Janeiro","Fevereiro","Março","Abril","Maio","Junho",
+                            "Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"],
+            // short names of months
+            monthesSNames: ["Jan","Fev","Mar","Abr","Mai","Jun",
+                            "Jul","Ago","Set","Out","Nov","Dez"],
+            // full names of days
+            daysFNames: ["Segunda","Terça","Quarta","Quinta",
+                         "Sexta","Sábado","Domingo"],
+            // short names of days
+            daysSNames: ["Dom", "Seg","Ter","Qua","Qui","Sex","Sab"],
+            // starting day of a week. Number from 1(Monday) to 7(Sunday)
+            weekstart: 1,
+            // the title of the week number column
+            weekname: "S",
+            // name of the "Today" button
+            today: "Hoje",
+            // name of the "Clear" button
+            clear: "Limpar"
+          };
+          var myCalendar = new dhtmlXCalendarObject({input:"eventdate",button:"calendar_icon"});
+          myCalendar.loadUserLanguage("pt");
+	};
+</script>
+<script type='text/javascript' src='/js/exif_v1.js'></script>
+<script type='text/javascript' src='/js/record_v5.js'></script>
+<script type="text/javascript" src="/js/autosuggest_v2.1.3/js/bsn.AutoSuggest_2.1.3_comp.js" charset="utf-8"></script>
+<link rel="stylesheet" href="/js/autosuggest_v2.1.3/css/autosuggest_inquisitor.css" type="text/css" media="screen" charset="utf-8" />
+
+EOM
+}

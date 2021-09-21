@@ -1,0 +1,170 @@
+#!/usr/local/bin/perl
+$|=1;
+use strict;
+use lib "../lib";
+use GUARDIOES;
+use Encode;
+
+
+my $cfg = new GUARDIOES({ loginRequired => 1 });
+my $par = $cfg->param();
+my $dic = $cfg->dic();
+my $user = $cfg->get_user_info();
+
+my $PRG = 'search'; # deve ser search mesmo! 
+
+# ---- continue 
+
+my $script = <<EOM;
+<script type="text/javascript" src="/js/highslide/highslide/highslide.js"></script>
+<link rel="stylesheet" type="text/css" href="/js/highslide/highslide/highslide.css" />
+<script type="text/javascript">
+    hs.graphicsDir = '/js/highslide/highslide/graphics/';
+    hs.outlineType = null;
+    hs.wrapperClassName = 'colored-border';
+</script>
+<script type="text/javascript" src="/js/pendings_v1.js"></script>
+<style>
+#map { height: 100%; width: 100% }
+</style>
+EOM
+print $cfg->html_head({ script => $script });
+
+print $cfg->div_top_banner({ page => 'pendings' });
+
+form();
+
+print $cfg->html_foot();
+
+#===============================================================
+sub form
+{ # retrieve the last search options from cookie
+  my %sel = (); my %chk = ();
+  foreach my $pair (split('&',$cfg->{'search_string'}))
+  { my ($tag,$val) = split(':',$pair);
+    $sel{$tag}{$val} = ' selected="true"';
+    $chk{$tag} = ' checked="true"';
+  }
+ 
+  #ucs
+  my $ucs = $cfg->get_available_ucs();
+  my $ucs_opt = "<select name='ucs' id='ucs'>";
+  $ucs_opt .= "<option value=''>$dic->{'ANYWHERE'}</option>";
+  foreach (sort { $ucs->{$a} cmp $ucs->{$b} } keys %$ucs)
+  { $ucs_opt .= "<option value='$_'$sel{'ucs'}{$_}>$ucs->{$_}</option>" }
+  $ucs_opt .= "</select>";
+
+#day
+  my $day_opt = "<option value=''></option>";
+  foreach (1..31) { my $d = sprintf("%02d",$_); $day_opt .= "<option value='$d'$sel{'day'}{$d}>$d</option>" }
+  
+#month
+  my $month_opt = "<option value=''></option>";
+  foreach (1..12) { my $d = sprintf("%02d",$_); $month_opt .= "<option value='$d'$sel{'month'}{$d}>$cfg->{'month'}[$d]</option>" }
+
+#year
+  my $year_opt = "<option value=''></option>";
+  my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime(time);
+  $year += 1900;
+  foreach (2015..$year) { $year_opt .= "<option value='$_'$sel{'year'}{$_}>$_</option>" }
+
+#eventtime
+  my $eventtime_opt = "<option value=''></option>";
+  for (my $i=0;$i<=22;$i+=2)
+  { my $tag = sprintf('%02d h - %02d h',$i,$i+2);
+    my $val = sprintf('%02d%02d',$i,$i+2);
+    $eventtime_opt .= "<option value='$val'$sel{'eventtime'}{$val}>$tag</option>";
+  }
+
+
+#taxgrp
+  my $taxgrp_opt = <<EOM;
+<select name='taxgrp'>
+<option value=''></option>
+EOM
+  my $expertise = $cfg->expertise();
+  foreach (sort keys %$expertise)
+  { next if $expertise->{$_}{'group'} ne 'animalia';
+    $taxgrp_opt .= <<EOM;
+<option value='$expertise->{$_}{'key'}'$sel{'taxgrp'}{$expertise->{$_}{'key'}}>$dic->{$expertise->{$_}{'key'}}</option>
+EOM
+  }
+  $taxgrp_opt .= '</select>';
+
+#habit
+  my $habit_opt = <<EOM;
+<select name='habit'>
+<option value=''></option>
+EOM
+  my $habit = $cfg->habit();
+  foreach (sort { $habit->{$a} cmp $habit->{$b} } keys %$habit)
+  { $habit_opt .= <<EOM;
+<option value='$_'$sel{'habit'}{$_}>$dic->{$_}</option>
+EOM
+  }
+
+#interaction
+  my $interaction_opt = <<EOM;
+<select name='interaction'>
+<option value=''></option>
+EOM
+  my ($interaction) = $cfg->interaction();
+  foreach (sort { $interaction->{$a} <=> $interaction->{$b} } keys %$interaction)
+  { $interaction_opt .= <<EOM;
+<option value='$_'$sel{'interaction'}{$_}>$dic->{$_}</option>
+EOM
+  }
+
+# numbers
+  my $num = $cfg->counts();
+
+  print <<EOM;
+<div id='divMain'>
+<blockquote>
+<form name='pendingsForm' id='pendingsForm' method='post' enctype='multipart/form-data' action='$PRG'>
+<input type='hidden' name='action' value='pendings'/>
+<input type='hidden' name='report' value='list_of_records'/>
+<input type='hidden' name='mode' value='work'/>
+
+<table class='w100 noBorder'>
+<tr><td colspan='2'><span class='h2'>$dic->{'PendingsFilter'}</span><br/><span class='small'>$dic->{'PendingsFilterExplain'}</span><br/><br/></td>
+</tr>
+
+<tr>
+<td>
+	<table class='w100 noBorder'>
+	<tr><td><label for='taxgrp'>$dic->{'taxonomicGroup'}</label><br/>$taxgrp_opt</td></tr>
+	<tr><td><label for='habit'>$dic->{'habito_label'}</label><br/>$habit_opt</td></tr>
+	<tr><td><label for='interaction'>$dic->{'interacao_label:lc'}</label><br/>$interaction_opt</td></tr>
+	<tr><td><label for='ucs'>$dic->{'madeIn'}</label><br/>$ucs_opt</td></tr>
+	<tr><td><label>$dic->{'madeOn'}</label><br/>
+		<table><tr>
+			<td><label>$dic->{'day'}</label><br/><select name='day'>$day_opt</select></td>
+			<td><label>$dic->{'month'}</label><br/><select name='month'>$month_opt</select></td>
+			<td><label>$dic->{'year'}</label><br/><select name='year'>$year_opt</select></td>
+			<td><label>$dic->{'period'}</label><br/><select name='eventtime'>$eventtime_opt</select></td>
+			</tr>
+		</table>
+	</td></tr>
+	</table>
+</td>
+<td><br/>
+	<table class='w100 noBorder'>
+	<tr><td class='direita'><a href="javascript:clearForm('pendingsForm')" class="clear">$dic->{'clear'}</a></td></tr>
+	<tr><td><input onChange="toogleCheck(this)" type='checkbox' name='animalia_scientificname' $chk{'animalia_scientificname'} value='noid'/><label for='animalia_scientificname'>$dic->{'animal_noid'} [ $num->{0}{'rec_noid:animalia'} ]</label></td></tr>
+	<tr><td><input onChange="toogleCheck(this)" type='checkbox' name='plantae_scientificname' $chk{'plantae_scientificname'} value='noid'/><label for='plantae_scientificname'>$dic->{'plant_noid'} [ $num->{0}{'rec_noid:plantae'} ]</label></td></tr>
+	<tr><td>&#160;</td></tr>
+	<tr><td><input onChange="toogleCheck(this)" type='checkbox' name='animalia_name' $chk{'animalia_name'} value='noval'/><label for='animalia_name'>$dic->{'animal_noval'} [ $num->{0}{'rec_noval:animalia'} ]</label></td></tr>
+	<tr><td><input onChange="toogleCheck(this)" type='checkbox' name='plantae_name' $chk{'plantae_name'} value='noval'/><label for='plantae_name'>$dic->{'plant_noval'} [ $num->{0}{'rec_noval:plantae'} ]</label></td></tr>
+	</tr>
+	</table>
+</td>
+</tr>
+<tr><td align='right'></td>
+	    <td align='right'><input type='button' value='$dic->{'List'}' onClick="submitForm()" class='send'/></td>
+</tr>
+</table>
+</form>
+</blockquote>
+EOM
+}

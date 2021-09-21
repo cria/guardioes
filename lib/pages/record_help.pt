@@ -1,0 +1,46 @@
+<h2>Como enviar uma observação</h2>
+
+<b>Campos de preenchimento obrigatório</b><br/>
+são aqueles cujas informações são necessárias para enviar uma observação ao sistema.<p/>
+
+<h3>1. Adicionar fotos da interação</h3>
+<img width="60" src="/imgs/i_icon.png" align='right'/>
+Adicione de uma a quatro fotos mostrando a interação entre animal e planta que observou. Pelo menos uma foto, à sua escolha, é obrigatória.
+No entanto, são desejáveis fotos que evidenciem o animal em diferentes ângulos, pois auxilia os especialistas na identificação.
+As fotos podem ser enviadas individualmente, mas o sistema também permite que até quatro imagens sejam selecionadas e enviadas ao mesmo tempo.
+<p/><a href='/photos_tips' target='_blank'>Confira aqui dicas de como tirar uma boa fotografia.</a>
+
+<h3>2. Que animal é esse?</h3>
+Selecione o grupo de animal que observou. Se o grupo do animal não estiver presente na lista, selecione a opção "outro animal". Essa informação é necessária para nos ajudar a localizar especialistas que possam identificar o animal observado na interação.
+
+<h3>3. Adicionar fotos da planta</h3>
+<img width="60" src="/imgs/p_icon.png" align='right'/>
+Adicione de uma a quatro fotos mostrando a planta que observou. Pelo menos uma foto, à sua escolha, é obrigatória.
+No entanto, são desejáveis fotos da planta nas seguintes vistas: (1) flor vista de frente, (2) ramo com as folhas, (3) planta inteira com a vegetação do entorno e (4) fruto, pois auxilia os especialistas na identificação.
+As fotos podem ser enviadas individualmente, mas o sistema também permite que até quatro imagens sejam selecionadas e enviadas ao mesmo tempo.
+<p/><a href='/photos_tips' target='_blank'>Confira aqui dicas de como tirar uma boa fotografia.</a>
+
+<h3>4. Localização</h3>
+Use o mapa para localizar onde foi feita a observação. Se a foto foi feita com o sistema de localização do dispositivo fotográfico
+ativado, não é necessário o uso do mapa, pois os dados são preenchidos automaticamente.
+Os campos "localidade", "data" e "hora" podem ser preenchidos manualmente, se necessário.
+O campo ”localidade” serve para indicar, por exemplo, um ponto de referência para a interação observada.
+Os campos "data" e "hora" são preenchidos com a data, considerando dia, mês e ano, e hora, considerando intervalos
+de duas horas, em que a interação foi observada.<p/>
+
+<b>Campos de preenchimento <span class='alert'>não</span> obrigatório</b><br/>
+são aqueles cujas informações não são necessárias para enviar uma observação ao sistema, podendo deixá-los em branco, caso o
+guardião não tenha certeza do que observou. No entanto, devem ser preenchidos se o guardião souber.
+
+<h3>5. Identificação</h3>
+Preencha os formulários de identificação do animal e da planta com as informações que souber.
+Por exemplo, se conhecer somente o nome popular, preencha o campo referente a essa informação.
+As demais podem ficar em branco. Quando uma identificação é submetida pelo guardião, obrigatoriamente passará pela avaliação de um especialista,
+que indicará se a identificação é válida para compor o banco de dados do sistema.
+
+<h3>6. Hábito da planta</h3>
+Selecione o hábito da planta que observou. Se o hábito não estiver presente na lista, selecione a opção "nenhuma das anteriores".
+Para conhecer os hábitos considerados e seus significados, visite o glossário.
+
+<h3>7. Tipo de interação</h3>
+Selecione a interação que observou. Se a interação não estiver presente na lista, selecione a opção “nenhuma das anteriores”.

@@ -1,0 +1,42 @@
+#!/usr/local/bin/perl
+# ----------------------------------------------------
+# cria a página /about (saiba mais)
+# textos em ../lib/pages/
+# ----------------------------------------------------
+$|=1;
+use strict;
+use lib "../lib";
+use GUARDIOES;
+
+my $cfg = new GUARDIOES();
+
+my $script = <<EOM;
+<script type="text/javascript" src="/js/highslide/highslide/highslide.js"></script>
+<link rel="stylesheet" type="text/css" href="/js/highslide/highslide/highslide.css" />
+<script type="text/javascript">
+    hs.graphicsDir = '/js/highslide/highslide/graphics/';
+    hs.outlineType = null;
+    hs.wrapperClassName = 'colored-border';
+</script>
+<script type="text/javascript" src="/js/usersForm.js"></script>
+EOM
+
+print $cfg->html_head({ script => $script });
+
+print $cfg->div_top_banner({ page => 'about', sub_page => 'about' });
+
+my $imgs = $cfg->get_random_thumbs(4);
+
+my $img = '';
+foreach my $k (0..$#$imgs)
+{ $img .= "<span>";
+  $img .= $imgs->[$k]{'image_of'} eq 'planta' ?
+                $cfg->build_svg_circ( { record_id => $imgs->[$k]{'record_id'}, image_id => $imgs->[$k]{'id'}, large_url => $imgs->[$k]{'large_url'}, thumb_url => $imgs->[$k]{'thumb_url'}, radius => 50 } )."<br/>" :
+                $cfg->build_svg_hex( { record_id => $imgs->[$k]{'record_id'}, image_id => $imgs->[$k]{'id'}, large_url => $imgs->[$k]{'large_url'}, thumb_url => $imgs->[$k]{'thumb_url'}, radius => 50  } )."<br/>" ;
+  $img .= "</span>";
+}
+
+print "<div id='divMain'>";
+print $cfg->get_page({ page => 'about', imgs => $img });
+
+print $cfg->html_foot();

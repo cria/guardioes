@@ -1,0 +1,153 @@
+#!/usr/local/bin/perl
+$|=1;
+use strict;
+use lib "../lib";
+use Mail::Sendmail;
+use GUARDIOES;
+
+my $cfg = new GUARDIOES();
+my $par = $cfg->parameters();
+my $dic = $cfg->dic();
+
+if ($par->{'_method'} eq 'post') { sendMessage() }
+else { form() }
+
+print $cfg->html_foot();
+
+#-------------------------------------------------------
+sub form
+{ my $script = <<EOM;
+<script type="text/javascript" src="/js/highslide/highslide/highslide.js"></script>
+<link rel="stylesheet" type="text/css" href="/js/highslide/highslide/highslide.css" />
+<script type="text/javascript">
+    hs.graphicsDir = '/js/highslide/highslide/graphics/';
+    hs.outlineType = null;
+    hs.wrapperClassName = 'colored-border';
+</script>
+EOM
+
+  print $cfg->html_head({ script => $script });
+
+  print $cfg->div_top_banner();
+
+  my $rec = {}; my $text = '';
+
+  if ($par->{'record_id'})
+  { $rec  = $cfg->get_record($par->{'record_id'});
+    $text = $cfg->format_record($rec);
+  }
+
+  my $imgs = ''; my $photos = $rec->{'photo'};
+  foreach my $k (0..$#$photos)
+  { next if $par->{'image_id'} && $photos->[$k]{'id'} != $par->{'image_id'};
+    $imgs .= "<span>";
+    $imgs .= $photos->[$k]{'image_of'} eq 'planta' ?
+                $cfg->build_svg_circ( { record_id => $photos->[$k]{'record_id'}, image_id => $photos->[$k]{'id'}, large_url => $photos->[$k]{'large_url'}, thumb_url => $photos->[$k]{'thumb_url'}, radius => 50 } ) :
+                $cfg->build_svg_hex( { record_id => $photos->[$k]{'record_id'}, image_id => $photos->[$k]{'id'}, large_url => $photos->[$k]{'large_url'}, thumb_url => $photos->[$k]{'thumb_url'}, radius => 50  } );
+    $imgs .= "</span>";
+  }
+
+  print <<EOM;
+<div id='divMain'>
+<table><tr><td>
+<h2 class='alert'>$dic->{'denunciar_title'}</h2>
+<blockquote>
+<form name='denunciarForm' id='denunciarForm' method='post' enctype='multipart/form-data'>
+<input type='hidden' name='record_id' value='$par->{'record_id'}'/>
+<input type='hidden' name='image_id' value='$par->{'image_id'}'/>
+<table class='w100'>
+<tr>
+<td>
+$dic->{'denunciar_text'}
+<p/>
+
+<table><tr><td class='pad15'>$imgs</td>
+	<td><cite>$text</cite></tr>
+</table>
+
+</td>
+<td class='w40 direita'>
+<label>$dic->{'Email_name'} <sup>*</sup></label><br/>
+<input type='text' name='name' class='w90'/>
+<p/>
+<label>$dic->{'Email_email'} <sup>*</sup></label><br/>
+<input type='email' name='email' class='w90'/>
+<p/>
+<label>$dic->{'Email_message'} <sup>*</sup></label><br/>
+<textarea name='comments' class='w90 h200px'></textarea>
+<p/>
+<label> <sup>*</sup> $dic->{'optional_filling'}</label><p/>
+
+<input type='submit' value='enviar' class='send'/>
+<p/>
+</td>
+
+</tr></table>
+</form>
+
+</blockquote>
+</td></tr>
+</table>
+EOM
+}
+
+#-------------------------------------------------------
+sub sendMessage
+{ print $cfg->html_head({ });
+  print $cfg->div_top_banner();
+
+  my $rec = {}; my $text = '';
+
+  if ($par->{'record_id'})
+  { $rec  = $cfg->get_record($par->{'record_id'});
+    $text = $cfg->format_record($rec);
+  }
+
+  my $recid = $cfg->format_record_id($par->{'record_id'});
+  $text =  <<EOM;
+<html>
+<head>
+<style type='text/css'>
+body    { font-family: Courier New, fixed; font-size: 12px; }
+.tag    { color: #c93; }
+h1      { font-size: 16px; font-weight: bold; }
+h2      { font-size: 14px; font-weight: bold; }
+</style>
+</head>
+<body>
+<blockquote>
+<h2>$dic->{'denunciar_title'}</h2>
+   <table>
+	<tr><td class='tag'>Nome</td><td>$par->{'name'}</td></tr>
+	<tr><td class='tag'>E-mail</td><td>$par->{'email'}</td></tr>
+	<tr><td class='tag'>Message</td><td>$par->{'comments'}</td></tr>
+	<tr><td class='tag' valign='top'>record</td><td><h2>$recid<br/>$text</td></tr>
+   </table>
+</blockquote>
+</body>
+</html>
+EOM
+
+  my %mail = (  To              => 'sidnei@cria.org.br',
+                'Reply-to'      => $par->{'email'} || 'sidnei@cria.org.br',
+                From            => 'web@guardioes.cria.org.br',
+                Subject         => $dic->{'denunciar_title'},
+                Message         => $text,
+                'Content-type'  => 'text/html; charset=utf-8',
+                smtp            => 'zimbra.cria.org.br'
+             );
+
+  my $result = "<b class='success'>$dic->{'denunciar_result'}";
+
+  if (!sendmail(%mail) )
+  { $result =  "<b class='error'>$dic->{'notify_error'}<br/>$Mail::Sendmail::error" }
+
+
+  print <<EOM;
+<div id='divMain'>
+<blockquote class='h200px' style='vertical-align: middle'>
+$result
+</blockquote>
+EOM
+  
+}

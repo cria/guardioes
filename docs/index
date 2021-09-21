@@ -1,0 +1,257 @@
+#!/usr/local/bin/perl
+$|=1;
+use strict;
+use lib "../lib";
+use GUARDIOES;
+
+my $cfg = new GUARDIOES();
+
+my $user = $cfg->get_user_info();
+
+my $hex  = $cfg->get_random_thumbs(2,0,'interacao');
+my $circ;
+   do { $circ = $cfg->get_random_thumbs(2,0,'planta') } until $circ->[0]{'user_id'} != $hex->[0]{'user_id'};
+
+my @covers = glob "svg/capa??.svg";
+my $k = int(rand($#covers+1));
+
+my $s = -s $covers[$k];
+die if !$s;
+
+open(IN,$covers[$k]);
+read(IN, my $svg, $s);
+close(IN);
+
+$svg =~ s/--svg-0/--svg-Z/g; ## used for test purpuses only
+foreach (0..9) { my $c = $cfg->next_svg_color(); $svg =~ s/--svg-$_/$c/g; }
+
+my $nHex = 0; my $nCirc = 0;
+foreach (0..$#$hex)  { $nHex++ if $svg =~ s/__IMG_HEX__/$hex->[$_]{'thumb_url'}/ }
+foreach (0..$#$circ) { $nCirc++ if $svg =~ s/__IMG_CIRC__/$circ->[$_]{'thumb_url'}/ }
+
+my $title_x = 500;
+my $title_y =   5;
+my $title_w = 200;
+my $title_h = 100;
+
+my $box01_x = $svg =~ /box01_x=['"](\d+)['"]/ ? $1 : 400;
+my $box01_y = $svg =~ /box01_y=['"](\d+)['"]/ ? $1 : 100;
+my $box01_w = $svg =~ /box01_w=['"](\d+)['"]/ ? $1 : 400;
+my $box01_h = $svg =~ /box01_h=['"](\d+)['"]/ ? $1 : 400;
+
+my $box02_x = $svg =~ /box02_x=['"](\d+)['"]/ ? $1 :  25;
+my $box02_y = $svg =~ /box02_y=['"](\d+)['"]/ ? $1 : 450;
+my $box02_w = $svg =~ /box02_w=['"](\d+)['"]/ ? $1 : 300;
+my $box02_h = $svg =~ /box02_h=['"](\d+)['"]/ ? $1 : 200;
+
+$box02_y += 50 if !$cfg->{'session_id'};
+
+my $box03_x = $svg =~ /box03_x=['"](\d+)['"]/ ? $1 : 600;
+my $box03_w = $svg =~ /box03_w=['"](\d+)['"]/ ? $1 : 200;
+
+my $box03_y = $svg =~ /box03_y=['"](\d+)['"]/ ? $1 : 550;
+my $box03_h = $svg =~ /box03_h=['"](\d+)['"]/ ? $1 : 100;
+
+my $boxImg_x  = $box01_x + 450;
+my $boxImg_y  = $title_y;
+
+my $boxCall_x = $box01_x;
+my $boxCall_y = 530;
+
+$svg =~ s/<cover[^\/]+\/>//;
+
+my $script = <<EOM;
+<META HTTP-EQUIV=REFRESH CONTENT="60; URL=$cfg->{'home_url'}"/>
+<style type='text/css'>
+#title	{ position: absolute;
+	  top: ${title_y}px; left: ${title_x}px;
+	  width: ${title_w}px; height: ${title_h}px;
+	  color: #c03;
+	  font-size: 1.8em;
+	  font-weight: bold;
+	  text-align: left;
+	  border: 0px solid #000;
+	}
+#box01	{ position: absolute;
+	  top: ${box01_y}px; left: ${box01_x}px;
+	  width: ${box01_w}px; height: ${box01_h}px;
+	  color: #003;
+	  font-size: 0.9em;
+	  text-align: justify;
+	  border: 0px solid #000;
+	}
+#box02	{ position: absolute;
+	  top: ${box02_y}px; left: ${box02_x}px;
+	  width: ${box02_w}px; height: ${box02_h}px;
+	  border: 0px solid #000;
+	}
+#box021	{ display: table-cell;
+	  width: ${box02_w}px; height: ${box02_h}px;
+	  color: #003;
+	  font-size: 0.9em;
+	  text-align: justify;
+	  vertical-align: bottom;
+	}
+#box03 	{ position: absolute;
+	  top: ${box03_y}px; left: ${box03_x}px;
+	  width: ${box03_w}px; height: ${box03_h}px;
+	  border: 0px solid #000;
+	}
+#box031	{ display: table-cell;
+	  width: ${box03_w}px; height: ${box03_h}px;
+	  color: #003;
+	  font-size: 1.0em;
+	  text-align: right;
+	  vertical-align: bottom;
+	}
+#boxImg
+	{ position: absolute;
+	  top: ${boxImg_y}px; left: ${boxImg_x}px;
+          width: 240px; 
+          border: 0px solid #000;
+        }
+#boxCall
+	{ position: absolute;
+	  top: 0px; left: 0px;
+	  width: ${box02_w}px; 
+          border: 0px solid #000;
+	  text-align: right;
+	  font-size: 1.6em;
+        }
+</style>
+
+<script type="text/javascript" src="/js/highslide/highslide/highslide-with-gallery.js"></script>
+<link rel="stylesheet" type="text/css" href="/js/highslide/highslide/highslide.css" />
+<script type="text/javascript">
+
+        hs.graphicsDir = '/js/highslide/highslide/graphics/';
+
+        hs.align = 'center';
+        hs.transitions = ['expand', 'crossfade'];
+        hs.outlineType = 'rounded-white';
+        hs.fadeInOut = true;
+        hs.numberPosition = 'caption';
+        hs.dimmingOpacity = 0.75;
+
+        if (hs.addSlideshow) hs.addSlideshow(
+        {       interval: 5000,
+                repeat: false,
+                useControls: true,
+                fixedControls: 'fit',
+                overlayOptions:
+                {       opacity: .75,
+                        position: 'bottom center',
+                        hideOnMouseOut: true
+                }
+        });
+</script>
+EOM
+
+print $cfg->html_head({ script => $script, body => $cfg->{'windowWidth'} == 0 ? "onload='windowSize(); location.reload();'" : '' });
+my $dic = $cfg->dic();
+
+print $cfg->div_top_banner({ page => 'home' });
+
+
+my $box1 = $cfg->get_page({ page => 'home_box1' });
+my $box2 = $cfg->get_page({ page => 'home_box2' });
+
+my $counts = $cfg->counts();
+
+my $box3 = $cfg->get_page(
+	{ page			=> 'home_box3',
+	  num_rec		=> $counts->{0}{'num_rec'},
+	  num_image 		=> $counts->{0}{'num_image'},
+	  num_ident		=> $counts->{0}{'num_ident'},
+	  num_guardioes		=> $counts->{0}{'num_user:guardiao'}+$counts->{0}{'num_user:especialista'}+$counts->{0}{'num_user:admin'},
+	  num_especialistas	=> $counts->{0}{'num_user:especialista'}+$counts->{0}{'num_user:admin'},
+	});
+
+
+print <<EOM;
+<div id='divMain'>
+$svg
+<div id='title'><img src='/imgs/logo_400_$cfg->{'palette_id'}.png' /></div>
+<div id='box01'>$box1</div>
+<div id='box02'>
+EOM
+
+if (!$cfg->{'session_id'})
+{ print <<EOM;
+<div id='boxCall'><a href='howto' class='homeCall'>$dic->{'quero_participar'}</a></div>
+EOM
+}
+
+print <<EOM;
+<div id='box021'>$box2</div></div>
+<div id='box03'><div id='box031'>$box3</div></div>
+EOM
+
+
+# -------------------------------------- for big window
+if ($cfg->{'windowWidth'} > 1100)
+{ my @table = ();
+  print "<div id='boxImg'>";
+#hex
+  my $col = -1;
+  foreach my $i (0..$nHex-1)
+  { my $row = 0;
+
+    $table[0][++$col] = 
+	"<th><a href='$hex->[$i]{'large_url'}' class='highslide' onclick='return hs.expand(this, { slideshowGroup: $hex->[$i]{'record_id'} })'>".
+	$cfg->build_svg_hex({ record_id => $hex->[$i]{'record_id'}, thumb_url => $hex->[$i]{'thumb_url'}, radius => 60, mode => 'flatTop' }).
+	'</a></th>';
+ 
+    my $data = $cfg->get_record($hex->[$i]{'record_id'}); 
+    my $svg = $cfg->build_svg($data->{'photo'});
+
+    foreach my $s (@{$svg->{'planta'}}) { $table[++$row][$col] = "<th>$s</th>" }
+
+    my $user = $cfg->get_user_info({ user_id => $data->{'user_id'} });
+
+    my $info = $user->{'name'};
+       $info .= ", $data->{'municipality'}"	if $data->{'municipality'};
+       $info .= ", $data->{'stateprovince'}"	if $data->{'stateprovince'};
+       $info .= ", $data->{'eventdate'}"	if $data->{'eventdate'};
+    $table[++$row][$col] = "<td class='small guardianStats centro'>$info</td>";
+  }
+
+# circulos
+  foreach my $i (0..$nCirc-1)
+  { my $row = 0;
+
+    $table[0][++$col] = 
+	"<th><a href='$circ->[$i]{'large_url'}' class='highslide' onclick='return hs.expand(this, { slideshowGroup: $circ->[$i]{'record_id'} })'>".
+	$cfg->build_svg_circ({ record_id => $circ->[$i]{'record_id'}, thumb_url => $circ->[$i]{'thumb_url'}, radius => 60 }).
+	'</a></th>';
+
+    my $data = $cfg->get_record($circ->[$i]{'record_id'});
+    my $svg = $cfg->build_svg($data->{'photo'});
+
+    foreach my $s (@{$svg->{'interacao'}}) { $table[++$row][$col] = "<th>$s</th>" }
+
+    my $user = $cfg->get_user_info({ user_id => $data->{'user_id'} });
+    my $info = $user->{'name'};
+       $info .= ", $data->{'municipality'}"	if $data->{'municipality'};
+       $info .= ", $data->{'stateprovince'}"	if $data->{'stateprovince'};
+       $info .= ", $data->{'eventdate'}"	if $data->{'eventdate'};
+    $table[++$row][$col] = "<td class='small guardianStats centro'>$info</td>";
+  }
+
+  print "<table cellspacing='0' cellpadding='0'>\n";
+
+  foreach my $row (0..6)
+  { 
+    print "<tr>";
+    foreach my $col (0..1) { print $table[$row][$col] || "<td></td>" }
+    print "</tr>";
+  }
+  print "</table></div>\n";
+
+}
+# --------------------------------------------------------
+print <<EOM;
+</div>
+</body>
+</html>
+EOM

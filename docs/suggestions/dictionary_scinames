@@ -1,0 +1,130 @@
+#!/usr/local/bin/perl
+# ------------------------------------------------------------------------
+# utiliza os dicionários disponíveis no banco de dados sp_dic 
+# moure seguido do sp2000_animalia para os animais e
+# flora2020 seguido do sp2000_plantae para as plantas
+# para sugerir nomes para preenchimento de campos
+# ------------------------------------------------------------------------
+$|=1;
+use strict;
+use lib "../../lib";
+use PARAMETERS;
+use JSON;
+use GUARDIOES;
+my $cfg = new GUARDIOES();
+
+my $par = new PARAMETERS();
+
+#parameters
+#
+my $sciname = lc $par->data('sciname');
+   $sciname =~ s/^\s+|\s+$//g; $sciname =~ s/\s+/ /g;
+
+my $family = lc $par->data('family');
+   $family =~ s/\s+//g;
+
+my $kingdom = lc $par->data('kingdom');
+
+my @tables = $kingdom eq 'plantae' ?	('flora2020','sp2000_plantae') : ('moure','sp2000_animalia');
+
+my $limit = 50;
+
+my $hash = { results => [] };
+
+# -- search
+
+my $sql = $cfg->connect_dic();
+
+# ------------------------------------------- SCINAME
+if ($sciname)
+{ my %p = (); my $db = '';
+  foreach my $table (@tables)
+  {
+  my $cmd = buildCmd_2($table,$sciname, $limit);
+
+   %p = $sql->query($cmd);
+
+   $db = $table;
+   last if $sql->nRecords;
+  }
+
+  $db =~s/_.*//;
+  foreach my $i (0..$sql->nRecords-1)
+  { $p{$i}{'name'} =~ s/\s+/ /g;
+    $p{$i}{'name'} =~ s/^\s+|\s+$//g;
+    $p{$i}{'family'} =~ s/\s+/ /g;
+    $p{$i}{'family'} =~ s/^\s+|\s+$//g;
+    $p{$i}{'full_name'} =~ s/\s+/ /g;
+    $p{$i}{'full_name'} =~ s/^\s+|\s+$//g;
+
+    push @{$hash->{'results'}}, { id => $p{$i}{'id'}, value => $p{$i}{'full_name'}, info => "$p{$i}{'family'}:$db" };
+  }
+}
+# ------------------------------------------- FAMILY
+elsif ($family)
+{ my %p = (); my $db = '';
+  foreach my $table (@tables)
+  { my $cmd = <<EOM;
+select  distinct on (name)
+        family as name, id
+from    $table
+where   lower(family) like '$family%'
+order by 1
+limit   $limit
+EOM
+
+    %p = $sql->query($cmd);
+    $db = $table;
+    last if $sql->nRecords;
+  }
+
+  foreach my $i (0..$sql->nRecords-1)
+  { $p{$i}{'name'} =~ s/\s+/ /g;
+    $p{$i}{'name'} =~ s/^\s+|\s+$//g;
+
+    $db =~s/_.*//;
+    push @{$hash->{'results'}}, { id => $p{$i}{'id'}, value => $p{$i}{'name'}, info => $db };
+  }
+}
+
+# -- end
+  my $json = new JSON();
+  print "Content-Type: application/json\n\n".$json->encode( $hash );
+
+# ----------------------------------------------------------------------
+# as tabelas do banco de dados foram copiadas e modificadas acrescentando-se
+# um _words em seu nome para tentar melhorar a performance e precisão da busca
+# buildCmd_2 substitui buildCmd_1
+# ----------------------------------------------------------------------
+sub buildCmd_2
+{ my ($table,$sciiname) = @_;
+  my @sci = split(' ',$sciname);
+
+  my $cmd = "select distinct on (name) w0.genus||' '||w0.species||' '||w0.subspecies as name, w0.id, w0.family, w0.full_name from ${table}_words w0 ";
+  foreach (1..$#sci)
+  { $cmd .= "left join ${table}_words w$_ on (w0.id = w$_.id) " }
+
+  $cmd .= "where w0.word like public.ascii('$sci[0]')||'%' ";
+
+  foreach (1..$#sci)
+  { $cmd .= "and w$_.word like public.ascii('$sci[$_]')||'%' " }
+
+  $cmd .= "order by 1 limit $limit";
+
+  return $cmd;
+}
+# ----------------------------------------------------------------------
+sub buildCmd_1
+{ my ($table,$sciname) = @_;
+
+  my $cmd = <<EOM;
+select	distinct on (name)
+	genus||' '||species||' '||subspecies as name, id, family, full_name
+from	$table
+where	plain_name like public.ascii('$sciname')||'%'
+order by 1
+limit		$limit
+EOM
+
+  return $cmd;
+}

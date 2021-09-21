@@ -1,0 +1,97 @@
+#!/usr/local/bin/perl
+$|=1;
+use strict;
+use lib "../lib";
+use GUARDIOES;
+
+my $cfg = new GUARDIOES();
+my $dic = $cfg->dic();
+
+my $script = <<EOM;
+<script type='text/javascript'>
+	function switchPalette(pal)
+	{ document.cookie = "guardioesPalette="+pal;
+//	  location.reload();
+	  document.getElementById('pageColors').setAttribute('href','/css/colors_v'+pal+'.css');
+	}
+</script>
+EOM
+
+print $cfg->html_head({ script => $script });
+
+my @fn = glob ("css/colors_v?.css");
+
+print $cfg->div_top_banner({ page => 'about', sub_page => 'about' });
+
+my $svg = $cfg->user_svg(5);
+
+print <<EOM;
+<div id='divMain'>
+<blockquote>
+
+<h1>$dic->{'theme_choose_title'}</h1>
+<table cellspacing='10px'>
+EOM
+
+foreach my $fn (@fn)
+{ my $version = $1 if $fn =~ /colors_v(\d).css/;
+ 
+  my %base = ();
+  open(IN,$fn);
+  while (my $L = <IN>)
+  { if ($L =~ /--base-([A-Z])\s*:\s*(#[0-9a-f]+);/) { $base{$1} = $2 if !$base{$1} } }
+  close(IN);
+
+  print "<tr><td><a href=\"javascript:switchPalette($version)\">$dic->{'theme_list'}&#160;$version</a></td>";
+  foreach ('A'..'F')
+  { print <<EOM;
+    <td width='15px' style='background-color: $base{$_}; text-align: center;'><a href="javascript:switchPalette($version)" class='white'>$_</a></td>
+EOM
+  }
+  print "<td>".($version == $cfg->{'palette_id'} ? $dic->{'theme_current'} : '')."</td>"; 
+  print "</tr>";
+}
+
+print <<EOM;
+</table><br/><br/>
+<h1>$dic->{'theme_result_title'}</h1>
+<table width='99%'>
+<tr><td width='33%'>
+<blockquote>
+<h2>Lorem ipsum</h2>
+<b>Lorem ipsum</b> dolor sit amet, consectetur adipiscing elit. Etiam eget ligula eu lectus lobortis condimentum. <i>Aliquam nonummy auctor massa.</i> Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. <a href='javascript:void(0)'>Nulla at risus.</a> Quisque purus magna, auctor et, sagittis ac, posuere eu, lectus. Nam mattis, felis ut adipiscing.<p/>
+	<a href='javascript:void(0)'>$dic->{'this_is_a_link'}</a><p/>
+
+<blockquote>
+</td>
+
+<td width='33%'>
+	<label for='name'>$dic->{'tag_observer'}</label><br/>
+	<input type='text' name='name' value='José da Silva'/><p/>
+	<label for='habit'>hábito da planta</label><br/>
+<select name='habit'>
+<option value=''></option>
+<option value='arvore'>$dic->{'arvore'}</option>
+<option value='arbusto' selected='true'>$dic->{'arbusto'}</option>
+<option value='erva'>$dic->{'erva'}</option>
+<option value='epifita'>$dic->{'epifita'}</option>
+<option value='trepadeira'>$dic->{'trepadeira'}</option>
+<option value='parasita'>$dic->{'parasita'}</option>
+<option value='nda'>$dic->{'nda'}</option>
+</select>
+<p/>
+<table width='300px'>
+<tr><td></td><td class="tableHeadBorder bold">$dic->{'Email_name'}</td></tr>
+<tr><td class="tableBodyBorder centro">1</td><td class="tableBodyBorder">José</td></tr>
+<tr><td class="tableBodyBorder centro">2</td><td class="tableBodyBorder">Maria</td></tr>
+</td>
+
+
+</tr>
+</table>
+</td><td>$svg</td>
+</table><br/><br/>
+
+</bockquote>
+EOM
+  print $cfg->html_foot();

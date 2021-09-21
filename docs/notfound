@@ -1,0 +1,43 @@
+#!/usr/local/bin/perl
+$|=1;
+use strict;
+use lib "../lib";
+use GUARDIOES;
+
+my $rid = $ENV{'REDIRECT_URL'}; $rid =~ s/[^0-9]//g;
+$rid = $rid+0;
+
+if ($rid)
+{ print <<EOM;
+Content-type: text/html
+
+<html>
+<head>
+</head>
+<body onLoad='document.fakeForm.submit()'>
+<form name='fakeForm' method='post' enctype='multipart/form-data' action='/search'>
+<input type='hidden' name='rid' value='$rid'/>
+<input type='hidden' name='action' value='search'/>
+<input type='hidden' name='report' value='list_of_records'/>
+</form>
+</body>
+</html>
+EOM
+}
+else
+{ my $cfg = new GUARDIOES();
+
+  print $cfg->html_head();
+
+  print $cfg->div_top_banner();
+
+  print <<EOM;
+
+<div id='divMain'>
+<h3>Oops! Page not found.</h3>
+
+</div>
+</body>
+</html>
+EOM
+}

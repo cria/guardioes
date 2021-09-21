@@ -1,0 +1,40 @@
+<table>
+<tr><td>
+<h1>Sobre o sistema</h1>
+<blockquote>
+O sistema tem por objetivo prover um ambiente onde pessoas possam compartilhar suas fotos, informações e
+conhecimento sobre a biodiversidade brasileira, com foco na interação animal-planta.
+As fotos e informações associadas podem ser enviadas diretamente no sistema online ou por meio de um
+aplicativo desenvolvido para dispositivos móveis, o qual permite também registrar as interações em tempo real.
+Além disso,
+o sistema permite que as informações compartilhadas possam ser exploradas e analisadas visualmente na
+forma de listas, gráficos e tabelas, de acordo com os critérios de busca do usuário.
+As imagens e dados associados são de acesso livre e aberto a todos os interessados que também podem
+contribuir com suas críticas e sugestões, identificando erros e propondo novas formas de visualizar
+o conteúdo. Todo usuário também poderá denunciar imagens impróprias ou inadequadas ao objetivo do sistema.
+Os parceiros que colaboram com a construção do sistema são:
+<ul>
+
+<li><b>guardiões:</b> são voluntários interessados em fotografar interações entre animais e plantas e
+compartilhar as fotos e informações associadas através de um sistema público de informações.
+Cada guardião é responsável pelos seus registros de interação, tratados no sistema como observações,
+podendo inserir, editar ou apagar os seus dados online. Os guardiões também podem fazer a identificação
+das espécies observadas em seus registros, porém ela precisa ser validada por um especialista
+cadastrado no sistema.</li><br/>
+
+<li><b>especialistas:</b> são voluntários especialistas em determinados grupos de plantas ou animais,
+responsáveis pela identificação das espécies documentadas no sistema, atribuindo a elas o nome
+científico aceito pela ciência, ou pela validação da identificação quando esta é feita pelo guardião.
+Um especialista pode também ser um guardião.</li><br/>
+
+</ul>
+
+O sistema, por ser de acesso livre, também permite que usuários não parceiros tenham acesso às
+observações registradas, suas informações associadas e ferramentas de análise.
+
+</blockquote>
+</td>
+
+<td>%IMGS%</td>
+</tr>
+</table>

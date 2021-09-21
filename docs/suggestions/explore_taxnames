@@ -1,0 +1,50 @@
+#!/usr/local/bin/perl
+#-----------------------------------------------------------------------------
+# utiliza os nomes científicos registrados pelos guardiões para a sugestão
+# de preenchimento de campos
+# dados extraídos da tabela/view de identificação
+#-----------------------------------------------------------------------------
+$|=1;
+use strict;
+use JSON;
+use lib "../../lib";
+use GUARDIOES;
+my $cfg = new GUARDIOES();
+
+my $par = $cfg->param();
+
+my $search_string = lc $par->data('search_string');
+my $kingdom	  = lc $par->data('kingdom');
+my $item	  = lc $par->data('item');
+
+die if $item !~ /family|genus|scientificname/;
+
+if ($search_string)
+{ my $sql = $cfg->connect();
+
+  my $limit = 35;
+  my $table = $cfg->{'user_level'} <= 1 ? 'ident_view' : 'ident';
+
+  my $cmd = <<EOM;
+select	distinct $item
+from	$table
+where	lower(kingdom) = '$kingdom' and
+	lower($item) like '$search_string%'
+group by 1
+order by 1
+limit	$limit
+EOM
+
+  my %p = $sql->query($cmd);
+
+  my $hash = { results => [] };
+
+  foreach my $i (0..$sql->nRecords-1)
+  { $p{$i}{$item} =~ s/\s+/ /g; $p{$i}{$item} =~ s/^\s+|\s+$//g;
+
+    push @{$hash->{'results'}}, { id => $i, value => $p{$i}{$item}, info => '' };
+  }
+
+  my $json = new JSON();
+  print "Content-Type: application/json\n\n".$json->encode( $hash );
+}

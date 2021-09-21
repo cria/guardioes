@@ -1,0 +1,71 @@
+#!/usr/local/bin/perl
+# -------------------------------------------------------------
+# utiliza a tabela users para sugerir nomes de usuários
+# tanto que contribuíram com, quanto identificaram registros
+# -------------------------------------------------------------
+$|=1;
+use strict;
+use JSON;
+use lib "../../lib";
+use GUARDIOES;
+my $cfg = new GUARDIOES();
+
+my $par = $cfg->param();
+
+my $search_string = lc $par->data('search_string');
+my $item	  = lc $par->data('item');
+
+die if $item !~ /usr|idf/;
+
+if ($search_string)
+{ my $sql = $cfg->connect();
+  my $limit = 35; my $cmd = '';
+
+  $search_string =~ s/^\s+|\s+$//g; $search_string =~ s/\s+/ /g;
+  my $where = ''; foreach (split(' ',$search_string)) { $where .= "unaccent(u.name) ~* unaccent('^$_| $_') and " }
+
+  if ($item eq 'usr')
+  { $cmd = <<EOM;
+select id,name from 
+	( select	distinct u.id,u.name
+	  from	users u
+	  where	true
+-- mesmo não estando mais ativo, as contribuições do usuário devem ser preservadas
+--		and u.status != 'inativo'
+		and $where
+--		exists (select 1 from counts c where c.user_id = u.id and c.key = 'num_rec' and c.num != 0 )
+		exists (select 1 from record r where r.user_id = u.id limit 1)
+	) foo
+order by 2
+limit $limit
+EOM
+  }
+  else
+  { my $ident_table = $cfg->{'user_level'} <= 1 ? 'ident_view' : 'ident';
+    $cmd = <<EOM;
+select	distinct u.id,u.name
+from	users u
+where	true
+-- mesmo não estando mais ativo, as contribuições do usuário devem ser preservadas
+--	and u.status != 'inativo'
+	and $where
+--	exists (select 1 from counts c where c.user_id = u.id and c.key = 'idents_by' and c.num != 0)
+	exists (select 1 from $ident_table i where i.user_id = u.id limit 1)
+order by 2
+limit $limit
+EOM
+  }
+
+  my %p = $sql->query($cmd);
+
+  my $hash = { results => [] };
+
+  foreach my $i (0..$sql->nRecords-1)
+  { $p{$i}{'name'} =~ s/\s+/ /g; $p{$i}{'name'} =~ s/^\s+|\s+$//g;
+
+    push @{$hash->{'results'}}, { id => $p{$i}{'id'}, value => $p{$i}{'name'}, info => '' };
+  }
+
+  my $json = new JSON();
+  print "Content-Type: application/json\n\n".$json->encode( $hash );
+}

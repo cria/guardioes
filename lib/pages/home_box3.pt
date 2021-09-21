@@ -1,0 +1,7 @@
+<b class='maior photosStats'>%num_image%</b> fotos<p/>
+
+<b class='maior guardianStats'>%num_guardioes%</b> guardiões<br/>
+<b class='maior guardianStats'>%num_rec%</b>   observações<p/>
+
+<b class='maior specialistStats'>%num_especialistas%</b> especialistas<br/>
+<b class='maior specialistStats'>%num_ident%</b> identificações<p/>

@@ -1,0 +1,101 @@
+#!/usr/local/bin/perl
+$|=1;
+use strict;
+use lib "../lib";
+use GUARDIOES;
+
+my $cfg = new GUARDIOES();
+my $dic = $cfg->dic();
+my $par = $cfg->param();
+
+if (!$cfg->current_session_id()) { exit 0 }
+
+my $email   = $par->data('email');
+my $pass    = $par->data('password');
+my $confirm = $par->data('confirm');
+
+if ($par->method() eq 'post')
+{ my $uid = $cfg->email_exists({ email => $email}); # checa se email está cadastrado e pega user_id do email
+  if (	$uid == $cfg->{'user_id'} && 	# garantir que o email existe e é de quem está logado
+	$cfg->password_matches({ email=> $email, password => $pass}) &&
+	$confirm eq 'yes'
+     )
+  { if ($cfg->unsubscribe( { email => $email } ))
+    { goodbye() }
+    else
+    { form($dic->{'unexpectedError'}) }
+  }
+  else
+  { form($dic->{'fillFormCorrectly'}) }
+}
+else { form() }
+
+# -------------------------------------------------
+sub form
+{ my $msg = shift;
+  $msg = "<tr><td><b style='color:red'>$msg</b></td></tr>" if $msg;
+
+  print $cfg->html_head();
+
+  print $cfg->div_top_banner( { page => 'register' } );
+
+  print <<EOM;
+<div id='divMain'>
+<center>
+
+<form name='formUnsubscribe' id='formUnsubscribeId' method='post' enctype='multipart/form-data' action='unsubscribe' autocomplete='off'>
+<table width='80%' cellpadding='5px' cellspacing='5px'>
+<tr><td><h3 class='alert'>$dic->{'unsubscribeTitle'}</h3><br/>$dic->{'unsubscribeExplain'}</td></tr>
+$msg
+<tr><td><label for='email'>$dic->{'e-mail'}</label><br/>
+	<input type='email' name='email' id='email' value='$email' autocomplete='off' class='w50'/>
+    </td>
+</tr>
+</table>
+<table width='80%' cellpadding='5px' cellspacing='5px'>
+<tr><td><label for='password'>$dic->{'password'}</label><br/>
+	<input type='password' name='password' id='password' value='' autocomplete='off' class='w50'/>
+    </td>
+</tr>
+<tr><td>
+<input type='checkbox' name='confirm' value='yes'/>&#160;$dic->{'unsubscribeConfirm'}
+</td>
+</tr>
+
+<tr><td align='right'><input type='submit' name='login' value='$dic->{'unsubscribe:lc'}' class='button send bgAlert'/></td></tr> 
+</table>
+
+</form>
+</center>
+EOM
+
+  print $cfg->html_foot();
+}
+
+# -------------------------------------------------
+sub goodbye
+{ my $user_id = $cfg->{'user_id'}; # saving as the user will be logged off 
+
+  $cfg->logoff(); $cfg->set_cookie('','index');
+  $cfg = new GUARDIOES();
+
+  print $cfg->html_head();
+  print $cfg->div_top_banner();
+
+  my $svg = $cfg->user_svg($user_id);
+
+  print <<EOM;
+<div id='divMain'>
+<table class='w90'>
+<tr><td>
+	<h2 class='maior alert grande'>$dic->{'goodbyeTitle'}</h2>
+	$dic->{'goodbyeText'}
+    </td>
+    <td>$svg</td>
+</tr>
+</table>
+</blockquote>
+EOM
+
+  print $cfg->html_foot();
+}

@@ -1,0 +1,77 @@
+#!/usr/local/bin/perl
+use JSON;
+use Net::OAuth2::Profile::WebServer;
+use lib "../lib";
+use GUARDIOES;
+my $cfg = new GUARDIOES;
+
+my $par = $cfg->param();
+
+my $code  = $par->data('code');
+
+if ($code)
+{ # print "Content-type: text/plain\n\n";
+  my $state = $par->data('state');
+
+  my $auth = Net::OAuth2::Profile::WebServer->new
+    ( name			=> 'Google Contacts'
+    , auto_refresh		=> 1,
+    , client_id			=> $cfg->{'google_id'}
+    , client_secret		=> $cfg->{'google_secret'}
+    , site			=> 'https://www.googleapis.com'
+    , authorize_path		=> '/o/oauth2/v2/auth'
+    , access_token_path		=> '/oauth2/v4/token'
+    , redirect_uri		=> "$cfg->{'home_url'}/googleLogin"
+    );
+
+  my $session  = $auth->get_access_token($code);
+
+  my $response = $session->get('/oauth2/v2/userinfo');
+  if ($response->is_success)
+  { my $context = '';
+
+    my $data = decode_json $response->decoded_content;
+
+    $data->{'network'}  = 'google';
+    $data->{'netid'}	= $data->{'id'};
+    $data->{'nickname'} = $data->{'given_name'};
+
+    if (length $state > 4 && substr($state, 0, 3) eq 'ac_')
+    { $data->{'appcode'} = substr($state, 3);
+      # Don't use if $cfg->{'mobile'} because login scripts will always run in root directory
+      $context = 'mobile/';
+    }
+
+    my ($session_id,$user_status) = $cfg->login($data);
+
+    my $location = $user_status eq 'new' ? 'register' : 'welcome';
+
+    print $cfg->set_cookie($session_id,$context.$location);
+  }
+  else
+  { print "error: " . $response->status_line; }
+}
+else
+{ my $appcode = $par->data('ac');
+
+  my $state_param = 'ts_'.time();
+
+  if ($appcode)
+  { $state_param = "ac_$appcode";
+  }
+
+  my $auth = Net::OAuth2::Profile::WebServer->new
+    ( name			=> 'Google Contacts'
+    , client_id			=> $cfg->{'google_id'}
+    , client_secret		=> $cfg->{'google_secret'}
+    , site			=> 'https://accounts.google.com'
+    , authorize_path		=> '/o/oauth2/v2/auth'
+    , access_token_path		=> '/o/oauth2/v2/token'
+    , scope			=> 'https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/user.birthday.read'
+    , protected_resource_url	=> 'https://www.google.com/m8/feeds/contacts/default/full'
+    , redirect_uri		=> "$cfg->{'home_url'}/googleLogin"
+    , state			=> $state_param
+    );
+
+  print "Location: ",$auth->authorize,"\n\n";
+}

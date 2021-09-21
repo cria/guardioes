@@ -1,0 +1,62 @@
+<table class='w100'>
+<tr><td colspan='2' class='h1'>Créditos</td></tr>
+<tr class='top'>
+<td class='w50'>
+  <table width='w100'>
+  <tr>
+    <td class='w50 pad15'>
+	<h2>Financiamento e apoio técnico</h2>
+	<a href='http://www.abelha.org.br' target='other'><img src='/imgs/partners/abelha.png' class='partner_img' align='left'/></a>
+	A <b>Associação Brasileira de Estudo das Abelhas (A.B.E.L.H.A.)</b> é uma associação civil, sem fins lucrativos
+	e conotação político-partidária ou ideológica, com o objetivo de liderar a criação de uma rede em prol da
+	conservação de abelhas e outros polinizadores.
+	<p/>
+	Sua principal missão está pautada em reunir, produzir e divulgar informações, com base científica e a colaboração
+	de uma rede de parceiros, que visem à conservação das abelhas e outros polinizadores no Brasil,
+	promovendo seu papel na biodiversidade e convivência harmônica e sustentável com as diferentes culturas agrícolas.
+  </td>
+  </tr><tr>
+  <td class='w50 pad15'>
+	<h2>Desenvolvimento e manutenção do sistema</h2>
+	<a href='http://www.cria.org.br' target='other'><img src='/imgs/partners/cria.png' class='partner_img' align='left'/></a>
+	O <b>Centro de Referência em Informação Ambiental, CRIA</b> tem como meta e estratégia a disseminação de informação
+	eletrônica, como ferramenta na organização da comunidade científica e tecnológica do país.
+	Atua especificamente na área de informação biológica, de interesse industrial e ambiental, e pretende, através
+	de sua atuação, contribuir diretamente para a conservação e utilização racional da biodiversidade no Brasil.
+	Uma sociedade sustentável pressupõe uma sociedade informada, na qual os vários segmentos produzem e têm acesso
+	à informação qualificada, utilizando-a nos processos de formulação e decisão política.
+  </td>
+  </tr><tr>
+  </tr>
+  </table>
+</td>
+<td class='w50'>
+  <table class='w100'>
+  <tr>
+  <td class='w50 pad15'>
+	<h2>Parceria e apoio técnico</h2><p/>
+	<a href='https://www.facebook.com/inctintree/' target='intree'><img src='/imgs/inct_in_tree.png' height='100px' class='partner_img' align='left'/></a>
+
+	O <b>Instituto Nacional de Ciência e Tecnologia em Estudos Inter e Transdisciplinares em Ecologia e Evolução (INCT IN-TREE)</b>,
+	liderado pela Universidade Federal da Bahia (UFBA), é formado por uma rede de 49 laboratórios associados e
+	mais 250 pesquisadores atuantes, pertencentes a dezenas de Universidades e Institutos de Pesquisa brasileiros e estrangeiros.<p/>
+
+	O Instituto tem como objetivo o desenvolvimento de projetos sobre questões de pesquisa em ecologia e evolução numa
+	abordagem interdisciplinar, a partir de projetos integradores de modelagem matemática, computacional, estatística e
+	epistemologia, ética, e numa abordagem transdisciplinar, a partir de projetos integradores de interação e comunicação com a
+	sociedade, envolvendo trabalho colaborativo com atores sociais de instituições não acadêmicas (incluindo órgãos públicos,
+	ONGs e empresas) e de escolas da educação básica.
+  </td>
+  </tr><tr>
+  <td class='w50 pad15'>
+	<h2>Desenvolvimento e manutenção do aplicativo</h2>
+	<a href='http://www.linearsm.com.br' target='other'><img src='/imgs/partners/linearsm.png' class='partner_img' align='left' width='100px' /></a>
+	A <b>Linear Softwares Matemáticos</b> é responsável pelo desenvolvimento e manutenção dos aplicativos para dispositivos móveis que permitem o registro
+	das interações no campo (fotos e dados associados), mesmo sem acesso à Internet, para posterior envio dos registros ao sistema central.
+
+  </td>
+  </tr>
+  </table>
+</td>
+</tr>
+</table>

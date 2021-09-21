@@ -1,0 +1,94 @@
+#!/usr/local/bin/perl
+use lib "../lib";
+use GUARDIOES;
+use Net::Twitter;
+use Data::Dumper;
+ 
+my $cfg = new GUARDIOES();
+
+my $id = $cfg->{'twitter_id'};
+my $secret = $cfg->{'twitter_secret'};
+
+my $par = $cfg->param();
+
+my $oauth_verifier = $par->data('oauth_verifier');
+my $oauth_token = $par->data('oauth_token');
+
+my $client = Net::Twitter->new(
+    traits => ['API::RESTv1_1', 'OAuth'],
+    consumer_key => $id, 
+    consumer_secret => $secret,
+    );
+
+my $appcode = $par->data('ac');
+
+# URL deste script (obs: Twitter só trabalha com https)
+my $server_url = $cfg->{'home_url'};
+
+if ($oauth_verifier)
+{ # Caso tenha sido redirecionado pra cá com parâmetros oauth
+
+  # Atualiza token recebido como parâmetro
+  $client->request_token($oauth_token);
+  $client->request_token_secret($oauth_verifier);
+
+  # Troca por token de acesso
+  my($access_token,$access_token_secret,$user_id,$screen_name) = $client->request_access_token(verifier => $oauth_verifier);
+
+  # Pega dados do usuário com novos tokens
+  my $resp = $client->verify_credentials({ 
+      include_entities => 0, 
+      skip_status => 1, 
+      include_email => 1 });
+
+  if ($resp) {
+
+      my $context = '';
+
+      my $data = {
+	  'name' => $resp->{'name'},
+	  'email' => $resp->{'email'},
+	  'network' => 'twitter',
+	  'netid' => $user_id,
+	  'nickname' => $screen_name,
+	  'picture' => $resp->{'profile_image_url'},
+	  'access_token' => $access_token,
+	  'access_token_secret' => $access_token_secret
+      };
+
+      # Acrescenta parâmetro do app se houver
+      if ($appcode)
+      { $data->{'appcode'} = $appcode;
+        # Don't use if $cfg->{'mobile'} because login scripts will always run in root directory
+        $context = 'mobile/';
+      }
+
+      #my $d = Dumper $data;
+      #print "Content-type: text/plain\n\n";
+      #print "OK [$d]\n";
+      #exit 0;
+
+      my ($session_id,$user_status) = $cfg->login($data);
+
+      my $location = $user_status eq 'new' ? 'register' : 'welcome';
+
+      print $cfg->set_cookie($session_id,$context.$location);
+  }
+  else
+  { print "Falha na comunicação com o Twitter" }
+}
+else
+{ # Primeiro acesso: redireciona para autenticar/autorizar no Twitter 
+
+  # Atenção: o parâmetro callback é importante, do contrário ocorrerá autorização via PIN!
+  my $callback = $server_url . '/twitterLogin';
+
+  # Acrescenta parâmetro do app se houver
+  if ($appcode)
+  { $callback .= "?ac=$appcode";
+  }
+
+  my $url = $client->get_authorization_url(callback => $callback);
+
+  print "Location: ",$url,"\n\n";
+}

@@ -1,0 +1,1009 @@
+#!/usr/local/bin/perl
+$|=1;
+use strict;
+use lib "../lib";
+use GUARDIOES;
+use Excel::Writer::XLSX;
+use Encode;
+
+my $PRG = 'search';
+
+my $cfg = new GUARDIOES({ debug => 0 });
+my $par = $cfg->parameters();
+my $dic = $cfg->dic();
+my $user = $cfg->get_user_info();
+
+# validate identification
+if ($par->{'action'} eq 'validate' && $par->{'ident_id'} && $user->{'category'} eq 'especialista')
+{ my $ident = $cfg->get_ident($par->{'ident_id'});
+  $cfg->validate_ident($par->{'ident_id'}) if !$ident->{'validatedby_id'};
+}
+
+# invalidate identification
+elsif ($par->{'action'} eq 'invalidate' && $par->{'ident_id'} && $user->{'category'} eq 'especialista')
+{ my $ident = $cfg->get_ident($par->{'ident_id'});
+  $cfg->invalidate_ident($par->{'ident_id'}); # if !$ident->{'validatedby_id'};
+}
+
+# new identification
+elsif ($par->{'action'} eq 'identify' && $par->{'rid'})
+{ my $ident_id = $cfg->put_ident({
+        record_id               => $par->{'rid'},
+        user_id                 => $par->{'user_id'},
+        kingdom                 => $par->{'kingdom'},
+        status			=> $user->{'category'} eq 'especialista' ? 'valido' : 'pendente',
+        identifiedby_id         => $cfg->{'user_id'},
+        family                  => $par->{'family'},
+        vernacularname          => $par->{'vernacularname'},
+        scientificname          => $par->{'scientificname'},
+        identificationremarks   => $par->{'identificationremarks'}
+        });
+  $cfg->validate_ident($ident_id) if $user->{'category'} eq 'especialista';	# apenas identificacoes de guardioes precisam ser validadas
+}
+
+# delete identification
+elsif ($par->{'action'} eq 'delIdent' && $par->{'ident_id'})
+{ $cfg->delete_ident($par->{'ident_id'}) }
+
+# delete record
+elsif ($par->{'action'} eq 'delRecord' && $par->{'rid'})
+{ $cfg->delete_record($par->{'rid'}); $par->{'rid'} = '' }
+
+# change_taxgrp
+elsif ($par->{'action'} eq 'changeGroup' && $par->{'rid'} && $par->{'taxgrp'})
+{ $cfg->change_group($par->{'rid'},$par->{'taxgrp'}); }
+
+# change_habit
+elsif ($par->{'action'} eq 'changeHabit' && $par->{'rid'} && $par->{'habit'})
+{ $cfg->change_habit($par->{'rid'},$par->{'habit'}); }
+
+# change_interaction
+elsif ($par->{'action'} eq 'changeInteraction' && $par->{'rid'} && $par->{'interaction'})
+{ $cfg->change_interaction($par->{'rid'},$par->{'interaction'}); }
+
+# ---- continue 
+
+my $script = <<EOM;
+<script type="text/javascript" src="/js/highslide/highslide/highslide-with-gallery.js"></script>
+<link rel="stylesheet" type="text/css" href="/js/highslide/highslide/highslide.css" />
+<script type="text/javascript">
+
+        hs.graphicsDir = '/js/highslide/highslide/graphics/';
+
+        hs.align = 'center';
+        hs.transitions = ['expand', 'crossfade'];
+        hs.outlineType = 'rounded-white';
+        hs.fadeInOut = true;
+        hs.numberPosition = 'caption';
+        hs.dimmingOpacity = 0.75;
+
+        if (hs.addSlideshow) hs.addSlideshow(
+        {       interval: 5000,
+                repeat: false,
+                useControls: true,
+                fixedControls: 'fit',
+                overlayOptions:
+                {       opacity: .75,
+                        position: 'bottom center',
+                        hideOnMouseOut: true
+                }
+        });
+</script>
+
+<script type="text/javascript" src="/js/autosuggest_v2.1.3/js/bsn.AutoSuggest_2.1.3_comp.js" charset="utf-8"></script>
+<link rel="stylesheet" href="/js/autosuggest_v2.1.3/css/autosuggest_inquisitor.css" type="text/css" media="screen" charset="utf-8" />
+
+<script type="text/javascript" src="/js/search_v3.js"></script>
+
+<link rel="stylesheet" href="/css/dhtmlx.css" type="text/css"> 
+<script src="/js/dhtmlx.js" type="text/javascript"></script>
+<script type="text/javascript">
+        window.onload = function() {
+          // Calendarios
+          dhtmlXCalendarObject.prototype.langData["pt"] = {
+            // date format for inputs
+            dateformat: "%d/%m/%Y",
+            // header format
+            hdrformat: "%F %Y",
+            // full names of months
+            monthesFNames: ["Janeiro","Fevereiro","Março","Abril","Maio","Junho",
+                            "Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"],
+            // short names of months
+            monthesSNames: ["Jan","Fev","Mar","Abr","Mai","Jun",
+                            "Jul","Ago","Set","Out","Nov","Dez"],
+            // full names of days
+            daysFNames: ["Segunda","Terça","Quarta","Quinta",
+                         "Sexta","Sábado","Domingo"],
+            // short names of days
+            daysSNames: ["Dom", "Seg","Ter","Qua","Qui","Sex","Sab"],
+            // starting day of a week. Number from 1(Monday) to 7(Sunday)
+            weekstart: 1,
+            // the title of the week number column
+            weekname: "S",
+            // name of the "Today" button
+            today: "Hoje",
+            // name of the "Clear" button
+            clear: "Limpar"
+          };
+          var myCalendar1 = new dhtmlXCalendarObject({button:"ini_icon"});
+          myCalendar1.loadUserLanguage("pt");
+          myCalendar1.hideTime();
+          var myEvent = myCalendar1.attachEvent("onClick", function(){
+            var d1 = myCalendar1.getDate();
+            document.getElementById('year_ini').value = d1.getFullYear().toString();
+            var d1_month = (d1.getMonth()+1).toString();
+            document.getElementById('month_ini').value = (d1_month.length === 1) ? '0' + d1_month : d1_month;
+            var d1_day = d1.getDate().toString();
+            document.getElementById('day_ini').value = (d1_day.length === 1) ? '0' + d1_day : d1_day;
+          });
+          var myCalendar2 = new dhtmlXCalendarObject({button:"fim_icon"});
+          myCalendar2.loadUserLanguage("pt");
+          myCalendar2.hideTime();
+          var myEvent = myCalendar2.attachEvent("onClick", function(){
+            var d2 = myCalendar2.getDate();
+            document.getElementById('year_fim').value = d2.getFullYear().toString();
+            var d2_month = (d2.getMonth()+1).toString();
+            document.getElementById('month_fim').value = (d2_month.length === 1) ? '0' + d2_month : d2_month;
+            var d2_day = d2.getDate().toString();
+            document.getElementById('day_fim').value = (d2_day.length === 1) ? '0' + d2_day : d2_day;
+          });
+        };
+</script>
+
+EOM
+
+if ($par->{'report'} =~ /graph_of/)
+{ $script .= <<EOM;
+<script src="/js/Chartjs/Chart.bundle.min.js"></script>
+
+<style>
+#map	{ height: 100%; width: 100% }
+        canvas {
+                -moz-user-select: none;
+                -webkit-user-select: none;
+                -ms-user-select: none;
+        }
+</style>
+EOM
+}
+
+print $cfg->html_head({ script => $script }) if ! $par->{'ajax'};
+
+print "Content-type: text/html; charset=utf-8\n\n" if $par->{'ajax'};
+
+my $page =	!$cfg->{'user_id'}			? 'search' :
+		$par->{'action'} eq 'pendings'		? 'pendings'  :
+		$par->{'usr'} == $cfg->{'user_id'}	? 'myrecords' : 'search';
+
+my $sub_page = $par->{'report'};
+
+print $cfg->div_top_banner({ page => $page }) if ! $par->{'ajax'};
+
+if ($par->{'action'})
+{ hidden_form() if ! $par->{'ajax'};
+  search();
+}
+else { form() }
+
+
+#===============================================================
+sub form
+{ # retrieve the last search options from cookie
+  my %sel = (); my %chk = (); my %val = (); my $rid = '';
+
+  foreach my $pair (split('&',$cfg->{'search_string'}))
+  { my ($t,$v) = split(':',$pair);
+    $val{$t} = $v;
+    $sel{$t}{$v} = ' selected="true"';
+    $rid = $v if $t eq 'rid';
+  }
+ 
+  #prj
+  my $prj = $cfg->get_available_prj();
+  my $prj_opt = "<select name='prj' id='prj'>";
+  $prj_opt .= "<option value=''></option>";
+  foreach (sort { $prj->{$a} cmp $prj->{$b} } keys %$prj)
+  { $prj_opt .= "<option value='$_'$sel{'prj'}{$_}>$prj->{$_}</option>" }
+  $prj_opt .= "</select>";
+
+  #ucs
+  my $ucs = $cfg->get_available_ucs();
+  my $ucs_opt = "<select name='ucs' id='ucs'>";
+  $ucs_opt .= "<option value=''></option>";
+  foreach (sort { $ucs->{$a} cmp $ucs->{$b} } keys %$ucs)
+  { $ucs_opt .= "<option value='$_'$sel{'ucs'}{$_}>$ucs->{$_}</option>" }
+  $ucs_opt .= "</select>";
+
+  #ufs
+  my $ufs = $cfg->get_available_ufs();
+  my $ufs_opt = "<select name='ufs' id='ufs'>";
+  $ufs_opt .= "<option value=''></option>";
+  foreach (sort { $ufs->{$a} cmp $ufs->{$b} } keys %$ufs)
+  { $ufs_opt .= "<option value='$_'$sel{'ufs'}{$_}>$ufs->{$_}</option>" }
+  $ufs_opt .= "</select>";
+
+#day_ini
+  my $day_ini_opt = "<option value=''></option>";
+  foreach (1..31) { my $d = sprintf("%02d",$_); $day_ini_opt .= "<option value='$d'$sel{'day_ini'}{$d}>$d</option>" }
+  
+#day_fim
+  my $day_fim_opt = "<option value=''></option>";
+  foreach (1..31) { my $d = sprintf("%02d",$_); $day_fim_opt .= "<option value='$d'$sel{'day_fim'}{$d}>$d</option>" }
+  
+#month_ini
+  my $month_ini_opt = "<option value=''></option>";
+  foreach (1..12) { my $d = sprintf("%02d",$_); $month_ini_opt .= "<option value='$d'$sel{'month_ini'}{$d}>$cfg->{'month'}[$d]</option>" }
+
+#month_fim
+  my $month_fim_opt = "<option value=''></option>";
+  foreach (1..12) { my $d = sprintf("%02d",$_); $month_fim_opt .= "<option value='$d'$sel{'month_fim'}{$d}>$cfg->{'month'}[$d]</option>" }
+
+#year_ini
+  my $year_ini_opt = "<option value=''></option>";
+  foreach ($cfg->get_min_event_year..$cfg->get_max_event_year) { $year_ini_opt .= "<option value='$_'$sel{'year_ini'}{$_}>$_</option>" }
+
+#year_fim
+  my $year_fim_opt = "<option value=''></option>";
+  foreach ($cfg->get_min_event_year..$cfg->get_max_event_year) { $year_fim_opt .= "<option value='$_'$sel{'year_fim'}{$_}>$_</option>" }
+
+#eventtime_ini
+  my $eventtime_ini_opt = "<option value=''></option>";
+  for (my $i=0;$i<=22;$i+=2)
+  { my $tag = sprintf('%02d h - %02d h',$i,$i+2);
+    my $val = sprintf('%02d%02d',$i,$i+2);
+    $eventtime_ini_opt .= "<option value='$val'$sel{'eventtime_ini'}{$val}>$tag</option>";
+  }
+
+#eventtime_fim
+  my $eventtime_fim_opt = "<option value=''></option>";
+  for (my $i=0;$i<=22;$i+=2)
+  { my $tag = sprintf('%02d h - %02d h',$i,$i+2);
+    my $val = sprintf('%02d%02d',$i,$i+2);
+    $eventtime_fim_opt .= "<option value='$val'$sel{'eventtime_fim'}{$val}>$tag</option>";
+  }
+
+#taxgrp
+  my $taxgrp_opt = <<EOM;
+<select name='taxgrp'>
+<option value=''></option>
+EOM
+  my $expertise = $cfg->expertise();
+  foreach (sort keys %$expertise)
+  { next if $expertise->{$_}{'group'} ne 'animalia';
+    $taxgrp_opt .= <<EOM;
+<option value='$expertise->{$_}{'key'}'$sel{'taxgrp'}{$expertise->{$_}{'key'}}>$dic->{$expertise->{$_}{'key'}}</option>
+EOM
+  }
+  $taxgrp_opt .= '</select>';
+
+#habit
+  my $habit_opt = <<EOM;
+<select name='habit'>
+<option value=''></option>
+EOM
+  my $habit = $cfg->habit();
+  foreach (sort { $habit->{$a} cmp $habit->{$b} } keys %$habit)
+  { $habit_opt .= <<EOM;
+<option value='$_'$sel{'habit'}{$_}>$dic->{$_}</option>
+EOM
+  }
+
+#interaction
+  my $interaction_opt = <<EOM;
+<select name='interaction'>
+<option value=''></option>
+EOM
+  my ($interaction) = $cfg->interaction();
+  foreach (sort { $interaction->{$a} <=> $interaction->{$b} } keys %$interaction)
+  { $interaction_opt .= <<EOM;
+<option value='$_'$sel{'interaction'}{$_}>$dic->{$_}</option>
+EOM
+  }
+
+# mode 
+
+  print <<EOM;
+<div id='divMain'>
+<form name='searchForm' id='searchForm' method='post' enctype='multipart/form-data' action='$PRG'>
+<input type='hidden' name='action' value='search'/>
+<input type='hidden' name='report' value='list_of_records'/>
+<input type='hidden' name='mode' value=''/>
+<input type='hidden' name='offset' value='0'/>
+<input type='hidden' name='graph_type' value=''/>
+<input type='hidden' name='order_by' value=''/>
+<input type='hidden' name='usr_id' value='$val{'usr_id'}'/>
+<input type='hidden' name='idf_id' value='$val{'idf_id'}'/>
+<TABLE width='100%' cellpadding='5px' cellspacing='5px' class='noBorder'>
+<TR><TD><span class='h2'>$dic->{'ExploreFilter'}</span><br/><span class='small'>$dic->{'ExploreFilterExplain'}</span><br/><br/></TD></TR>
+
+<TR><TD><table class='w100'>
+	<tr><td>
+		<table class='w100 noBorder'>
+		<tr><td><table class='w100'>
+			<tr><td width='50%'><label for='usr'>$dic->{'madeBy'}</label><br/>
+				<input type="text" name="usr" id="usr" value="$val{'usr'}" autocomplete='off' onFocus="document.searchForm.usr_id.value=''" style='witdh: 400px'/>
+			    </td>
+			    <td><label for='idf'>$dic->{'identifiedBy'}</label><br/>
+				<input type="text" name="idf" id="idf" value="$val{'idf'}" autocomplete='off' onFocus="document.searchForm.idf_id.value=''" style='witdh: 400px'/>
+			    </td></tr>
+			</table>
+	</td></tr>
+	<tr><td>
+		<table class='w100 noBorder'>
+		<tr><td>
+ 			<table class='w100 bgGray'>
+			<tr><td class='h3' width='50%'><br/>$dic->{'animal'}</td>
+			    <td class='h3'><br/>$dic->{'planta'}</td>
+			</tr>
+			<tr><td><label for='animalia_vernacularname'>$dic->{'vernacular'}</label><br/>
+				<input type="text" name="animalia_vernacularname" id="animalia_vernacularname" value="$val{'animalia_vernacularname'}" autocomplete='off' style='witdh: 400px'/>
+			    </td>
+			    <td><label for='plantae_vernacularname'>$dic->{'vernacular'}</label><br/>
+				<input type="text" name="plantae_vernacularname" id="plantae_vernacularname" value="$val{'plantae_vernacularname'}" autocomplete='off' style='witdh: 400px'/>
+			    </td>
+			</tr>
+			<tr><td><label for='taxgrp'>$dic->{'taxonomicGroup'}</label><br/>$taxgrp_opt</td>
+			    <td><label for='habit'>$dic->{'habito_label'}</label><br/>$habit_opt</td>
+			</tr>
+
+			<tr><td colspan='2'>&#160;</td></tr>
+
+			<tr><td><label for='animalia_family'>$dic->{'family'}</label><br/>
+				<input type="text" name="animalia_family" id="animalia_family" value="$val{'animalia_family'}" autocomplete='off' style='witdh: 400px'/>
+			    </td>
+			    <td><label for='plantae_family'>$dic->{'family'}</label><br/>
+				<input type="text" name="plantae_family" id="plantae_family" value="$val{'plantae_family'}" autocomplete='off' style='witdh: 400px'/>
+			    </td>
+			</tr>
+			<tr><td><label for='animalia_genus'>$dic->{'genus'}</label><br/>
+				<input type="text" name="animalia_genus" id="animalia_genus" value="$val{'animalia_genus'}" autocomplete='off' style='witdh: 400px'/>
+			    </td>
+			    <td><label for='plantae_genus'>$dic->{'genus'}</label><br/>
+				<input type="text" name="plantae_genus" id="plantae_genus" value="$val{'plantae_genus'}" autocomplete='off' style='witdh: 400px'/>
+			    </td>
+			</tr>
+			<tr><td><label for='animalia_scientificname'>$dic->{'scientificName'}</label><br/>
+				<input type="text" name="animalia_scientificname" id="animalia_scientificname" value="$val{'animalia_scientificname'}" autocomplete='off' style='witdh: 400px'/>
+			    </td>
+			    <td><label for='plantae_scientificname'>$dic->{'scientificName'}</label><br/>
+				<input type="text" name="plantae_scientificname" id="plantae_scientificname" value="$val{'plantae_scientificname'}" autocomplete='off' style='witdh: 400px'/>
+			    </td>
+			</tr>
+			<tr><td align='center' class='bgWhite' colspan='2'><label for='interaction'>$dic->{'tag_interaction:lc'}</label><br/>$interaction_opt</td></tr>
+			</table>
+		    </td>
+		</tr>
+		<tr><td></td></tr>
+		</table>
+	</td><td>
+		<table class='w100 noBorder'>
+		<tr><td><table class='w100' cellpading='0' cellspacing='0'>
+			<tr><td><label for='prj'>$dic->{'prj'}</label> <span class='tip'> $cfg->{'tip_symbol'}<span>$dic->{'prj_tip'}</span></span><br/>$prj_opt</td>
+			    <td class='direita'><a href="javascript:clearForm('searchForm')" class='clear'>$dic->{'clear'}</a></td>
+			</tr>
+			</table>
+		<td></tr>
+		<tr><td><label for='ucs'>$dic->{'ucs'}</label> <span class='tip'> $cfg->{'tip_symbol'}<span>$dic->{'ucs_tip'}</span></span><br/>$ucs_opt</td></tr>
+		<tr><td><label for='ufs'>$dic->{'ufs'}</label><br/>$ufs_opt</td></tr>
+		<tr><td>&nbsp;</td></tr>
+		<tr><td><label>$dic->{'madeOn'}</label> <span class='tip'> $cfg->{'tip_symbol'}<span>$dic->{'madeOn_tip'}</span></span><br/>
+			<table cellpadding='0' cellspacing='0'>
+			   <tr>	<td style='vertical-align: bottom'><label>$dic->{'from'}&#160;</label></td>
+				<td><label>$dic->{'day'}</label><br/><select id='day_ini' name='day_ini'>$day_ini_opt</select></td>
+				<td><label>$dic->{'month'}</label><br/><select id='month_ini' name='month_ini'>$month_ini_opt</select></td>
+				<td><label>$dic->{'year'}</label><br/><select id='year_ini' name='year_ini'>$year_ini_opt</select><span><img hspace='5px' id="ini_icon" src="/imgs/calendar.png" border="0"></span></td>
+				<td width='10px'>&#160;</td>
+				<td><label>$dic->{'period'}</label><br/><select name='eventtime_ini'>$eventtime_ini_opt</select></td>
+			   </tr>
+			   <tr>	<td style='vertical-align: bottom'><label>$dic->{'to'}&#160;</label></td>
+				<td><select id='day_fim' name='day_fim'>$day_fim_opt</select></td>
+				<td><select id='month_fim' name='month_fim'>$month_fim_opt</select></td>
+				<td><select id='year_fim' name='year_fim'>$year_fim_opt</select><span><img hspace='5px' id="fim_icon" src="/imgs/calendar.png" border="0"></span></td>
+				<td width='10px'>&#160;</td>
+				<td><select name='eventtime_fim'>$eventtime_fim_opt</select></td>
+			   </tr>
+			</table>
+		</td></tr>
+		</table>
+	     </td>
+	</tr>
+	<tr><td align='right' colspan='2'><input type='button' value='$dic->{'searchButton'}' onclick="submitSearchForm({ report: 'list_of_records', offset: 0 })" class='send'/></td></tr>
+	     </table>
+    </TD>
+</TR>
+</TABLE>
+</form>
+<script type="text/javascript">
+EOM
+
+  my $scr = { animalia => [ { var => 'animalia_family',		item => 'family' },
+			    { var => 'animalia_genus',		item => 'genus'  },
+			    { var => 'animalia_vernacularname',	item => 'vernacularname'  },
+			    { var => 'animalia_scientificname',	item => 'scientificname'  }
+			  ],
+              plantae  => [ { var => 'plantae_family',		item => 'family'  },
+			    { var => 'plantae_genus',		item => 'genus'  },
+			    { var => 'plantae_vernacularname',	item => 'vernacularname'  },
+			    { var => 'plantae_scientificname',	item => 'scientificname'  }
+			  ],
+	    };
+
+  foreach my $king ( keys %$scr )
+  { foreach my $i ( 0..$#{$scr->{$king}} )
+    { my $item = $scr->{$king}[$i]{'item'};
+      print <<EOM;
+new bsn.AutoSuggest('$scr->{$king}[$i]{'var'}',
+		    { script: "/suggestions/explore_taxnames?kingdom=$king&item=$item&",
+		      varname: "search_string", json: true, minchars: 1, delay: 10, offsety: 0, timeout: 10000,
+		      noresults: "Nome não encontrado", cache: false, maxresults: 35, callback: function(obj) { } });
+EOM
+    }
+  }
+
+  foreach my $item ( 'usr','idf' )
+  { print <<EOM;
+new bsn.AutoSuggest('$item',
+		    { script: "/suggestions/explore_usernames?item=$item&",
+		      varname: "search_string", json: true, minchars: 1, delay: 10, offsety: 0, timeout: 10000,
+		      noresults: "Nome não encontrado", cache: false, maxresults: 35,
+		      callback: function(obj) { d = document.searchForm; id = obj.id; d.${item}_id.value = id }
+		    });
+EOM
+  }
+
+  my $scr = { animalia => [ { var => 'animalia_vernacularname',	item => 'vernacularname' } ],
+              plantae  => [ { var => 'plantae_vernacularname',	item => 'vernacularname' } ]
+	    };
+
+  foreach my $king ( keys %$scr )
+  { foreach my $i ( 0..$#{$scr->{$king}} )
+    { my $item = $scr->{$king}[$i]{'item'};
+      print <<EOM;
+new bsn.AutoSuggest('$scr->{$king}[$i]{'var'}',
+		    { script: "/suggestions/explore_vernacularnames?kingdom=$king&item=$item&",
+		      varname: "search_string", json: true, minchars: 1, delay: 10, offsety: 0, timeout: 10000,
+		      noresults: "Nome não encontrado", cache: false, maxresults: 35, callback: function(obj) { } });
+EOM
+    }
+  }
+
+  print "</script>\n";
+  print $cfg->html_foot();
+}
+#===============================================================
+sub hidden_form
+{ print <<EOM;
+<form name='searchForm' id='searchForm' method='post' enctype='multipart/form-data' action='$PRG'>
+<input type='hidden' name='rid'				value='$par->{'rid'}'/>
+<input type='hidden' name='ucs'				value='$par->{'ucs'}'/>
+<input type='hidden' name='prj'				value='$par->{'prj'}'/>
+<input type='hidden' name='ufs'				value='$par->{'ufs'}'/>
+<input type='hidden' name='usr'				value='$par->{'usr'}'/>
+<input type='hidden' name='usr_id'			value='$par->{'usr_id'}'/>
+<input type='hidden' name='idf'				value='$par->{'idf'}'/>
+<input type='hidden' name='idf_id'			value='$par->{'idf_id'}'/>
+<input type='hidden' name='animalia_scientificname'	value='$par->{'animalia_scientificname'}'/>
+<input type='hidden' name='plantae_scientificname'	value='$par->{'plantae_scientificname'}'/>
+<input type='hidden' name='animalia_genus'		value='$par->{'animalia_genus'}'/>
+<input type='hidden' name='plantae_genus'		value='$par->{'plantae_genus'}'/>
+<input type='hidden' name='animalia_family'		value='$par->{'animalia_family'}'/>
+<input type='hidden' name='plantae_family'		value='$par->{'plantae_family'}'/>
+<input type='hidden' name='animalia_vernacularname'	value='$par->{'animalia_vernacularname'}'/>
+<input type='hidden' name='plantae_vernacularname'	value='$par->{'plantae_vernacularname'}'/>
+<input type='hidden' name='animalia_name'		value='$par->{'animalia_name'}'/>
+<input type='hidden' name='plantae_name'		value='$par->{'plantae_name'}'/>
+<input type='hidden' name='day_ini'			value='$par->{'day_ini'}'/>
+<input type='hidden' name='day_fim'			value='$par->{'day_fim'}'/>
+<input type='hidden' name='month_ini'			value='$par->{'month_ini'}'/>
+<input type='hidden' name='month_fim'			value='$par->{'month_fim'}'/>
+<input type='hidden' name='year_ini'			value='$par->{'year_ini'}'/>
+<input type='hidden' name='year_fim'			value='$par->{'year_fim'}'/>
+<input type='hidden' name='eventtime_ini'		value='$par->{'eventtime_ini'}'/>
+<input type='hidden' name='eventtime_fim'		value='$par->{'eventtime_fim'}'/>
+<input type='hidden' name='taxgrp'			value='$par->{'taxgrp'}'/>
+<input type='hidden' name='habit'			value='$par->{'habit'}'/>
+<input type='hidden' name='interaction'			value='$par->{'interaction'}'/>
+<input type='hidden' name='mode'			value='$par->{'mode'}'/>
+<input type='hidden' name='action'			value='search'/>
+<input type='hidden' name='report'			value=''/>
+<input type='hidden' name='offset'			value='$par->{'offset'}'/>
+<input type='hidden' name='graph_type'			value='$par->{'graph_type'}'/>
+<input type='hidden' name='order_by'			value='$par->{'order_by'}'/>
+</form	>
+EOM
+}
+#===============================================================
+sub search
+{ my $report = $par->{'report'} || 'list_of_records'; 
+
+  my $rid			= $par->{'rid'}; $rid =~ s/r0+//g;
+  my $ucs			= $par->{'ucs'};
+  my $prj			= $par->{'prj'};
+  my $ufs			= $par->{'ufs'};
+  my $usr			= $par->{'usr'};
+  my $usr_id			= $par->{'usr_id'};
+  my $idf			= $par->{'idf'};
+  my $idf_id			= $par->{'idf_id'};
+
+  my $animalia_family		= $par->{'animalia_family'};
+  my $plantae_family		= $par->{'plantae_family'};
+  my $animalia_vernacularname	= $par->{'animalia_vernacularname'};
+  my $plantae_vernacularname	= $par->{'plantae_vernacularname'};
+  my $animalia_name		= $par->{'animalia_name'};
+  my $plantae_name		= $par->{'plantae_name'};
+  my $animalia_genus		= $par->{'animalia_genus'};
+  my $plantae_genus		= $par->{'plantae_genus'};
+  my $animalia_scientificname	= $par->{'animalia_scientificname'};
+  my $plantae_scientificname	= $par->{'plantae_scientificname'};
+
+  my $taxgrp			= $par->{'taxgrp'};
+  my $habit			= $par->{'habit'};
+  my $interaction		= $par->{'interaction'};
+
+  my $day_ini			= $par->{'day_ini'};
+  my $day_fim			= $par->{'day_fim'};
+  my $month_ini			= $par->{'month_ini'};
+  my $month_fim			= $par->{'month_fim'};
+  my $year_ini			= $par->{'year_ini'};
+  my $year_fim			= $par->{'year_fim'};
+  my $eventtime_ini		= $par->{'eventtime_ini'};
+  my $eventtime_fim		= $par->{'eventtime_fim'};
+  my $mode			= $par->{'mode'};
+  my $offset			= $par->{'offset'};
+	
+  my $graph_type		= $par->{'graph_type'};
+  my $order_by			= $par->{'order_by'};
+
+  my $search_string  = '';
+  if ($par->{'_method'} eq 'post')
+  { $search_string .= "ucs:$ucs&"						if $ucs;
+    $search_string .= "prj:$prj&"						if $prj;
+    $search_string .= "ufs:$ufs&"						if $ufs;
+    $search_string .= "usr:$usr&"						if $usr;
+    $search_string .= "usr_id:$usr_id&"						if $usr_id;
+    $search_string .= "idf:$idf&"						if $idf;
+    $search_string .= "idf_id:$idf_id&"						if $idf_id;
+    $search_string .= "plantae_family:$plantae_family&"				if $plantae_family	&& $plantae_family ne 'noid';
+    $search_string .= "plantae_genus:$plantae_genus&"				if $plantae_genus	&& $plantae_genus ne 'noid';
+    $search_string .= "plantae_name:$plantae_name&"				if $plantae_name	&& $plantae_name ne 'noid';
+    $search_string .= "plantae_scientificname:$plantae_scientificname&"		if $plantae_scientificname && $plantae_scientificname ne 'noid';
+    $search_string .= "plantae_vernacularname:$plantae_vernacularname&"		if $plantae_vernacularname;
+
+    $search_string .= "animalia_family:$animalia_family&"			if $animalia_family	&& $animalia_family ne 'noid';
+    $search_string .= "animalia_genus:$animalia_genus&"				if $animalia_genus	&& $animalia_genus ne 'noid';
+    $search_string .= "animalia_name:$animalia_name&"				if $animalia_name	&& $animalia_name ne 'noid';
+    $search_string .= "animalia_scientificname:$animalia_scientificname&"	if $animalia_scientificname && $animalia_scientificname ne 'noid';
+    $search_string .= "animalia_vernacularname:$animalia_vernacularname&"	if $animalia_vernacularname;
+
+    $search_string .= "taxgrp:$taxgrp&"						if $taxgrp;
+    $search_string .= "habit:$habit&"						if $habit;
+    $search_string .= "interaction:$interaction&"				if $interaction;
+    $search_string .= "day_ini:$day_ini&"					if $day_ini;
+    $search_string .= "day_fim:$day_fim&"					if $day_fim;
+    $search_string .= "month_ini:$month_ini&"					if $month_ini;
+    $search_string .= "month_fim:$month_fim&"					if $month_fim;
+    $search_string .= "year_ini:$year_ini&"					if $year_ini;
+    $search_string .= "year_fim:$year_fim&"					if $year_fim;
+    $search_string .= "eventtime_ini:$eventtime_ini&"				if $eventtime_ini;
+    $search_string .= "eventtime_fim:$eventtime_fim&"				if $eventtime_fim;
+    $search_string .= "mode:$mode&"						if $mode;
+    $search_string .= "offset:$offset&"						if $offset;
+    $search_string .= "graph_type:$graph_type&"					if $graph_type;
+    $search_string .= "order_by:$order_by&"					if $order_by;
+    $search_string .= "rid:$rid&"						if $rid;
+    $search_string =~ s/&$//;
+  }
+
+ 
+  print <<EOM;
+<script>
+document.cookie = "guardioesSearchString=$search_string";
+</script>
+EOM
+
+  my $sql = $cfg->connect();
+
+# inserido depois de mudar o combo para lista
+
+
+  if ($idf && !$idf_id)
+  { my %p = $sql->query("select id from users where upper(unaccent(name)) like upper(unaccent('$idf'))||'%'");
+    $idf_id = '';
+    foreach (0..$sql->nRecords-1) { $idf_id .= "$p{$_}{'id'}," }
+    $idf_id =~ s/,$//;
+  }
+  if ($usr && !$usr_id)
+  { my %p = $sql->query("select id from users where upper(unaccent(name)) like upper(unaccent('$usr'))||'%'");
+    $usr_id = '';
+    foreach (0..$sql->nRecords-1) { $usr_id .= "$p{$_}{'id'}," }
+    $usr_id =~ s/,$//;
+  }
+#####
+
+  my $ident_restriction = $cfg->{'user_level'} <= 1 ? " and status = 'valido'" : '';
+  my $ident_table = $cfg->{'user_level'} <= 1 ? 'ident_view' : 'ident';
+
+  my $cmd = '';
+
+# registro específico
+  if ($rid) { $cmd = "select id,user_id from record where id = $rid" }
+
+# registros de um usuário específico
+  elsif ($usr_id)
+  { $cmd = "select id,user_id from record where user_id in ( $usr_id )" }
+
+#todos...
+  else
+  { $cmd = "select id,user_id from record " }
+
+# registros restritos a uma UC
+  if ($ucs)
+  { $cmd = "select r.id,r.user_id from map_ucsfi u, record r where ST_Within(r.point,u.geom) and u.gid = $ucs intersect $cmd" }
+
+# registros restritos à area de um projeto participante
+  if ($prj)
+  { $cmd = "select r.id,r.user_id from map_projects p, record r where ST_Within(r.point,p.geom) and p.gid = $prj intersect $cmd" }
+
+# registros restritos a uma UF
+  if ($ufs)
+  { $cmd = "select r.id,r.user_id from map_ufs u, record r where ST_Within(r.point,u.geom) and u.gid = $ufs intersect $cmd;" }
+
+# identificados por
+  if ($idf_id)
+  { $cmd = "select record_id as id, user_id from $ident_table where identifiedby_id in ($idf_id) intersect $cmd" }
+
+# família de animal específico
+  if ($animalia_family)
+  { if ($animalia_family eq 'noid')
+    { $cmd = "select r.id,r.user_id from record r where not exists (select i.id from $ident_table i where i.record_id = r.id and i.kingdom = 'animalia' and family != '') intersect $cmd" }
+    else
+    { $cmd = "select distinct record_id as id, user_id from $ident_table where upper(family) = upper('$animalia_family') intersect $cmd"; }
+  }
+
+# família de planta específico
+  if ($plantae_family)
+  { if ($plantae_family eq 'noid')
+    { $cmd = "select r.id,r.user_id from record r where not exists (select i.id from $ident_table i where i.record_id = r.id and i.kingdom = 'plantae' and family != '' ) intersect $cmd" }
+    else
+    { $cmd = "select distinct record_id as id, user_id from $ident_table where upper(family) = upper('$plantae_family') intersect $cmd"; }
+  }
+# nome comum planta
+  if ($plantae_vernacularname)
+  { my $where = ''; $plantae_vernacularname =~ s/^\s+|\s+$//g; $plantae_vernacularname =~ s/\s+/ /g;
+    foreach my $w (split(' ',lc($plantae_vernacularname))) { $where .= "(vernacularname ~* E'$w') and " }
+    $where =~ s/ and $//;
+    $cmd = "select distinct record_id as id, user_id from $ident_table where $where intersect $cmd";
+  }
+
+# nome comum animal
+
+  if ($animalia_vernacularname)
+  { my $where = ''; $animalia_vernacularname =~ s/^\s+|\s+$//g; $animalia_vernacularname =~ s/\s+/ /g;
+    foreach my $w (split(' ',lc($animalia_vernacularname))) { $where .= "(vernacularname ~* E'$w') and " }
+    $where =~ s/ and $//;
+    $cmd = "select distinct record_id as id, user_id from $ident_table where $where intersect $cmd";
+  }
+
+
+# gênero de animal específico
+  if ($animalia_genus)
+  { if ($animalia_genus eq 'noid')
+    { $cmd = "select r.id,r.user_id from record r where not exists (select i.id from $ident_table i where i.record_id = r.id and i.kingdom = 'animalia' and genus != '' ) intersect $cmd" }
+    else
+    { $cmd = "select distinct record_id as id, user_id from $ident_table where upper(genus) = upper('$animalia_genus') intersect $cmd"; }
+  }
+
+# gênero de planta específico
+  if ($plantae_genus)
+  { if ($plantae_genus eq 'noid')
+    { $cmd = "select r.id,r.user_id from record r where not exists (select i.id from $ident_table i where i.record_id = r.id and i.kingdom = 'plantae' and genus != '' ) intersect $cmd" }
+    else
+    { $cmd = "select distinct record_id as id, user_id from $ident_table where upper(genus) = upper('$plantae_genus') intersect $cmd"; }
+  }
+
+# nome científico de animal específico
+  if ($animalia_scientificname)
+  { if ($animalia_scientificname eq 'noid')
+    { $cmd = "select r.id,r.user_id from record r where not exists (select i.id from $ident_table i where i.record_id = r.id and i.kingdom = 'animalia' and scientificname != '' ) intersect $cmd" }
+    else
+    { $cmd = "select distinct record_id as id, user_id from $ident_table where upper(scientificname) = upper('$animalia_scientificname') intersect $cmd"; }
+  }
+
+# nome científico de planta específico
+  if ($plantae_scientificname)
+  { if ($plantae_scientificname eq 'noid')
+    { $cmd = "select r.id,r.user_id from record r where not exists (select i.id from $ident_table i where i.record_id = r.id and i.kingdom = 'plantae' and scientificname != '' ) intersect $cmd" }
+    else
+    { $cmd = "select distinct record_id as id, user_id from $ident_table where upper(scientificname) = upper('$plantae_scientificname') intersect $cmd"; }
+  }
+
+# planta aguardando validação
+  if ($plantae_name eq 'noval')
+  { $cmd = "select r.id,r.user_id from record r where exists (select f.status from (select i.status from $ident_table i where i.record_id = r.id and kingdom = 'plantae' order by dateidentified desc limit 1) f where f.status = 'pendente') intersect $cmd" }
+
+# animal aguardando validação
+  if ($animalia_name eq 'noval')
+  { $cmd = "select r.id,r.user_id from record r where exists (select f.status from (select i.status from $ident_table i where i.record_id = r.id and kingdom = 'animalia' order by dateidentified desc limit 1) f where f.status = 'pendente') intersect $cmd" }
+
+#eventtime
+  if ($eventtime_ini)
+  { if ($eventtime_fim)
+    { if ($eventtime_fim < $eventtime_ini)
+      { $cmd = "select distinct id, user_id from record where (eventtime >= '$eventtime_ini' and eventtime <= '2359') or (eventtime >= '0000' and eventtime <= '$eventtime_fim') intersect $cmd" }
+      else
+      { $cmd = "select distinct id, user_id from record where eventtime >= '$eventtime_ini' and eventtime <= '$eventtime_fim' intersect $cmd" }
+    }
+    else
+    { $cmd = "select distinct id, user_id from record where eventtime = '$eventtime_ini' intersect $cmd" }
+  }
+
+#day
+  if ($day_ini)
+  { if ($day_fim)
+    { $cmd = "select distinct id, user_id from record where eventday >= $day_ini and eventday <= $day_fim intersect $cmd" }
+    else
+    { $cmd = "select distinct id, user_id from record where eventday = $day_ini intersect $cmd" }
+  }
+
+#month
+  if ($month_ini)
+  { if ($month_fim)
+    { $cmd = "select distinct id, user_id from record where eventmonth >= $month_ini and eventmonth <= $month_fim intersect $cmd" }
+    else
+    { $cmd = "select distinct id, user_id from record where eventmonth = $month_ini intersect $cmd" }
+  }
+
+#year
+  if ($year_ini)
+  { if ($year_fim)
+    { $cmd = "select distinct id, user_id from record where eventyear >= $year_ini and eventyear <= $year_fim intersect $cmd" }
+    else
+    { $cmd = "select distinct id, user_id from record where eventyear = $year_ini intersect $cmd" }
+  }
+
+#taxgrp
+  if ($taxgrp)
+  { $cmd = "select distinct id, user_id from record where taxgrp = E'$taxgrp' intersect $cmd" }
+
+#habit
+  if ($habit)
+  { $cmd = "select distinct id, user_id from record where habit = E'$habit' intersect $cmd" }
+
+#interaction
+  if ($interaction)
+  { $cmd = "select distinct id, user_id from record where interaction = E'$interaction' intersect $cmd" }
+
+#print STDERR "$cmd\n";
+
+  my %p = $sql->query($cmd);
+  print STDERR $sql->message() if $sql->error;
+
+  my $records = {}; foreach (0..$sql->nRecords-1) { $records->{$p{$_}{'id'}} = $p{$_}{'user_id'} }
+
+  if (!$sql->nRecords) { not_found() }	# no records were found
+
+  elsif ($report eq 'list_of_records')	# show the list of records
+  { require "../inc/list_of_records.pl";
+    list_of_records($cfg,$records,$par->{'offset'});
+  }
+
+  elsif ($report eq 'map_of_records')	# show the map
+  { require "../inc/map_of_records.pl";
+    map_of_records($cfg, { records => $records, ucs => $ucs, ufs => $ufs, prj => $prj });
+  }
+
+  elsif ($report =~ /list_of_plants|list_of_animals/)	# show lists of species
+  { require "../inc/list_of_species.pl";
+    list_of_species($cfg,$records,$report);
+  }
+
+  elsif ($report =~ /images_of_plants|images_of_animals/)	# show the images 
+  { require "../inc/images_of_species.pl";
+    images_of_species($cfg,$records,$report);
+  }
+
+  elsif ($report eq 'download_records')	# download records in DwC standard
+  { require "../inc/download_records.pl";
+    download_records($cfg,$records);
+  }
+
+  elsif ($report =~ /graph_of_|table_of_/)	# show graphs or tables
+  { require "../inc/chartjs_graph_of_records.pl";
+    graph_of_records($cfg,$records,$report,$graph_type,$order_by);
+  }
+
+  elsif ($report =~ /table_spp_month/)	# show special report: species by month of observation
+  { require "../inc/table_spp_month.pl";
+    table_spp_month($cfg,$records,$report);
+  }
+}
+#===============================================================
+sub search_menu
+{ my $par = shift;
+
+  my $w = 'w100';
+  my %class = ();
+  foreach (	'download_records',
+		'graphs',
+		'graph_of_animal_family',
+		'graph_of_eventtime',
+		'graph_of_habit',
+		'graph_of_interaction',
+		'graph_of_months',
+		'graph_of_plant_family',
+		'images',
+		'images_of_animals',
+		'images_of_plants',
+		'lists',
+		'list_of_animals',
+		'list_of_animals_x_plants',
+		'list_of_plants',
+		'list_of_plants_x_animals',
+		'list_of_records',
+		'map_of_records',
+		'tables',
+		'table_spp_month'
+	) { $class{$_} = " class='subMenuOff'" }
+
+  $class{$par->{'active'}} = " class='subMenuOn'";
+
+  my %sel = ( $par->{'active'} => ' selected="true"' ); 
+
+  my $back = ''; my $next = '';
+  my $offset = $par->{'offset'}+0;
+  my $total  = $par->{'total'}+0;
+  my $border = 'subMenuBorderBottom';
+
+
+  if ($par->{'active'} eq 'list_of_records')
+  { $w = 'w90'; $border = '';
+    if ($total > $cfg->{'records_per_page'})
+    { if (($offset + $cfg->{'records_per_page'}) < $total)
+      { my $os = $offset + $cfg->{'records_per_page'};
+	$next  = "<td align='left' width='20px'><a href=\"javascript:submitSearchForm({ report: 'list_of_records', offset: $os })\"$class{'list_of_records'}><img src='/imgs/next.png'/></a></td>";
+      }
+
+      if ($offset >= $cfg->{'records_per_page'})
+      { my $os = $offset - $cfg->{'records_per_page'}; $os = 0 if $os < 0;
+	$back  = "<td align='right' width='20px'><a href=\"javascript:submitSearchForm({ report: 'list_of_records', offset: $os})\"$class{'list_of_records'}><img src='/imgs/back.png'/></a></td>";
+      }
+    }
+  }
+
+  $class{'lists'}  = " class='subMenuOn'" if $par->{'active'} =~ /list_of_(plants|animals)/;
+  $class{'images'} = " class='subMenuOn'" if $par->{'active'} =~ /images_of_/;
+  $class{'graphs'} = " class='subMenuOn'" if $par->{'active'} =~ /graph_of_/;
+  $class{'tables'} = " class='subMenuOn'" if $par->{'active'} =~ /table_/;
+
+  my $menu = <<EOM;
+	<table cellpadding='0px' cellspacing='0px' border='0' class='$border $w subMenuBg' height='23px'>
+        <tr>	<td>
+			<table><tr>
+		                $back
+       				<td align='center'><a
+					title='$dic->{'list_of_recordsTip'}'
+					href="javascript:submitSearchForm({ report: 'list_of_records', offset: 0 })"$class{'list_of_records'}>$total $dic->{'list_of_records'}</a></td>
+              			$next
+			</tr></table>
+
+		</td>
+                <td align='center'>
+			<table>
+			<tr>
+                	    <td align='center' class='dd_menu'><b $class{'images'}>$dic->{'images_of_species'}</b>
+				<span>	<a href="javascript:submitSearchForm({ report: 'images_of_animals' });"$class{'images_of_animals'}>$dic->{'images_of_animals'}</a><br/>
+					<a href="javascript:submitSearchForm({ report: 'images_of_plants' });"$class{'images_of_plants'}>$dic->{'images_of_plants'}</a><br/>
+				</span>
+			    </td>
+
+                	    <td class='subMenuSep'>&#160;&#x25cf;&#160;</td>
+
+			    <td><a href="javascript:submitSearchForm({ report: 'map_of_records' })"$class{'map_of_records'} title='$dic->{'map_of_recordsTip'}'>$dic->{'map_of_records'}</a></td>
+
+                	    <td class='subMenuSep'>&#160;&#x25cf;&#160;</td>
+
+                	    <td align='center' class='dd_menu'><b $class{'lists'}>$dic->{'list_of_species'}</b>
+				<span>
+					<a href="javascript:submitSearchForm({ report: 'list_of_animals' });"$class{'list_of_animals'}>$dic->{'list_of_animals'}</a><br/>
+					<a href="javascript:submitSearchForm({ report: 'list_of_animals_x_plants' });"$class{'list_of_animals_x_plants'}>$dic->{'list_of_animals_x_plants'}</a><br/>
+					<a href="javascript:submitSearchForm({ report: 'list_of_plants' });"$class{'list_of_plants'}>$dic->{'list_of_plants'}</a><br/>
+					<a href="javascript:submitSearchForm({ report: 'list_of_plants_x_animals' });"$class{'list_of_plants_x_animals'}>$dic->{'list_of_plants_x_animals'}</a><br/>
+				</span>
+			    </td>
+
+                	    <td class='subMenuSep'>&#160;&#x25cf;&#160;</td>
+
+                	    <td align='center' class='dd_menu'><a
+				title='$dic->{'graphTip'}'$class{'graphs'}>$dic->{'graph'}</a>
+				<span>	<a href="javascript:submitSearchForm({ report: 'graph_of_habit', graph_type: 'horizontalBar', order_by: 'count' });"$class{'graph_of_habit'}>$dic->{'graph_of_habit'}</a><br/>
+					<a href="javascript:submitSearchForm({ report: 'graph_of_interaction', graph_type: 'horizontalBar', order_by: 'count' });"$class{'graph_of_interaction'}>$dic->{'graph_of_interaction'}</a><br/>
+					<a href="javascript:submitSearchForm({ report: 'graph_of_eventtime', graph_type: 'radar', order_by: 'item' });"$class{'graph_of_eventtime'}>$dic->{'graph_of_eventtime'}</a><br/>
+					<a href="javascript:submitSearchForm({ report: 'graph_of_months', graph_type: 'radar', order_by: 'item' });"$class{'graph_of_months'}>$dic->{'graph_of_months'}</a><br/>
+					<a href="javascript:submitSearchForm({ report: 'graph_of_plant_family', graph_type: 'bar', order_by: 'count' });"$class{'graph_of_plant_family'}>$dic->{'graph_of_plant_family'}</a><br/>
+					<a href="javascript:submitSearchForm({ report: 'graph_of_animal_family', graph_type: 'bar', order_by: 'count' });"$class{'graph_of_animal_family'}>$dic->{'graph_of_animal_family'}</a><br/>
+				</span>
+			    </td>
+
+                	    <td class='subMenuSep'>&#160;&#x25cf;&#160;</td>
+
+                	    <td align='center' class='dd_menu'><a title='$dic->{'tableTip'}'$class{'table_spp_month'}>$dic->{'tables'}</a>
+				<span>	<a href="javascript:submitSearchForm({ report: 'table_spp_month' });"$class{'table_spp_month'}>$dic->{'table_spp_month'}</a><br/>
+				</span>
+			    </td>
+			</tr>
+			</table>
+                </td>
+                <td align='right'><a href="javascript:submitSearchForm({ report: 'download_records' })"$class{'download_records'} title='$dic->{'download_recordsTip'}'>$dic->{'download_records'}</a></td>
+        </tr>
+        </table><br/>
+EOM
+  return $menu; 
+}
+
+#===============================================================
+sub not_found
+{ print <<EOM;
+<div id='divMain'>
+<blockquote>
+<h1>$dic->{'searchNotFound'}</h1>
+</blockquote>
+EOM
+}
+#===============================================================
+#===============================================================
+#===============================================================
+sub validate
+{ my ($ident,$work_mode,$record_id) = @_;
+
+  return '' if !$work_mode;
+#  return '' if !$ident->{'scientificname'} && !$ident->{'family'};
+
+  my $user = $cfg->get_user_info();
+
+  my $st = '';
+
+  $st .= $ident->{'status'} eq 'invalido' ?	"<span class='invalid'>$dic->{'ident_invalid'}</span><br clear='all'> " :
+	 $ident->{'status'} eq 'valido' ?	"<span class='valid'>$dic->{'ident_validated'}</span><br clear='all'> " :
+						"<span class='pending'>$dic->{'ident_pending'}</span><br clear='all'> ";
+
+  if ($user->{'category'} eq 'especialista')
+  { $st .= '<span class="ident">';
+    if (!$ident->{'validatedby_id'} || $ident->{'status'} eq 'pendente')
+    { $st .= "<a href='javascript:validateIdent($record_id,$ident->{'id'})' class='action'>$dic->{'ident_validate'}</a><br/>";
+    }
+    if ($ident->{'status'} ne 'invalido')
+    { $st .= "<a href='javascript:invalidateIdent($record_id,$ident->{'id'})' class='action'>$dic->{'ident_incorrect'}</a><br/>" }
+    $st .= "</span>";
+  }
+
+  if ($cfg->{'is_super'} || $cfg->{'is_admin'} ||	# admin/super
+      ($ident->{'identifiedby_id'} == $cfg->{'user_id'} &&		# quem identificou é o usuário atual
+       (!$ident->{'validatedby_id'} || $ident->{'identifiedby_id'} == $ident->{'validatedby_id'})	# que é igual a quem validou
+      ) 
+     )
+  { $st .= '<span class="ident">';
+    $st .= "<a href='javascript:deleteIdent($record_id,$ident->{'id'})' class='action'>$dic->{'ident_delete'}</a><br/>";
+    $st .= "</span>";
+  }
+  return $st;
+}
+#-------------------------------------------------------
+sub validated
+{ my ($ident,$work_mode,$record_id) = @_;
+
+#  return '' if !$work_mode;
+  return '' if !$ident->{'validatedby_id'};
+  return '' if $ident->{'validatedby_id'} == $ident->{'identifiedby_id'};
+
+  my $st = '<span class="ident">';
+  my $v = $cfg->get_user_info({ user_id => $ident->{'validatedby_id'} });
+  my $fdate = $ident->{'datevalidated'} =~ /(\d{4}).(\d{2}).(\d{2})/ ? 
+	$cfg->format_date( { day => $3, month => $2, year => $1 }) : $ident->{'datevalidated'};
+  my $pr = $ident->{'status'} eq 'invalido' ? 'in' : '';
+  $st .= "<br/><span class='tag'>".$pr."val. </span>".$v->{'name'}." ($fdate)";
+  $st .= "</span>";
+  return $st;
+}
+#-------------------------------------------------------
+#===============================================================
+#===============================================================

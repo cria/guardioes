@@ -1,0 +1,161 @@
+#!/usr/local/bin/perl
+$|=1;
+use strict;
+use lib "/system/guardioes/lib";
+use GUARDIOES;
+
+my $cfg = new GUARDIOES();
+my $dic = $cfg->dic();
+
+my $sql = $cfg->connect();
+my $counts = $cfg->counts();
+
+# find elegible users for notification
+my $cmd = <<EOM;
+select	*
+from	users
+where	category in ('especialista','admin','super')
+	and status = 'ativo'
+	and (	(alert_period = 'day'   and (now() - last_alert) >= make_interval( days   => 1, mins => -30 )) or
+		(alert_period = 'week'  and (now() - last_alert) >= make_interval( weeks  => 1, mins => -30 )) or
+		(alert_period = 'month' and (now() - last_alert) >= make_interval( months => 1, mins => -30 ))
+	    )
+EOM
+my %p = $sql->query($cmd);
+my $np= $sql->nRecords;
+
+foreach my $i (0..$np-1)
+{ # get information about expertises
+  my %q  = $sql->query("select grupo,key from def_expertise where id in (select expertise_id from expertises where user_id = $p{$i}{'id'})");
+  my $nq = $sql->nRecords;
+
+  next if !$nq; # if no expertise is defined, no alert needed
+
+  my $noid_msg = ''; my $noval_msg = '';
+
+  # records without identification
+
+  foreach my $k (0..$nq-1)
+  { if ($q{$k}{'grupo'} eq 'animalia')  # animalia
+    { my $key = "rec_noid:animalia:$q{$k}{'key'}";
+      next if ! $counts->{0}{$key};
+
+      my $url = "taxgrp=$q{$k}{'key'}&action=pendings&report=list_of_records&mode=work&animalia=noid";
+      my $key_str =     $counts->{0}{$key} == 1 ? $dic->{$q{$k}{'key'}} :
+                        $dic->{$q{$k}{'key'}.'s'} || $dic->{$q{$k}{'key'}}.'s';
+
+      $noid_msg .= <<EOM;
+<tr><td align='right'>$counts->{0}{$key}</td><td><a
+   href="$cfg->{'home_url'}/search?$url">$key_str</a></td></tr>
+EOM
+    }
+    else        # plantae
+    { my $key = "rec_noid:plantae";
+      next if ! $counts->{0}{$key};
+
+      my $url = "action=pendings&report=list_of_records&mode=work&plantae=noid";
+
+      my $key_str =     $counts->{0}{$key} == 1 ? $dic->{$q{$k}{'key'}} :
+                        $dic->{$q{$k}{'key'}.'s'} || $dic->{$q{$k}{'key'}}.'s';
+
+      $noid_msg .= <<EOM;
+<tr><td align='right'>$counts->{0}{$key}</td><td><a
+   href="$cfg->{'home_url'}/search?$url">$key_str</a></td></tr>
+EOM
+    }
+  }
+
+  # identifications requiring validation
+
+  foreach my $k (0..$nq-1)
+  { if ($q{$k}{'grupo'} eq 'animalia')  # animalia
+    { my $key = "rec_noval:animalia:$q{$k}{'key'}";
+      next if ! $counts->{0}{$key};
+
+      my $url = "taxgrp=$q{$k}{'key'}&action=pendings&report=list_of_records&mode=work&vanimalia=noval";
+      my $key_str =     $counts->{0}{$key} == 1 ? $dic->{$q{$k}{'key'}} :
+                        $dic->{$q{$k}{'key'}.'s'} || $dic->{$q{$k}{'key'}}.'s';
+
+      $noval_msg .= <<EOM;
+<tr><td align='right'>$counts->{0}{$key}</td><td><a
+   href="$cfg->{'home_url'}/search?$url">$key_str</a></td></tr>
+EOM
+    }
+    else        # plantae
+    { my $key = "rec_noval:plantae";
+      next if ! $counts->{0}{$key};
+
+      my $url = "action=pendings&report=list_of_records&mode=work&vplantae=noval";
+
+      my $key_str =     $counts->{0}{$key} == 1 ? $dic->{$q{$k}{'key'}} :
+                        $dic->{$q{$k}{'key'}.'s'} || $dic->{$q{$k}{'key'}}.'s';
+      $noval_msg .= <<EOM;
+<tr><td align='right'>$counts->{0}{$key}</td><td><a
+   href="$cfg->{'home_url'}/search?$url">$key_str</a></td></tr>
+EOM
+    }
+  }
+
+  send_email($p{$i},$noid_msg,$noval_msg,$sql);
+} 
+#====================================================================================
+sub send_email
+{ my ($user,$noid_msg,$noval_msg,$sql) = @_;
+
+  my $dic = $cfg->dic({ forced => 1, language => $user->{'language'}, gender => $user->{'gender'} });
+
+  my $salutation = $dic->{'notification_salutation'};
+  $salutation =~ s/#user_name#/<b>$user->{'name'}<\/b>/;
+
+  if ($noid_msg)
+  { $noid_msg = <<EOM;
+<h3>$dic->{'rec_noid_title'}</h3>
+$dic->{'rec_noid_tip'}<br/>
+<table>
+$noid_msg
+</table>
+EOM
+  }
+
+  if ($noval_msg)
+  { $noval_msg = <<EOM;
+<h3>$dic->{'rec_noval_title'}</h3>
+$dic->{'rec_noval_tip'}<br/>
+<table>
+$noval_msg
+</table>
+EOM
+  }
+
+  my $msg_body = <<EOM;
+<html><head>
+<style type='text/css'>
+html { font-size: 1em; }
+body { font-family: Arial, Helvetica, sans-serif; font-size: 1em; }
+a { text-decoration: none; color: black  !important; font-weight: bold; font-size: 1em !important; }
+h2	{ font-size: 1.1em; color: #696; }
+h3	{ font-size: 1.05em; color: #c93; }
+table tr td { }
+</style>
+</head>
+<body>
+<blockquote>
+<h2>$dic->{'notification_subject'}</h2>
+$salutation<p/>
+$noid_msg
+$noval_msg
+</body>
+</html>
+EOM
+
+  my %mail = (	To              => "sidnei\@cria.org.br, $user->{'email'}",
+		From            => 'web@guardioes.cria.org.br',
+		Subject         => $dic->{'notification_subject'},
+		Message         => $msg_body,
+		'Content-type'  => 'text/html; charset=utf-8',
+		smtp            => 'zimbra.cria.org.br'
+	     );
+
+    if (GUARDIOES::sendmail(%mail))
+    { $sql->exec("update users set last_alert = now() where id = $user->{'id'}") }
+}

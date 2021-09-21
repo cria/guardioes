@@ -1,0 +1,120 @@
+#!/usr/local/bin/perl
+$|=1;
+use strict;
+use lib "../lib";
+use GUARDIOES;
+
+my $cfg = new GUARDIOES();
+my $dic = $cfg->dic();
+my $par = $cfg->param();
+
+if ($cfg->current_session_id()) { already_logged_in(); exit 0 }
+
+my $email = $par->data('email');
+my $pass  = $par->data('password');
+
+if ($par->method() eq 'post' && $email && $pass eq 'reset')
+{ $cfg->send_reset_password_email({ email => $email });
+
+  form($dic->{'reset_password_notice'});
+}
+elsif ($par->method() eq 'post' && $email)
+{ if ($cfg->email_exists({ email => $email}) && (my $cpass = $cfg->password_matches({ email=> $email, password => $pass})))
+  { my $data = { email => $email, network => 'guardioes', password => $cpass };
+
+    my ($session_id,$user_status) = $cfg->login($data);
+
+    my $location = $user_status eq 'new' ? 'register' : 'welcome';
+
+    print  $cfg->set_cookie($session_id,$location);
+  }
+  else
+  { form($dic->{'userNotFound'}) }
+}
+else { form() }
+
+# -------------------------------------------------
+sub already_logged_in
+{ print $cfg->html_head();
+
+  print $cfg->div_top_banner( { page => 'login' } );
+
+  my $user = $cfg->get_user_info();
+
+  print <<EOM;
+<center>
+<div id='divLogin'>
+Você já está logado nos Guardiões como $user->{'name'}.<p/><p/><a href='logoff'>Clique aqui para sair</a>.
+</div>
+</center>
+</body>
+</html>
+EOM
+}
+
+# -------------------------------------------------
+sub form
+{ my $msg = shift;
+  $msg = "<tr><td><b style='color:red'>$msg</b></td></tr>" if $msg;
+
+  print $cfg->html_head( { script => "<script type='text/javascript' src='/js/login_v1.js'></script>" } );
+
+  print $cfg->div_top_banner( { page => 'login' } );
+
+  print <<EOM;
+<center>
+<div id='divLogin'>
+
+<form name='formLogin' id='formLoginId' method='post' enctype='multipart/form-data' action='login' autocomplete='off'>
+<table width='80%' cellpadding='5px' cellspacing='5px'>
+<tr><td><h3>$dic->{'identifyYourself'}</h3></td></tr>
+$msg
+<tr><td><label for='email'>$dic->{'e-mail'}</label><br/>
+	<input type='email' name='email' id='email' value='$email'/>
+    </td>
+</tr>
+</table>
+<table width='80%' cellpadding='5px' cellspacing='5px'>
+<tr><td><label for='password'>$dic->{'password'}</label><br/>
+	<input type='password' name='password' id='password' value=''/><br/>
+	<a href='javascript:showResetDiv()' class='tinyHelp'>$dic->{'forgotPassword'}</a>
+    </td>
+</tr>
+<tr><td align='right'><input type='submit' name='login' value='$dic->{'login'}' class='button send'/></td></tr> 
+</table>
+ <hr><p/>
+$dic->{'notAGuardian'}<br/><a href='register' class='tinyHelp'>$dic->{'registerYourself'}</a>
+
+</form>
+</div>
+<div id='divLoginWith'>
+<table cellspacing='5px' cellpadding='5px' width='80%'>
+<tr><td>$dic->{'orNetAccess'}</td></tr>
+<tr><td><a href='googleLogin'><img src='/imgs/icons/google_icon.png'/> Google</a></td></tr>
+<tr><td><a href='facebookLogin'><img src='/imgs/icons/facebook_icon.png'/> Facebook</a></td></tr>
+<tr><td><a href='twitterLogin'><img src='/imgs/icons/twitter_icon.png'/> Twitter</a></td></tr>
+<tr><td><a href='instagramLogin'><img src='/imgs/icons/instagram_icon.png'/> Instagram</a></td></tr>
+</table>
+</div>
+
+<div id='divLoginReset'>
+<form name='formReset' id='formResetId' method='post' enctype='multipart/form-data' action='login' autocomplete='off'>
+<table cellspacing='5px' cellpadding='5px' width='80%'>
+<tr><td align='right'><a href='javascript:hideResetDiv()'>$dic->{'cancel'}</a></td></tr>
+<tr><td>
+	<h1>$dic->{'forgotPassword'}</h1>
+	$dic->{'forgotPasswordText'}<p/>
+
+	<input type='email' name='email' value=''/>
+	<input type='hidden' name='password' value='reset'/>
+	<input type='button' value='$dic->{'send'}' onClick='submitResetPassword()'/>
+    </td>
+</tr>
+</table>
+</form>
+</div>
+</center>
+</body>
+</html>
+EOM
+}

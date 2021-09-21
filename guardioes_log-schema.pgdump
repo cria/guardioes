@@ -1,0 +1,2239 @@
+--
+-- PostgreSQL database dump
+--
+
+-- Dumped from database version 13.2
+-- Dumped by pg_dump version 13.2
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+SET default_tablespace = '';
+
+SET default_table_access_method = heap;
+
+--
+-- Name: log; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.log (
+    id bigint NOT NULL,
+    date timestamp with time zone DEFAULT now(),
+    user_id integer DEFAULT 0,
+    action text DEFAULT ''::text,
+    detail text DEFAULT ''::text
+);
+
+
+ALTER TABLE public.log OWNER TO postgres;
+
+--
+-- Name: log_2018; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.log_2018 (
+)
+INHERITS (public.log);
+
+
+ALTER TABLE public.log_2018 OWNER TO postgres;
+
+--
+-- Name: log_201803; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.log_201803 (
+)
+INHERITS (public.log_2018);
+
+
+ALTER TABLE public.log_201803 OWNER TO postgres;
+
+--
+-- Name: log_201804; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.log_201804 (
+)
+INHERITS (public.log_2018);
+
+
+ALTER TABLE public.log_201804 OWNER TO postgres;
+
+--
+-- Name: log_201805; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.log_201805 (
+)
+INHERITS (public.log_2018);
+
+
+ALTER TABLE public.log_201805 OWNER TO postgres;
+
+--
+-- Name: log_201806; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.log_201806 (
+)
+INHERITS (public.log_2018);
+
+
+ALTER TABLE public.log_201806 OWNER TO postgres;
+
+--
+-- Name: log_201807; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.log_201807 (
+)
+INHERITS (public.log_2018);
+
+
+ALTER TABLE public.log_201807 OWNER TO postgres;
+
+--
+-- Name: log_201808; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.log_201808 (
+)
+INHERITS (public.log_2018);
+
+
+ALTER TABLE public.log_201808 OWNER TO postgres;
+
+--
+-- Name: log_201809; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.log_201809 (
+)
+INHERITS (public.log_2018);
+
+
+ALTER TABLE public.log_201809 OWNER TO postgres;
+
+--
+-- Name: log_201810; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.log_201810 (
+)
+INHERITS (public.log_2018);
+
+
+ALTER TABLE public.log_201810 OWNER TO postgres;
+
+--
+-- Name: log_201811; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.log_201811 (
+)
+INHERITS (public.log_2018);
+
+
+ALTER TABLE public.log_201811 OWNER TO postgres;
+
+--
+-- Name: log_201812; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.log_201812 (
+)
+INHERITS (public.log_2018);
+
+
+ALTER TABLE public.log_201812 OWNER TO postgres;
+
+--
+-- Name: log_2019; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.log_2019 (
+)
+INHERITS (public.log);
+
+
+ALTER TABLE public.log_2019 OWNER TO postgres;
+
+--
+-- Name: log_201901; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.log_201901 (
+)
+INHERITS (public.log_2019);
+
+
+ALTER TABLE public.log_201901 OWNER TO postgres;
+
+--
+-- Name: log_201902; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.log_201902 (
+)
+INHERITS (public.log_2019);
+
+
+ALTER TABLE public.log_201902 OWNER TO postgres;
+
+--
+-- Name: log_201903; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.log_201903 (
+)
+INHERITS (public.log_2019);
+
+
+ALTER TABLE public.log_201903 OWNER TO postgres;
+
+--
+-- Name: log_201904; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.log_201904 (
+)
+INHERITS (public.log_2019);
+
+
+ALTER TABLE public.log_201904 OWNER TO postgres;
+
+--
+-- Name: log_201905; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.log_201905 (
+)
+INHERITS (public.log_2019);
+
+
+ALTER TABLE public.log_201905 OWNER TO postgres;
+
+--
+-- Name: log_201906; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.log_201906 (
+)
+INHERITS (public.log_2019);
+
+
+ALTER TABLE public.log_201906 OWNER TO postgres;
+
+--
+-- Name: log_201907; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.log_201907 (
+)
+INHERITS (public.log_2019);
+
+
+ALTER TABLE public.log_201907 OWNER TO postgres;
+
+--
+-- Name: log_201908; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.log_201908 (
+)
+INHERITS (public.log_2019);
+
+
+ALTER TABLE public.log_201908 OWNER TO postgres;
+
+--
+-- Name: log_201909; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.log_201909 (
+)
+INHERITS (public.log_2019);
+
+
+ALTER TABLE public.log_201909 OWNER TO postgres;
+
+--
+-- Name: log_201910; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.log_201910 (
+)
+INHERITS (public.log_2019);
+
+
+ALTER TABLE public.log_201910 OWNER TO postgres;
+
+--
+-- Name: log_201911; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.log_201911 (
+)
+INHERITS (public.log_2019);
+
+
+ALTER TABLE public.log_201911 OWNER TO postgres;
+
+--
+-- Name: log_201912; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.log_201912 (
+)
+INHERITS (public.log_2019);
+
+
+ALTER TABLE public.log_201912 OWNER TO postgres;
+
+--
+-- Name: log_2020; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.log_2020 (
+)
+INHERITS (public.log);
+
+
+ALTER TABLE public.log_2020 OWNER TO postgres;
+
+--
+-- Name: log_202001; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.log_202001 (
+)
+INHERITS (public.log_2020);
+
+
+ALTER TABLE public.log_202001 OWNER TO postgres;
+
+--
+-- Name: log_202002; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.log_202002 (
+)
+INHERITS (public.log_2020);
+
+
+ALTER TABLE public.log_202002 OWNER TO postgres;
+
+--
+-- Name: log_202003; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.log_202003 (
+)
+INHERITS (public.log_2020);
+
+
+ALTER TABLE public.log_202003 OWNER TO postgres;
+
+--
+-- Name: log_202004; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.log_202004 (
+)
+INHERITS (public.log_2020);
+
+
+ALTER TABLE public.log_202004 OWNER TO postgres;
+
+--
+-- Name: log_202005; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.log_202005 (
+)
+INHERITS (public.log_2020);
+
+
+ALTER TABLE public.log_202005 OWNER TO postgres;
+
+--
+-- Name: log_202006; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.log_202006 (
+)
+INHERITS (public.log_2020);
+
+
+ALTER TABLE public.log_202006 OWNER TO postgres;
+
+--
+-- Name: log_202007; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.log_202007 (
+)
+INHERITS (public.log_2020);
+
+
+ALTER TABLE public.log_202007 OWNER TO postgres;
+
+--
+-- Name: log_202008; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.log_202008 (
+)
+INHERITS (public.log_2020);
+
+
+ALTER TABLE public.log_202008 OWNER TO postgres;
+
+--
+-- Name: log_202009; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.log_202009 (
+)
+INHERITS (public.log_2020);
+
+
+ALTER TABLE public.log_202009 OWNER TO postgres;
+
+--
+-- Name: log_202010; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.log_202010 (
+)
+INHERITS (public.log_2020);
+
+
+ALTER TABLE public.log_202010 OWNER TO postgres;
+
+--
+-- Name: log_202011; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.log_202011 (
+)
+INHERITS (public.log_2020);
+
+
+ALTER TABLE public.log_202011 OWNER TO postgres;
+
+--
+-- Name: log_202012; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.log_202012 (
+)
+INHERITS (public.log_2020);
+
+
+ALTER TABLE public.log_202012 OWNER TO postgres;
+
+--
+-- Name: log_2021; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.log_2021 (
+)
+INHERITS (public.log);
+
+
+ALTER TABLE public.log_2021 OWNER TO postgres;
+
+--
+-- Name: log_202101; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.log_202101 (
+)
+INHERITS (public.log_2021);
+
+
+ALTER TABLE public.log_202101 OWNER TO postgres;
+
+--
+-- Name: log_202102; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.log_202102 (
+)
+INHERITS (public.log_2021);
+
+
+ALTER TABLE public.log_202102 OWNER TO postgres;
+
+--
+-- Name: log_202103; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.log_202103 (
+)
+INHERITS (public.log_2021);
+
+
+ALTER TABLE public.log_202103 OWNER TO postgres;
+
+--
+-- Name: log_202104; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.log_202104 (
+)
+INHERITS (public.log_2021);
+
+
+ALTER TABLE public.log_202104 OWNER TO postgres;
+
+--
+-- Name: log_202105; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.log_202105 (
+)
+INHERITS (public.log_2021);
+
+
+ALTER TABLE public.log_202105 OWNER TO postgres;
+
+--
+-- Name: log_202106; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.log_202106 (
+)
+INHERITS (public.log_2021);
+
+
+ALTER TABLE public.log_202106 OWNER TO postgres;
+
+--
+-- Name: log_202107; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.log_202107 (
+)
+INHERITS (public.log_2021);
+
+
+ALTER TABLE public.log_202107 OWNER TO postgres;
+
+--
+-- Name: log_202108; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.log_202108 (
+)
+INHERITS (public.log_2021);
+
+
+ALTER TABLE public.log_202108 OWNER TO postgres;
+
+--
+-- Name: log_202109; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.log_202109 (
+)
+INHERITS (public.log_2021);
+
+
+ALTER TABLE public.log_202109 OWNER TO postgres;
+
+--
+-- Name: log_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.log_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.log_id_seq OWNER TO postgres;
+
+--
+-- Name: log_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.log_id_seq OWNED BY public.log.id;
+
+
+--
+-- Name: log id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log ALTER COLUMN id SET DEFAULT nextval('public.log_id_seq'::regclass);
+
+
+--
+-- Name: log_2018 id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_2018 ALTER COLUMN id SET DEFAULT nextval('public.log_id_seq'::regclass);
+
+
+--
+-- Name: log_2018 date; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_2018 ALTER COLUMN date SET DEFAULT now();
+
+
+--
+-- Name: log_2018 user_id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_2018 ALTER COLUMN user_id SET DEFAULT 0;
+
+
+--
+-- Name: log_2018 action; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_2018 ALTER COLUMN action SET DEFAULT ''::text;
+
+
+--
+-- Name: log_2018 detail; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_2018 ALTER COLUMN detail SET DEFAULT ''::text;
+
+
+--
+-- Name: log_201803 id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201803 ALTER COLUMN id SET DEFAULT nextval('public.log_id_seq'::regclass);
+
+
+--
+-- Name: log_201803 date; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201803 ALTER COLUMN date SET DEFAULT now();
+
+
+--
+-- Name: log_201803 user_id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201803 ALTER COLUMN user_id SET DEFAULT 0;
+
+
+--
+-- Name: log_201803 action; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201803 ALTER COLUMN action SET DEFAULT ''::text;
+
+
+--
+-- Name: log_201803 detail; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201803 ALTER COLUMN detail SET DEFAULT ''::text;
+
+
+--
+-- Name: log_201804 id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201804 ALTER COLUMN id SET DEFAULT nextval('public.log_id_seq'::regclass);
+
+
+--
+-- Name: log_201804 date; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201804 ALTER COLUMN date SET DEFAULT now();
+
+
+--
+-- Name: log_201804 user_id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201804 ALTER COLUMN user_id SET DEFAULT 0;
+
+
+--
+-- Name: log_201804 action; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201804 ALTER COLUMN action SET DEFAULT ''::text;
+
+
+--
+-- Name: log_201804 detail; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201804 ALTER COLUMN detail SET DEFAULT ''::text;
+
+
+--
+-- Name: log_201805 id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201805 ALTER COLUMN id SET DEFAULT nextval('public.log_id_seq'::regclass);
+
+
+--
+-- Name: log_201805 date; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201805 ALTER COLUMN date SET DEFAULT now();
+
+
+--
+-- Name: log_201805 user_id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201805 ALTER COLUMN user_id SET DEFAULT 0;
+
+
+--
+-- Name: log_201805 action; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201805 ALTER COLUMN action SET DEFAULT ''::text;
+
+
+--
+-- Name: log_201805 detail; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201805 ALTER COLUMN detail SET DEFAULT ''::text;
+
+
+--
+-- Name: log_201806 id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201806 ALTER COLUMN id SET DEFAULT nextval('public.log_id_seq'::regclass);
+
+
+--
+-- Name: log_201806 date; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201806 ALTER COLUMN date SET DEFAULT now();
+
+
+--
+-- Name: log_201806 user_id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201806 ALTER COLUMN user_id SET DEFAULT 0;
+
+
+--
+-- Name: log_201806 action; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201806 ALTER COLUMN action SET DEFAULT ''::text;
+
+
+--
+-- Name: log_201806 detail; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201806 ALTER COLUMN detail SET DEFAULT ''::text;
+
+
+--
+-- Name: log_201807 id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201807 ALTER COLUMN id SET DEFAULT nextval('public.log_id_seq'::regclass);
+
+
+--
+-- Name: log_201807 date; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201807 ALTER COLUMN date SET DEFAULT now();
+
+
+--
+-- Name: log_201807 user_id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201807 ALTER COLUMN user_id SET DEFAULT 0;
+
+
+--
+-- Name: log_201807 action; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201807 ALTER COLUMN action SET DEFAULT ''::text;
+
+
+--
+-- Name: log_201807 detail; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201807 ALTER COLUMN detail SET DEFAULT ''::text;
+
+
+--
+-- Name: log_201808 id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201808 ALTER COLUMN id SET DEFAULT nextval('public.log_id_seq'::regclass);
+
+
+--
+-- Name: log_201808 date; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201808 ALTER COLUMN date SET DEFAULT now();
+
+
+--
+-- Name: log_201808 user_id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201808 ALTER COLUMN user_id SET DEFAULT 0;
+
+
+--
+-- Name: log_201808 action; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201808 ALTER COLUMN action SET DEFAULT ''::text;
+
+
+--
+-- Name: log_201808 detail; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201808 ALTER COLUMN detail SET DEFAULT ''::text;
+
+
+--
+-- Name: log_201809 id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201809 ALTER COLUMN id SET DEFAULT nextval('public.log_id_seq'::regclass);
+
+
+--
+-- Name: log_201809 date; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201809 ALTER COLUMN date SET DEFAULT now();
+
+
+--
+-- Name: log_201809 user_id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201809 ALTER COLUMN user_id SET DEFAULT 0;
+
+
+--
+-- Name: log_201809 action; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201809 ALTER COLUMN action SET DEFAULT ''::text;
+
+
+--
+-- Name: log_201809 detail; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201809 ALTER COLUMN detail SET DEFAULT ''::text;
+
+
+--
+-- Name: log_201810 id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201810 ALTER COLUMN id SET DEFAULT nextval('public.log_id_seq'::regclass);
+
+
+--
+-- Name: log_201810 date; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201810 ALTER COLUMN date SET DEFAULT now();
+
+
+--
+-- Name: log_201810 user_id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201810 ALTER COLUMN user_id SET DEFAULT 0;
+
+
+--
+-- Name: log_201810 action; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201810 ALTER COLUMN action SET DEFAULT ''::text;
+
+
+--
+-- Name: log_201810 detail; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201810 ALTER COLUMN detail SET DEFAULT ''::text;
+
+
+--
+-- Name: log_201811 id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201811 ALTER COLUMN id SET DEFAULT nextval('public.log_id_seq'::regclass);
+
+
+--
+-- Name: log_201811 date; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201811 ALTER COLUMN date SET DEFAULT now();
+
+
+--
+-- Name: log_201811 user_id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201811 ALTER COLUMN user_id SET DEFAULT 0;
+
+
+--
+-- Name: log_201811 action; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201811 ALTER COLUMN action SET DEFAULT ''::text;
+
+
+--
+-- Name: log_201811 detail; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201811 ALTER COLUMN detail SET DEFAULT ''::text;
+
+
+--
+-- Name: log_201812 id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201812 ALTER COLUMN id SET DEFAULT nextval('public.log_id_seq'::regclass);
+
+
+--
+-- Name: log_201812 date; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201812 ALTER COLUMN date SET DEFAULT now();
+
+
+--
+-- Name: log_201812 user_id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201812 ALTER COLUMN user_id SET DEFAULT 0;
+
+
+--
+-- Name: log_201812 action; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201812 ALTER COLUMN action SET DEFAULT ''::text;
+
+
+--
+-- Name: log_201812 detail; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201812 ALTER COLUMN detail SET DEFAULT ''::text;
+
+
+--
+-- Name: log_2019 id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_2019 ALTER COLUMN id SET DEFAULT nextval('public.log_id_seq'::regclass);
+
+
+--
+-- Name: log_2019 date; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_2019 ALTER COLUMN date SET DEFAULT now();
+
+
+--
+-- Name: log_2019 user_id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_2019 ALTER COLUMN user_id SET DEFAULT 0;
+
+
+--
+-- Name: log_2019 action; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_2019 ALTER COLUMN action SET DEFAULT ''::text;
+
+
+--
+-- Name: log_2019 detail; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_2019 ALTER COLUMN detail SET DEFAULT ''::text;
+
+
+--
+-- Name: log_201901 id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201901 ALTER COLUMN id SET DEFAULT nextval('public.log_id_seq'::regclass);
+
+
+--
+-- Name: log_201901 date; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201901 ALTER COLUMN date SET DEFAULT now();
+
+
+--
+-- Name: log_201901 user_id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201901 ALTER COLUMN user_id SET DEFAULT 0;
+
+
+--
+-- Name: log_201901 action; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201901 ALTER COLUMN action SET DEFAULT ''::text;
+
+
+--
+-- Name: log_201901 detail; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201901 ALTER COLUMN detail SET DEFAULT ''::text;
+
+
+--
+-- Name: log_201902 id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201902 ALTER COLUMN id SET DEFAULT nextval('public.log_id_seq'::regclass);
+
+
+--
+-- Name: log_201902 date; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201902 ALTER COLUMN date SET DEFAULT now();
+
+
+--
+-- Name: log_201902 user_id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201902 ALTER COLUMN user_id SET DEFAULT 0;
+
+
+--
+-- Name: log_201902 action; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201902 ALTER COLUMN action SET DEFAULT ''::text;
+
+
+--
+-- Name: log_201902 detail; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201902 ALTER COLUMN detail SET DEFAULT ''::text;
+
+
+--
+-- Name: log_201903 id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201903 ALTER COLUMN id SET DEFAULT nextval('public.log_id_seq'::regclass);
+
+
+--
+-- Name: log_201903 date; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201903 ALTER COLUMN date SET DEFAULT now();
+
+
+--
+-- Name: log_201903 user_id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201903 ALTER COLUMN user_id SET DEFAULT 0;
+
+
+--
+-- Name: log_201903 action; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201903 ALTER COLUMN action SET DEFAULT ''::text;
+
+
+--
+-- Name: log_201903 detail; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201903 ALTER COLUMN detail SET DEFAULT ''::text;
+
+
+--
+-- Name: log_201904 id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201904 ALTER COLUMN id SET DEFAULT nextval('public.log_id_seq'::regclass);
+
+
+--
+-- Name: log_201904 date; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201904 ALTER COLUMN date SET DEFAULT now();
+
+
+--
+-- Name: log_201904 user_id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201904 ALTER COLUMN user_id SET DEFAULT 0;
+
+
+--
+-- Name: log_201904 action; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201904 ALTER COLUMN action SET DEFAULT ''::text;
+
+
+--
+-- Name: log_201904 detail; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201904 ALTER COLUMN detail SET DEFAULT ''::text;
+
+
+--
+-- Name: log_201905 id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201905 ALTER COLUMN id SET DEFAULT nextval('public.log_id_seq'::regclass);
+
+
+--
+-- Name: log_201905 date; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201905 ALTER COLUMN date SET DEFAULT now();
+
+
+--
+-- Name: log_201905 user_id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201905 ALTER COLUMN user_id SET DEFAULT 0;
+
+
+--
+-- Name: log_201905 action; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201905 ALTER COLUMN action SET DEFAULT ''::text;
+
+
+--
+-- Name: log_201905 detail; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201905 ALTER COLUMN detail SET DEFAULT ''::text;
+
+
+--
+-- Name: log_201906 id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201906 ALTER COLUMN id SET DEFAULT nextval('public.log_id_seq'::regclass);
+
+
+--
+-- Name: log_201906 date; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201906 ALTER COLUMN date SET DEFAULT now();
+
+
+--
+-- Name: log_201906 user_id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201906 ALTER COLUMN user_id SET DEFAULT 0;
+
+
+--
+-- Name: log_201906 action; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201906 ALTER COLUMN action SET DEFAULT ''::text;
+
+
+--
+-- Name: log_201906 detail; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201906 ALTER COLUMN detail SET DEFAULT ''::text;
+
+
+--
+-- Name: log_201907 id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201907 ALTER COLUMN id SET DEFAULT nextval('public.log_id_seq'::regclass);
+
+
+--
+-- Name: log_201907 date; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201907 ALTER COLUMN date SET DEFAULT now();
+
+
+--
+-- Name: log_201907 user_id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201907 ALTER COLUMN user_id SET DEFAULT 0;
+
+
+--
+-- Name: log_201907 action; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201907 ALTER COLUMN action SET DEFAULT ''::text;
+
+
+--
+-- Name: log_201907 detail; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201907 ALTER COLUMN detail SET DEFAULT ''::text;
+
+
+--
+-- Name: log_201908 id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201908 ALTER COLUMN id SET DEFAULT nextval('public.log_id_seq'::regclass);
+
+
+--
+-- Name: log_201908 date; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201908 ALTER COLUMN date SET DEFAULT now();
+
+
+--
+-- Name: log_201908 user_id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201908 ALTER COLUMN user_id SET DEFAULT 0;
+
+
+--
+-- Name: log_201908 action; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201908 ALTER COLUMN action SET DEFAULT ''::text;
+
+
+--
+-- Name: log_201908 detail; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201908 ALTER COLUMN detail SET DEFAULT ''::text;
+
+
+--
+-- Name: log_201909 id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201909 ALTER COLUMN id SET DEFAULT nextval('public.log_id_seq'::regclass);
+
+
+--
+-- Name: log_201909 date; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201909 ALTER COLUMN date SET DEFAULT now();
+
+
+--
+-- Name: log_201909 user_id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201909 ALTER COLUMN user_id SET DEFAULT 0;
+
+
+--
+-- Name: log_201909 action; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201909 ALTER COLUMN action SET DEFAULT ''::text;
+
+
+--
+-- Name: log_201909 detail; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201909 ALTER COLUMN detail SET DEFAULT ''::text;
+
+
+--
+-- Name: log_201910 id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201910 ALTER COLUMN id SET DEFAULT nextval('public.log_id_seq'::regclass);
+
+
+--
+-- Name: log_201910 date; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201910 ALTER COLUMN date SET DEFAULT now();
+
+
+--
+-- Name: log_201910 user_id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201910 ALTER COLUMN user_id SET DEFAULT 0;
+
+
+--
+-- Name: log_201910 action; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201910 ALTER COLUMN action SET DEFAULT ''::text;
+
+
+--
+-- Name: log_201910 detail; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201910 ALTER COLUMN detail SET DEFAULT ''::text;
+
+
+--
+-- Name: log_201911 id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201911 ALTER COLUMN id SET DEFAULT nextval('public.log_id_seq'::regclass);
+
+
+--
+-- Name: log_201911 date; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201911 ALTER COLUMN date SET DEFAULT now();
+
+
+--
+-- Name: log_201911 user_id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201911 ALTER COLUMN user_id SET DEFAULT 0;
+
+
+--
+-- Name: log_201911 action; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201911 ALTER COLUMN action SET DEFAULT ''::text;
+
+
+--
+-- Name: log_201911 detail; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201911 ALTER COLUMN detail SET DEFAULT ''::text;
+
+
+--
+-- Name: log_201912 id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201912 ALTER COLUMN id SET DEFAULT nextval('public.log_id_seq'::regclass);
+
+
+--
+-- Name: log_201912 date; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201912 ALTER COLUMN date SET DEFAULT now();
+
+
+--
+-- Name: log_201912 user_id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201912 ALTER COLUMN user_id SET DEFAULT 0;
+
+
+--
+-- Name: log_201912 action; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201912 ALTER COLUMN action SET DEFAULT ''::text;
+
+
+--
+-- Name: log_201912 detail; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_201912 ALTER COLUMN detail SET DEFAULT ''::text;
+
+
+--
+-- Name: log_2020 id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_2020 ALTER COLUMN id SET DEFAULT nextval('public.log_id_seq'::regclass);
+
+
+--
+-- Name: log_2020 date; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_2020 ALTER COLUMN date SET DEFAULT now();
+
+
+--
+-- Name: log_2020 user_id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_2020 ALTER COLUMN user_id SET DEFAULT 0;
+
+
+--
+-- Name: log_2020 action; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_2020 ALTER COLUMN action SET DEFAULT ''::text;
+
+
+--
+-- Name: log_2020 detail; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_2020 ALTER COLUMN detail SET DEFAULT ''::text;
+
+
+--
+-- Name: log_202001 id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202001 ALTER COLUMN id SET DEFAULT nextval('public.log_id_seq'::regclass);
+
+
+--
+-- Name: log_202001 date; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202001 ALTER COLUMN date SET DEFAULT now();
+
+
+--
+-- Name: log_202001 user_id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202001 ALTER COLUMN user_id SET DEFAULT 0;
+
+
+--
+-- Name: log_202001 action; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202001 ALTER COLUMN action SET DEFAULT ''::text;
+
+
+--
+-- Name: log_202001 detail; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202001 ALTER COLUMN detail SET DEFAULT ''::text;
+
+
+--
+-- Name: log_202002 id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202002 ALTER COLUMN id SET DEFAULT nextval('public.log_id_seq'::regclass);
+
+
+--
+-- Name: log_202002 date; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202002 ALTER COLUMN date SET DEFAULT now();
+
+
+--
+-- Name: log_202002 user_id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202002 ALTER COLUMN user_id SET DEFAULT 0;
+
+
+--
+-- Name: log_202002 action; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202002 ALTER COLUMN action SET DEFAULT ''::text;
+
+
+--
+-- Name: log_202002 detail; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202002 ALTER COLUMN detail SET DEFAULT ''::text;
+
+
+--
+-- Name: log_202003 id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202003 ALTER COLUMN id SET DEFAULT nextval('public.log_id_seq'::regclass);
+
+
+--
+-- Name: log_202003 date; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202003 ALTER COLUMN date SET DEFAULT now();
+
+
+--
+-- Name: log_202003 user_id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202003 ALTER COLUMN user_id SET DEFAULT 0;
+
+
+--
+-- Name: log_202003 action; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202003 ALTER COLUMN action SET DEFAULT ''::text;
+
+
+--
+-- Name: log_202003 detail; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202003 ALTER COLUMN detail SET DEFAULT ''::text;
+
+
+--
+-- Name: log_202004 id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202004 ALTER COLUMN id SET DEFAULT nextval('public.log_id_seq'::regclass);
+
+
+--
+-- Name: log_202004 date; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202004 ALTER COLUMN date SET DEFAULT now();
+
+
+--
+-- Name: log_202004 user_id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202004 ALTER COLUMN user_id SET DEFAULT 0;
+
+
+--
+-- Name: log_202004 action; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202004 ALTER COLUMN action SET DEFAULT ''::text;
+
+
+--
+-- Name: log_202004 detail; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202004 ALTER COLUMN detail SET DEFAULT ''::text;
+
+
+--
+-- Name: log_202005 id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202005 ALTER COLUMN id SET DEFAULT nextval('public.log_id_seq'::regclass);
+
+
+--
+-- Name: log_202005 date; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202005 ALTER COLUMN date SET DEFAULT now();
+
+
+--
+-- Name: log_202005 user_id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202005 ALTER COLUMN user_id SET DEFAULT 0;
+
+
+--
+-- Name: log_202005 action; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202005 ALTER COLUMN action SET DEFAULT ''::text;
+
+
+--
+-- Name: log_202005 detail; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202005 ALTER COLUMN detail SET DEFAULT ''::text;
+
+
+--
+-- Name: log_202006 id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202006 ALTER COLUMN id SET DEFAULT nextval('public.log_id_seq'::regclass);
+
+
+--
+-- Name: log_202006 date; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202006 ALTER COLUMN date SET DEFAULT now();
+
+
+--
+-- Name: log_202006 user_id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202006 ALTER COLUMN user_id SET DEFAULT 0;
+
+
+--
+-- Name: log_202006 action; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202006 ALTER COLUMN action SET DEFAULT ''::text;
+
+
+--
+-- Name: log_202006 detail; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202006 ALTER COLUMN detail SET DEFAULT ''::text;
+
+
+--
+-- Name: log_202007 id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202007 ALTER COLUMN id SET DEFAULT nextval('public.log_id_seq'::regclass);
+
+
+--
+-- Name: log_202007 date; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202007 ALTER COLUMN date SET DEFAULT now();
+
+
+--
+-- Name: log_202007 user_id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202007 ALTER COLUMN user_id SET DEFAULT 0;
+
+
+--
+-- Name: log_202007 action; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202007 ALTER COLUMN action SET DEFAULT ''::text;
+
+
+--
+-- Name: log_202007 detail; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202007 ALTER COLUMN detail SET DEFAULT ''::text;
+
+
+--
+-- Name: log_202008 id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202008 ALTER COLUMN id SET DEFAULT nextval('public.log_id_seq'::regclass);
+
+
+--
+-- Name: log_202008 date; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202008 ALTER COLUMN date SET DEFAULT now();
+
+
+--
+-- Name: log_202008 user_id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202008 ALTER COLUMN user_id SET DEFAULT 0;
+
+
+--
+-- Name: log_202008 action; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202008 ALTER COLUMN action SET DEFAULT ''::text;
+
+
+--
+-- Name: log_202008 detail; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202008 ALTER COLUMN detail SET DEFAULT ''::text;
+
+
+--
+-- Name: log_202009 id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202009 ALTER COLUMN id SET DEFAULT nextval('public.log_id_seq'::regclass);
+
+
+--
+-- Name: log_202009 date; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202009 ALTER COLUMN date SET DEFAULT now();
+
+
+--
+-- Name: log_202009 user_id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202009 ALTER COLUMN user_id SET DEFAULT 0;
+
+
+--
+-- Name: log_202009 action; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202009 ALTER COLUMN action SET DEFAULT ''::text;
+
+
+--
+-- Name: log_202009 detail; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202009 ALTER COLUMN detail SET DEFAULT ''::text;
+
+
+--
+-- Name: log_202010 id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202010 ALTER COLUMN id SET DEFAULT nextval('public.log_id_seq'::regclass);
+
+
+--
+-- Name: log_202010 date; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202010 ALTER COLUMN date SET DEFAULT now();
+
+
+--
+-- Name: log_202010 user_id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202010 ALTER COLUMN user_id SET DEFAULT 0;
+
+
+--
+-- Name: log_202010 action; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202010 ALTER COLUMN action SET DEFAULT ''::text;
+
+
+--
+-- Name: log_202010 detail; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202010 ALTER COLUMN detail SET DEFAULT ''::text;
+
+
+--
+-- Name: log_202011 id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202011 ALTER COLUMN id SET DEFAULT nextval('public.log_id_seq'::regclass);
+
+
+--
+-- Name: log_202011 date; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202011 ALTER COLUMN date SET DEFAULT now();
+
+
+--
+-- Name: log_202011 user_id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202011 ALTER COLUMN user_id SET DEFAULT 0;
+
+
+--
+-- Name: log_202011 action; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202011 ALTER COLUMN action SET DEFAULT ''::text;
+
+
+--
+-- Name: log_202011 detail; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202011 ALTER COLUMN detail SET DEFAULT ''::text;
+
+
+--
+-- Name: log_202012 id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202012 ALTER COLUMN id SET DEFAULT nextval('public.log_id_seq'::regclass);
+
+
+--
+-- Name: log_202012 date; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202012 ALTER COLUMN date SET DEFAULT now();
+
+
+--
+-- Name: log_202012 user_id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202012 ALTER COLUMN user_id SET DEFAULT 0;
+
+
+--
+-- Name: log_202012 action; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202012 ALTER COLUMN action SET DEFAULT ''::text;
+
+
+--
+-- Name: log_202012 detail; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202012 ALTER COLUMN detail SET DEFAULT ''::text;
+
+
+--
+-- Name: log_2021 id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_2021 ALTER COLUMN id SET DEFAULT nextval('public.log_id_seq'::regclass);
+
+
+--
+-- Name: log_2021 date; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_2021 ALTER COLUMN date SET DEFAULT now();
+
+
+--
+-- Name: log_2021 user_id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_2021 ALTER COLUMN user_id SET DEFAULT 0;
+
+
+--
+-- Name: log_2021 action; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_2021 ALTER COLUMN action SET DEFAULT ''::text;
+
+
+--
+-- Name: log_2021 detail; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_2021 ALTER COLUMN detail SET DEFAULT ''::text;
+
+
+--
+-- Name: log_202101 id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202101 ALTER COLUMN id SET DEFAULT nextval('public.log_id_seq'::regclass);
+
+
+--
+-- Name: log_202101 date; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202101 ALTER COLUMN date SET DEFAULT now();
+
+
+--
+-- Name: log_202101 user_id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202101 ALTER COLUMN user_id SET DEFAULT 0;
+
+
+--
+-- Name: log_202101 action; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202101 ALTER COLUMN action SET DEFAULT ''::text;
+
+
+--
+-- Name: log_202101 detail; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202101 ALTER COLUMN detail SET DEFAULT ''::text;
+
+
+--
+-- Name: log_202102 id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202102 ALTER COLUMN id SET DEFAULT nextval('public.log_id_seq'::regclass);
+
+
+--
+-- Name: log_202102 date; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202102 ALTER COLUMN date SET DEFAULT now();
+
+
+--
+-- Name: log_202102 user_id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202102 ALTER COLUMN user_id SET DEFAULT 0;
+
+
+--
+-- Name: log_202102 action; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202102 ALTER COLUMN action SET DEFAULT ''::text;
+
+
+--
+-- Name: log_202102 detail; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202102 ALTER COLUMN detail SET DEFAULT ''::text;
+
+
+--
+-- Name: log_202103 id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202103 ALTER COLUMN id SET DEFAULT nextval('public.log_id_seq'::regclass);
+
+
+--
+-- Name: log_202103 date; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202103 ALTER COLUMN date SET DEFAULT now();
+
+
+--
+-- Name: log_202103 user_id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202103 ALTER COLUMN user_id SET DEFAULT 0;
+
+
+--
+-- Name: log_202103 action; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202103 ALTER COLUMN action SET DEFAULT ''::text;
+
+
+--
+-- Name: log_202103 detail; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202103 ALTER COLUMN detail SET DEFAULT ''::text;
+
+
+--
+-- Name: log_202104 id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202104 ALTER COLUMN id SET DEFAULT nextval('public.log_id_seq'::regclass);
+
+
+--
+-- Name: log_202104 date; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202104 ALTER COLUMN date SET DEFAULT now();
+
+
+--
+-- Name: log_202104 user_id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202104 ALTER COLUMN user_id SET DEFAULT 0;
+
+
+--
+-- Name: log_202104 action; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202104 ALTER COLUMN action SET DEFAULT ''::text;
+
+
+--
+-- Name: log_202104 detail; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202104 ALTER COLUMN detail SET DEFAULT ''::text;
+
+
+--
+-- Name: log_202105 id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202105 ALTER COLUMN id SET DEFAULT nextval('public.log_id_seq'::regclass);
+
+
+--
+-- Name: log_202105 date; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202105 ALTER COLUMN date SET DEFAULT now();
+
+
+--
+-- Name: log_202105 user_id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202105 ALTER COLUMN user_id SET DEFAULT 0;
+
+
+--
+-- Name: log_202105 action; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202105 ALTER COLUMN action SET DEFAULT ''::text;
+
+
+--
+-- Name: log_202105 detail; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202105 ALTER COLUMN detail SET DEFAULT ''::text;
+
+
+--
+-- Name: log_202106 id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202106 ALTER COLUMN id SET DEFAULT nextval('public.log_id_seq'::regclass);
+
+
+--
+-- Name: log_202106 date; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202106 ALTER COLUMN date SET DEFAULT now();
+
+
+--
+-- Name: log_202106 user_id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202106 ALTER COLUMN user_id SET DEFAULT 0;
+
+
+--
+-- Name: log_202106 action; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202106 ALTER COLUMN action SET DEFAULT ''::text;
+
+
+--
+-- Name: log_202106 detail; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202106 ALTER COLUMN detail SET DEFAULT ''::text;
+
+
+--
+-- Name: log_202107 id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202107 ALTER COLUMN id SET DEFAULT nextval('public.log_id_seq'::regclass);
+
+
+--
+-- Name: log_202107 date; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202107 ALTER COLUMN date SET DEFAULT now();
+
+
+--
+-- Name: log_202107 user_id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202107 ALTER COLUMN user_id SET DEFAULT 0;
+
+
+--
+-- Name: log_202107 action; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202107 ALTER COLUMN action SET DEFAULT ''::text;
+
+
+--
+-- Name: log_202107 detail; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202107 ALTER COLUMN detail SET DEFAULT ''::text;
+
+
+--
+-- Name: log_202108 id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202108 ALTER COLUMN id SET DEFAULT nextval('public.log_id_seq'::regclass);
+
+
+--
+-- Name: log_202108 date; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202108 ALTER COLUMN date SET DEFAULT now();
+
+
+--
+-- Name: log_202108 user_id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202108 ALTER COLUMN user_id SET DEFAULT 0;
+
+
+--
+-- Name: log_202108 action; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202108 ALTER COLUMN action SET DEFAULT ''::text;
+
+
+--
+-- Name: log_202108 detail; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202108 ALTER COLUMN detail SET DEFAULT ''::text;
+
+
+--
+-- Name: log_202109 id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202109 ALTER COLUMN id SET DEFAULT nextval('public.log_id_seq'::regclass);
+
+
+--
+-- Name: log_202109 date; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202109 ALTER COLUMN date SET DEFAULT now();
+
+
+--
+-- Name: log_202109 user_id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202109 ALTER COLUMN user_id SET DEFAULT 0;
+
+
+--
+-- Name: log_202109 action; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202109 ALTER COLUMN action SET DEFAULT ''::text;
+
+
+--
+-- Name: log_202109 detail; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log_202109 ALTER COLUMN detail SET DEFAULT ''::text;
+
+
+--
+-- Name: log log_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.log
+    ADD CONSTRAINT log_pkey PRIMARY KEY (id);
+
+
+--
+-- PostgreSQL database dump complete
+--
+

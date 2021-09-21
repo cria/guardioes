@@ -1,0 +1,86 @@
+:root	{
+		--base-A		: #c03;		/* red */
+		--base-B		: #9c9;		/* light green */
+		--base-C		: #696;		/* dark green */
+		--base-D		: #c93;		/* mustard */
+
+		--base-F		: #06c;		/* blue */		
+
+		--white			: #fff;
+		--black			: #033;
+		--green			: var(--base-C);
+		--red			: var(--base-A);
+
+		--gray-very-lighter	: #fefefe;
+		--gray-much-lighter	: #f3f3f3;
+		--gray-lighter		: #eee;
+		--gray-light		: #ccc;
+		--gray-mid		: #999;
+		--gray-dark		: #666;
+		--gray-very-dark	: #444;
+
+		--sp-acc-dark-bg	: var(--white);
+		--sp-acc-light-bg	: var(--base-C);
+		--sp-syn-dark-bg	: var(--gray-mid);
+		--sp-syn-light-bg	: var(--gray-dark);
+
+		--home-call		: var(--base-A);
+
+		--main-menu-on		: var(--base-A);
+		--main-menu-off		: var(--gray-very-dark);
+		--main-menu-bg		: var(--base-B);
+		--main-menu-sep		: var(--white);
+		
+		--sub-menu-on		: var(--base-A);
+		--sub-menu-off		: var(--gray-very-dark);
+		--sub-menu-bg		: var(--white);
+		--sub-menu-sep		: var(--base-C);
+		--sub-menu-border	: var(--base-D);
+	
+		--text-normal		: var(--black);
+		--text-link		: var(--base-C);
+		--text-label		: var(--gray-dark);
+		--text-foot		: var(--gray-mid);
+		--text-tag		: var(--base-D);
+
+		--title-h1		: var(--base-D);
+		--title-h2		: var(--base-D);
+		--title-h3		: var(--base-D);
+		--title-h4		: var(--base-D);
+
+		--button-bg		: var(--base-D);
+		--button-fg		: var(--white);
+
+		--input-bg		: var(--white);
+		--input-fg		: var(--base-F);
+		--input-border		: var(--base-B);
+
+		--user-border-alert	: var(--base-A);
+		--user-border		: var(--gray-light);
+		--user-marker-rank	: var(--base-A);
+
+		--record-head-border	: var(--base-D);
+		--record-body-border	: var(--base-B);
+		--interaction           : var(--base-A);
+
+		--ident-bg-current	: var(--base-B);
+		--ident-bg-family	: var(--gray-much-lighter);
+
+		--table-head-border	: var(--base-D);
+		--table-body-border	: var(--base-B);
+
+		--specialist-stats	: var(--base-D);
+		--guardian-stats	: var(--base-A);
+		--photos-stats		: var(--base-C);
+
+		--success		: var(--base-C);
+		--warning		: var(--base-D);
+		--error			: var(--base-A);
+		--notice		: var(--gray-dark);
+
+		--svg-A			: var(--base-A);
+		--svg-B			: var(--base-B);
+		--svg-C			: var(--base-C);
+		--svg-D			: var(--base-D);
+		--svg-Z			: var(--black);
+	}

@@ -1,0 +1,12 @@
+Olá <b>%nickname%</b>, você está cadastrado nos Guardiões da Biodiversidade como <b>especialista %pending%</b>.
+<p/>
+Você está contribuindo com 
+<table>
+<tr><td><b>%num_images%</b></td><td>fotos</td></tr>
+<tr><td><a href='/search?action=search&usr_id=%user_id%'><b>%num_rec%</b></a></td>
+    <td><a href='/search?action=search&usr_id=%user_id%'>observações</a></td>
+</tr>
+<tr><td><b>%num_ident%</b></td><td>identificações</td></tr>
+</table>
+<p/>
+<b>%spp_id%</b> espécies foram identificadas em suas observações<p/>

@@ -1,0 +1,83 @@
+#!/usr/local/bin/perl
+use lib "../lib";
+use GUARDIOES;
+use WebService::Instagram;
+use Data::Dumper;
+
+my $cfg = new GUARDIOES();
+
+my $id = $cfg->{'instagram_id'};
+my $secret = $cfg->{'instagram_secret'};
+
+my $par = $cfg->param();
+
+my $code = $par->data('code');
+
+my $appcode = $par->data('ac');
+
+my $redirect_uri = $cfg->{'home_url'} . '/instagramLogin';
+
+# Acrescenta parâmetro do app se houver
+if ($appcode)
+{ $redirect_uri .= "?ac=$appcode";
+}
+
+my $client = WebService::Instagram->new({ client_id     => $id,
+                                          client_secret => $secret,
+                                          redirect_uri  => $redirect_uri
+                                        });
+
+if ($code)
+{ # Caso tenha sido redirecionado pra cá com o parâmetro code
+
+  # Pega o access token
+  $client->set_code($code);
+  my $access_token = $client->get_access_token();
+
+  $client->set_access_token($access_token);
+
+  # Pega dados do usuário (já vem json-decoded)
+  my $resp = $client->request('https://api.instagram.com/v1/users/self/');
+
+  if ($resp) {
+
+      my $context = '';
+
+      my $data = {
+          'network' => 'instagram',
+          'netid' => $resp->{data}->{id},
+          'name' => $resp->{data}->{full_name},
+          'nickname' => $resp->{data}->{username},
+	  'picture' => $resp->{data}->{profile_picture},
+          'access_token' => $access_token,
+      };
+
+      # Acrescenta parâmetro do app se houver
+      if ($appcode)
+      { $data->{'appcode'} = $appcode;
+        # Don't use if $cfg->{'mobile'} because login scripts will always run in root directory
+        $context = 'mobile/';
+      }
+
+      #my $d = Dumper $data;
+      #print "Content-type: text/plain\n\n";
+      #print "OK [$d]\n";
+      #exit 0;
+
+      my ($session_id,$user_status) = $cfg->login($data);
+
+      my $location = $user_status eq 'new' ? 'register' : 'welcome';
+
+      print $cfg->set_cookie($session_id,$context.$location);
+  }
+  else
+  { print "Falha na comunicação com o Instagram" }
+}
+else
+{ # Primeiro acesso: redireciona para autenticar/autorizar no Instagram
+
+  my $url = $client->get_auth_url();
+
+  print "Location: ",$url,"\n\n";
+}
+

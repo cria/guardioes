@@ -1,0 +1,50 @@
+<svg width="568" height="500" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg">
+<defs>
+	<clipPath id="hex01">
+		<polygon points="436,365, 513,348, 567,406, 543,482, 465,498, 412,440"
+			 style="fill: transparent; stroke: transparent; stroke-width: 3"
+			 myID="bottom black  hex"/>
+	</clipPath>
+	
+	<clipPath id="hex02">
+		<polygon points="186,152, 273,66, 388,98, 416,215, 329,298, 213,267"
+			 style="fill: transparent; stroke: transparent; stroke-width: 3"
+			 myID="midle black hex"/>
+	</clipPath>
+</defs>
+<polygon points="55,206, 130,79, 276,81, 348,208, 275,334, 128,334"
+	 style="fill: var(--svg-A); stroke: var(--svg-A); stroke-width: 3"
+	 myID="center red hex"/>
+
+<polygon points="231,248, 330,224, 400,298, 371,397, 273,420, 202,346"
+	 style="fill: var(--svg-B); stroke: var(--svg-B); stroke-width: 3"
+	 myID="bottom green hex"/>
+
+<polygon points="323,352, 391,312, 459,352, 459,431, 391,470, 322,430"
+	 style="fill: transparent; stroke: var(--svg-D); stroke-width: 3"
+	 myID="bottom mustard hex"/>
+
+<polygon points="60,45, 129,6, 198,46, 197,125, 129,164, 60,124"
+	 style="fill: transparent; stroke: var(--svg-D); stroke-width: 3"
+	 myID="top mustard hex"/>
+
+<polygon points="2,26, 42,1, 84,25, 84,72, 42,96, 1,72"
+	 style="fill: transparent; stroke: var(--svg-C); stroke-width: 3"
+	 myID="top green hex"/>
+
+<circle	 cx="109"  cy="288" r="74"
+	 style="fill: var(--svg-D); stroke: var(--svg-D); stroke-width: 3"
+	 myID="middle mustard circle"/>
+
+
+<image x="183" y="63" width="235" height="238" clip-path="url(#hex02)" xlink:href="__IMG_HEX__" myID="midle black hex"/>
+
+<image x="409" y="344" width="158" height="155" clip-path="url(#hex01)" xlink:href="__IMG_HEX__" myID="bottom black  hex"/>
+
+</svg>
+
+<cover  title_x='400' title_y='23'
+        box01_x='500' box01_y='100' box01_w='400' box01_h='400'
+        box02_x='15'  box02_y='400' box02_w='300' box02_h='150'
+        box03_x='650' box03_y='450' box03_w='250' box03_h='100'
+/>

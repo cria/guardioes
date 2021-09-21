@@ -1,0 +1,27 @@
+#!/usr/local/bin/perl
+$|=1;
+use strict;
+use lib "../lib";
+use GUARDIOES;
+
+my $cfg = new GUARDIOES();
+
+my $script = <<EOM;
+<script type="text/javascript" src="/js/highslide/highslide/highslide.js"></script>
+<link rel="stylesheet" type="text/css" href="/js/highslide/highslide/highslide.css" />
+<script type="text/javascript">
+    hs.graphicsDir = '/js/highslide/highslide/graphics/';
+    hs.outlineType = null;
+    hs.wrapperClassName = 'colored-border';
+</script>
+<script type="text/javascript" src="/js/usersForm.js"></script>
+EOM
+
+print $cfg->html_head({ script => $script });
+
+print $cfg->div_top_banner({ page => 'about', sub_page => 'faq' });
+
+print "<div id='divMain'>";
+print $cfg->get_page({ });
+
+print $cfg->html_foot();

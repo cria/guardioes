@@ -1,0 +1,48 @@
+<h1>FAQ - Perguntas frequentes</h1>
+<blockquote>
+<ol>
+<li><b>O que é uma observação?</b><p/>
+	Observação é o registro de UM evento visualizado em área natural, agrícola ou urbana, de interação entre UMA planta e UM animal. </li><p/>
+<li><b>Como faço para participar do sistema?</b><p/>
+	Basta você fazer seu cadastro <a href='/login'>aqui</a>.  </li><p/>
+<li><b>Quais informações são de preenchimento obrigatório para enviar uma observação?</b><p/>
+	Você deve submeter, pelo menos, UMA foto do animal interagindo com a planta, UMA foto da planta, a data, a localidade e a hora da observação, e indicar a qual grupo o animal fotografado na interação pertence. Sem estas informações não é possível completar o formulário. </li><p/>
+<li><b>Como é uma boa foto para enviar ao sistema?</b><p/>
+	As principais características de uma boa foto são a boa iluminação e o foco. Fotografias com animais e plantas desfocados impedem a identificação pelos especialistas. Antes de sair para o campo em busca de interações, <a href='/photos_tips'>confira aqui mais dicas de como tirar uma boa fotografia</a> e tire tantas fotos quanto quiser para escolher as melhores!</li><p/>
+<li><b>Como ocorre o preenchimento das coordenadas geográficas?</b><p/>
+	Se as fotos foram feitas com a localização (GPS) da câmera ativada, o sistema identifica as coordenadas associadas à imagem automaticamente. Caso tenham sido feitas com a localização desativada, você deve usar o mapa para indicar onde foi feita a observação. Para isso, basta aumentar o zoom do mapa, clicar no local de observação e, assim, será desenhado um ponteiro, que pode ser arrastado para melhor indicar a localização. As coordenadas geográficas são coletadas da localização do ponteiro. A localização é obrigatória e essencial para o monitoramento, pois a partir desses dados podemos identificar onde as espécies ocorrem e como estão distribuídas.</li><p/>
+<li><b>Fiz mais de uma  observação distinta de interação animal-planta, como devo incluí-las no sistema?</b><p/>
+	Para cada observação, você deve preencher o formulário uma vez. No caso de observar, por exemplo, três eventos distintos de interação animal-planta, então deve preencher três vezes o formulário. </li><p/>
+<li><b>Como guardião, posso fazer a identificação das espécies fotografadas em minhas observações?</b><p/>
+	Sim. Seu conhecimento é muito importante, no entanto, todas as observações são submetidas à avaliação dos especialistas. Veja "Por que um especialista precisa validar a minha identificação?" abaixo.</li><p/>
+<li><b>Fotografei uma interação, desejo enviar ao sistema, mas só conheço o nome popular das espécies observadas. Posso enviá-la mesmo assim?</b><p/>
+	Sim. Conhecer a variedade de nomes populares das espécies existentes é uma forma de registrar o conhecimento popular. Incluindo o nome popular da(s) espécie(s) você está contribuindo para o registro sistemático da nossa cultura e história. </li><p/>
+<li><b>Por que um especialista precisa validar a minha identificação?</b><p/>
+	Frequentemente a classificação dos nomes científicos muda e os especialistas são profissionais que contribuem e atualizam estas mudanças na classificação das espécies. Devido a isto, as identificações realizadas pelos guardiões no sistema são submetidas à validação.</li><p/>
+<li><b>Como faço para colaborar como especialista?</b><p/>
+	Basta você fazer seu cadastro <a href='/login'>aqui</a>. Primeiro você deve preencher seus dados pessoais em <i>cadastro de guardião</i> e concordar com os termos de uso do sistema. Adicionalmente, você deve concordar com os termos de uso para o especialista, disponibilizar um currículo, marcar os grupos taxonômicos em quais quer colaborar com identificações e apontar se deseja, e com qual frequência, receber notificações por e-mail sobre observações que necessitam de identificação ou validação. Antes de colaborar como especialista, seu pedido precisa ser aprovado pelo administrador.</li><p/>
+<li><b>Qual o papel de um especialista?</b><p/>
+	O especialista é um voluntário com dupla atribuição. Ele pode submeter fotos ao sistema como um guardião, mas também contribui com a identificação taxonômica e validação dos dados que são submetidos.</li><p/>
+<li><b>Sou um especialista cadastrado como colaborador na identificação de abelhas. Posso ter acesso às observações de outros grupos de animais e plantas que necessitam de identificação, mesmo sem possuir cadastro nesses grupos?</b><p/>
+	Sim. O cadastro em grupos taxonômicos é necessário para nos ajudar a localizar os especialistas e direcionar a eles os registros de animais e plantas observados que necessitam de identificação ou validação. O cadastro nos grupos, portanto, é simplesmente uma forma de filtrar os registros que serão notificados aos especialistas por e-mail e também mostrados na página do usuário assim que entrarem no sistema. No entanto, o sistema permite a todos os especialistas buscar por todas as observações que necessitam de identificação ou validação, chamadas de pendências no sistema.</li><p/>
+<li><b>Como especialista, tive acesso a uma observação formada por um animal e planta dos quais não sei a identificação. No entanto, conheço especialistas que podem colaborar com a identificação dos espécimes na observação. É possível notificá-los?</b><p/>
+	Sim, o próprio sistema permite que um especialista já cadastrado notifique outros especialistas, cadastrados ou não no sistema, pedindo a identificação ou validação dos nomes científicos de espécimes fotografados nas observações. A notificação é feita por e-mail e encontra-se na lista de observações enviadas ao sistema: ao editar a observação, basta clicar em <i>notificar</i>.
+<li><b>Um especialista pode ser um guardião?</b><p/>
+	Pode e é um guardião. Veja "Qual o papel de um especialista?" acima.</li><p/>
+<li><b>Como guardião, posso apagar uma observação? E como especialista?</b><p/> 
+	Tanto o guardião quanto o especialista podem apagar suas observações. No entanto, podem apagar do sistema somente suas observações que ainda não passaram pela validação de especialistas.</li><p/>
+<li><b>Como guardião, posso mudar a identificação de uma observação quando ela foi validada por um especialista?</b><p/>
+	Sim, porém você pode fazer uma nova identificação somente para as suas observações. Feita a nova identificação, ela fará parte do sistema somente após validação por um especialista. Entenda "Por que um especialista precisa validar a minha identificação?" acima.</li><p/>
+<li><b>Para ter acesso às observações registradas no sistema preciso possuir cadastro?</b><p/>
+	Não, qualquer pessoa pode ter acesso às observações registradas pelos guardiões sem possuir um cadastro no sistema. No entanto, para enviar uma observação, é necessário que você faça o cadastro.</li><p/>
+<li><b>Como os dados submetidos ao sistema pelos guardiões podem ser úteis?</b><p/>
+	O monitoramento da interação animal-planta ao longo do tempo e do espaço irão subsidiar pesquisas sobre o efeito de mudanças climáticas, por exemplo, nas espécies, populações e comunidades. Estes dados também irão ajudar no registro de espécies novas e raras. </li><p/>
+<li><b>O que significa explorar as observações?</b><p/>
+	Explorar as observações significa buscar pelos registros de interação enviados ao sistema pelos guardiões e poder analisá-los visualmente na forma de fotos, mapa, listas, gráficos e tabelas, de acordo com os critérios de busca do usuário. </li><p/>
+<li><b>Sou coordenador de um projeto que objetiva documentar interações animal-planta. Como faço para incluir a área de atuação do meu projeto?</b><p/>
+	Entre em contato no <a href='http://w2.cria.org.br/feedback/pt/index?guardioes.cria.org.br' target="talktous">fale conosco</a> no rodapé dessa página que daremos as informações necessárias.</li><p/>
+<li><b>Tirei fotos ano passado, posso submetê-las ao sistema?</b><p/>
+	Sim. É muito importante ter registros da interação planta-animal pretéritos ao lançamento do sistema. Veja "Quais informações são de preenchimento obrigatório para enviar uma observação?" acima.</li><p/>
+
+</ol>
+</blockquote>

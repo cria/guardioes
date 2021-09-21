@@ -1,0 +1,12 @@
+Hello <b>%nickname%</b>, you are registered in the Guardiões da Biodiversidade as a <b>guardian</b>.
+<p/>
+You are contributing with
+<table>
+<tr><td><b>%num_images%</b></td><td>photos</td></tr>
+<tr><td><a href='/search?action=search&usr_id=%user_id%'><b>%num_rec%</b></a></td>
+    <td><a href='/search?action=search&usr_id=%user_id%'>observations</a></td>
+</tr>
+<tr><td><b>%num_ident%</b></td><td>identifications</td></tr>
+</table>
+<p/>
+<b>%spp_id%</b> species were identified in your observations <p/>

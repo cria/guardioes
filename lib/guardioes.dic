@@ -1,0 +1,1594 @@
+account
+pt	meu cadastro
+en	my account
+
+record:ucfirst:lc
+pt	observação
+en	observation
+
+records:ucfirst:lc
+pt	observações
+en	observations
+
+my_records
+pt	minhas&#160;observações
+en	my&#160;observations
+
+new_record
+pt	enviar&#160;observação
+en	send&#160;observation
+
+login
+pt	entrar
+en	login
+
+logoff
+pt	sair
+en	logoff
+
+project
+pt	o&#160;sistema
+en	the&#160;system
+
+about
+pt	saiba mais
+en	about
+
+partners
+pt	parceiros
+en	partners
+
+credits:lc
+pt	Créditos
+en	Credits
+
+howto
+pt	como&#160;participar
+en	how&#160;to&#160;participate
+
+education
+pt	escolaridade
+en	education
+
+fundamental
+pt	fundamental
+en	basic
+
+medio
+pt	médio
+en	high school
+
+superior
+pt	superior
+en	undergraduate
+
+pos
+pt	pós-Graduação
+en	graduate
+
+pt
+pt	português
+en	Português
+
+en
+en	English
+pt	English
+
+searchNotFound
+pt	Nenhum registro encontrado que satisfaça os critérios de busca 
+en	No records found that match the search criteria
+
+userNotFound
+pt	Usuário ou senha inválido
+en	Invalid username or password
+
+save
+pt	Salvar
+en	Save
+
+register
+pt	Registrar
+en	Register
+
+completeYourData
+pt	Seus dados estão incompletos.
+	Por favor, complete-os para que possamos te conhecer você <a href="register">clicando aqui</a>.
+en	Your data are incomplete.
+	Please complete them so we can know you better <a href="register">clicking here</a>.
+
+plantae
+pt	plantas
+en	plants
+
+planta:ucfirst
+pt	planta
+en	plant
+
+animalia
+pt	animais
+en	animals
+
+animal:ucfirst
+pt	animal
+en	animal
+
+vernacular
+pt	nome popular
+en	common name
+
+ninho
+pt	ninho
+en	nest
+
+lagarto
+pt	lagarto
+en	lizard
+
+morcego
+pt	morcego
+en	bat
+
+ave
+pt	ave
+en	bird
+
+formiga
+pt	formiga
+en	ant
+
+abelha
+pt	abelha
+en	bee
+
+vespa
+pt	vespa
+en	wasp
+
+borboleta
+pt	borboleta
+en	butterfly
+
+borboletas
+pt	borboletas
+en	butterflies
+
+mariposa
+pt	mariposa
+en	moth
+
+mosca
+pt	mosca
+en	fly
+
+moscas
+pt	moscas
+en	flies
+
+besouro
+pt	besouro
+en	beetle
+
+grilo
+pt	grilo
+en	cricket
+
+aranha
+pt	aranha
+en	spider
+
+zzz_outro
+pt	outro animal
+en	another animal
+
+zzz_outros
+pt	outros animais
+en	other animals
+
+google
+pt	Google
+en	Google
+
+twitter
+pt	Twitter
+en	Twitter
+
+instagram
+pt      Instagram
+en      Instagram
+
+facebook
+pt	Facebook
+en	Facebook
+
+Guardioes_Title
+pt	Guardiões da Biodiversidade
+en	Guardiões da Biodiversidade 
+
+guardioes
+pt	Guardiões
+en	Guardians
+
+guardians:lc:ucfirst
+pt	guardiões
+en	guardians
+
+guardian
+pt	guardião
+en	guardian
+
+category
+pt	categoria
+en	category
+
+status
+pt	status
+en	status
+
+since
+pt	desde
+en	since
+
+last_seen
+pt	visto em
+en	last seen
+
+born
+pt	nasc.
+en	born
+
+male
+pt	masculino
+en	male
+
+female
+pt	feminino
+en	female
+
+records
+pt	registros
+en	records
+
+guardiao
+pt	guardião
+en	guardian
+
+especialista
+pt	especialista
+en	specialist
+
+admin
+pt	administrador
+en	administrator
+
+super
+pt	administrador geral
+en	general administrator
+
+superuser
+pt	administrador geral
+en	general administrator
+
+ativo
+pt	ativo
+en	active
+
+pendente
+pt	pendente
+en	pending
+
+inativo
+pt	inativo
+en	inactive
+
+cadastro_guardiao
+pt	Cadastro de guardião
+en	Registration of a guardian 
+
+dados_pessoais
+pt	dados pessoais
+en	personal data
+
+whats_your_name
+pt	qual seu nome completo?
+en	full Name
+
+whats_your_email
+pt      qual o seu e-mail?
+en      e-mail
+
+your_nickname
+pt	como quer ser chamado?
+en	nickname?
+
+alternative_email
+pt	e-mail alternativo
+en	alternative e-mail
+
+your_password
+pt	digite sua senha
+en	type your password
+
+your_password_again
+pt	digite novamente sua senha para confirmar
+en	type your password again to confirm
+
+birthdate
+pt	data de nascimento (dia/mês/ano)
+en	date of birth (day/month/year)
+
+gender:ucfirst
+pt	gênero
+en	gender
+
+language
+pt	língua (idioma)
+en	language
+
+cadastro_especialista
+pt	Cadastro de especialista
+en	Registration of a specialist
+
+agreement_title
+pt	concordância com os termos de uso
+en	use terms agreement
+
+cadastro_especialista_explain
+pt	Se você é um especialista e quer colaborar na identificação dos espécimes, preencha os dados abaixo.
+en	If you are a specialist and wish to collaborate in identifying specimens, fill out the information below.
+
+especialist_confirmation
+pt	Quero colaborar com os Guardiões da Biodiversidade como especialista e
+	confirmo que li e concordo com os
+	<a href="javascript:openNote('terms_especialista')">termos estabelecidos</a>.
+en	I want to collaborate with the Guardiões da Biodiversidade as a
+	specialist and confirm that I have read and agree to the
+	<a href="javascript:openNote('terms_especialista')">established rules</a>.
+
+terms_guardiao
+pt	Quero participar dos Guardiões da Biodiversidade e confirmo que li, concordo e assino os
+	<a href="javascript:openNote('terms_guardiao')">termos de participação estabelecidos</a>.
+en	I want to participate of the Guardiões da Biodiversidade and confirm that I have
+	read, agreed and signed the <a href="javascript:openNote('terms_guardiao')">established rules</a>.
+
+terms_guardiao_signed_in
+pt	<a href="javascript:openNote('terms_guardiao')">Termos de uso</a> lidos e assinados em 
+en	<a href="javascript:openNote('terms_guardiao')">Terms of use</a> read and signed in 
+
+terms_especialista_signed_in
+pt	<a href="javascript:openNote('terms_especialista')">Termos de colaboração</a> como especialista lidos e assinados em 
+en	<a href="javascript:openNote('terms_especialista')">Terms of collaboration</a> as an specialist read and signed in 
+
+curriculum_title
+pt	currículo
+en	curriculum
+
+curriculum_label
+pt	Especifique o link para seu currículo na
+	<a href="http://buscatextual.cnpq.br/buscatextual/busca.do?metodo=apresentar" target='curriculo'>Plataforma Lattes</a>,
+	<a href="https://www.academia.edu/" target='curriculo'>Academia</a>,
+	<a href="https://www.linkedin.com/" target='curriculo'>Linkedin</a> 
+	ou alguma outra plataforma onde esteja disponível.
+en	Specify the link to your curriculum at 
+	<a href="http://buscatextual.cnpq.br/buscatextual/busca.do?metodo=present" target='curriculo'> Plataforma Lattes </a>,
+	<a href="https://www.academia.edu/" target='curriculo'> Academia </a>,
+	<a href="https://www.linkedin.com/" target='curriculo'> Linkedin </a>
+	Or any other platform where it is available.
+
+see_curriculum
+pt	veja currículo
+en	see curriculum
+
+no_curriculum
+pt	não informou currículo
+en	curriculum not informed
+
+agreement
+pt	aceitou termos de uso
+en	accepted terms of participation
+
+no_agreement
+pt	não aceitou termos de uso
+en	not accepted terms of participation
+
+my_expertise_title
+pt	grupos taxonômicos
+en	taxonomic groups
+
+my_expertise
+pt	Marque os grupos taxonômicos nos quais quer colaborar com identificações.
+en	Check the taxonomic groups for which you wish to collaborate with identifications.
+
+no_expertise
+pt	nenhum grupo taxonômico informado
+en	no taxonomic group informed
+
+comments
+pt	comentários
+en	comments
+
+observation_record
+pt	Observação
+en	Observation
+
+Photos
+pt	Fotos
+en	Photos
+
+Photos_interaction
+pt      Adicionar fotos da interação
+en      Add photos of the interaction
+
+Photos_interaction_explain
+pt	Adicione de uma a quatro fotos mostrando a interação entre animal e planta.
+en      Upload from one to four photos showing the interaction between the animal and the plant.
+
+Photos_plant
+pt      Adicionar fotos da planta
+en      Add photos of the plant 
+
+Photos_plant_explain
+pt      Adicione de uma a quatro fotos mostrando a planta.
+en      Upload from one to four photos of the plant.
+
+Images
+pt	Imagens
+en	Images
+
+welcome_mobile
+pt	Olá <b>%nickname%</b>, você está conectado ao sistema!<p/>
+en	Hello <b>%nickname%</b>, you are connected to the system!<p/>
+
+send
+pt	enviar
+en	send
+
+Location
+pt	Localização
+en	Location
+
+tag_location
+pt	Loc.
+en	Loc.
+
+tag_coords
+pt	Coords.
+en	Coords.
+
+tag_fotografed_by
+pt	Fotografado por
+en	Photographed by
+
+tag_observed_on
+pt	Observado em
+en	Observed on
+
+tag_observer
+pt	Observado por
+en	Observed by
+
+tag_eventremarks
+pt	Notas
+en	Notes
+
+tag_interaction:lc
+pt	Tipo de interação
+en	Interaction type
+
+tag_taxgrp
+pt	Grupo
+en	Group
+
+tag_habit
+pt	Hábito
+en	Habit
+
+Location_explain
+pt	Use o mapa para localizar onde foi feita a observação.
+	Se a foto foi feita com a localização ativada, não será necessário o uso do mapa,
+	pois os dados são preenchidos automaticamente. Preencha os campos que ainda ficarem em branco.
+en	Use the map to locate where the observation was made.
+	If the photo was taken with the location activated, it is not necessary to use
+	the map because the data is added automatically. Fill out the fields that still remain blank.
+
+taxonomicGroup
+pt	grupo de animais
+en	animal group
+
+queBicho
+pt	Que animal é esse?
+en	What animal is this?
+
+queBicho_explain
+pt	Selecione o grupo do animal observado:
+en	Select the group of the animal you observed:
+
+habito_label
+pt	hábito da planta
+en	plant habit
+
+habito
+pt	Hábito da planta
+en	Habit
+
+habito_explain
+pt	Selecione o hábito da planta observada:
+en	Select the habit of the plant you observed:
+
+construindo_ninho
+pt	construindo ninho
+en	building a nest
+
+morando
+pt	morando
+en	inhabit
+
+coletando_alimento_flor
+pt	coletando alimento da flor
+en	collecting floral resource
+
+coletando_resina
+pt	coletando resina
+en	collecting resin
+
+dormindo
+pt	dormindo
+en	sleeping
+
+copulando
+pt	copulando
+en	mating
+
+comendo_cortando_folhas
+pt	comendo ou cortando folhas
+en	eating or cutting leaves
+
+comendo_cortando_petalas
+pt	comendo ou cortando pétalas
+en	eating or cutting petals
+
+sugando_seiva
+pt	sugando seiva
+en	sucking sap
+
+apoiando
+pt	se apoiando na planta
+en	leaning on the plant
+
+se_alimentando_fruto
+pt	se alimentando do fruto
+en	feeding on the fruit
+
+nda_graph
+pt	NDA
+en	NOA
+
+nda
+pt	nenhuma das anteriores
+en	none of the above
+
+interacao_label:lc
+pt	Tipo de interação
+en	Type of interaction
+
+interacao
+pt	Tipo de interação entre o animal e a planta
+en	Type of interaction between the animal and the plant
+
+interacao_explain
+pt	Selecione a interação que observou:
+en	Select the interaction observed:
+
+arvore
+pt	árvore
+en	tree
+
+arbusto
+pt	arbusto
+en	shrub
+
+erva
+pt	erva
+en	herb
+
+epifita
+pt	epífita
+en	epiphyte
+
+trepadeira
+pt	trepadeira
+en	vine
+
+parasita
+pt	parasita
+en	parasite
+
+plant_identification:lc
+pt	Identificação da planta
+en	Plant identification
+
+animal_identification:lc
+pt	Identificação do animal
+en	Animal identification
+
+Identification:lc
+pt	Identificação
+en	Identification
+
+Identifications:lc
+pt	Identificações
+en	Identifications
+
+in30days
+pt	nos últimos 30 dias
+en	in the last 30 days
+
+Identification_explain
+pt	Preencha os campos abaixo com a....
+en	Please fill out the fields below with the information about the ....
+
+Observations
+pt	Observações gerais
+en	General observations
+
+Observations_explain
+pt	Preencha o campo abaixo com quaisquer comentários que
+	acredite ser importante sobre sua observação.
+en	Please fill out the field below with any comments
+	you find relevant about your observation.
+
+country
+pt	país
+en	country
+
+stateProvince
+pt	estado
+en	state
+
+municipality
+pt	município
+en	municipality
+
+location
+pt	localidade
+en	location
+
+date:ucfirst
+pt	data (dia/mês/ano)
+en	date (month/day/year)
+
+date_only:ucfirst
+pt	data
+en	date
+
+date_sent:ucfirst
+pt	enviado em
+en	sent on
+
+period
+pt	hora
+en	time
+
+home
+pt	principal
+en	home
+
+linkNetworks
+pt	Você pode vincular sua conta nos Guardiões às redes sociais
+	listadas abaixo para facilitar seu acesso.<p/>
+	Para vincular a conta, clique em "vincular"
+en	To facilitate your access, you can sign up with the social
+	networks listed below.<p/>
+	To link to your account, click on the word "link".
+
+link
+pt	vincular
+en	link
+
+linked
+pt	vinculada
+en	linked
+
+pendings
+pt	pendências
+en	dependencies
+
+pendings_link
+pt	explorar pendências
+en	explore dependencies
+
+Indicators:lc
+pt	Indicadores
+en	Indicators
+
+indicatorsFormError
+pt	Parâmetros inválidos
+en	Invalid parameters
+
+FAQ:lc
+pt	FAQ
+en	FAQ
+
+usersInTime
+pt	usuários no período
+en	users during the period
+
+idsAnimaliaInTime
+pt	identificações de animais no período
+en	identifications of animals during the period
+
+idsPlantaeInTime
+pt	identificações de plantas no período
+en	identifications during the period
+
+recordsInTime
+pt	observações no período
+en	observations during the period
+
+Search:lc
+pt	Explorar
+en	Explore
+
+ExploreFilter
+pt	Buscar por observações que atendam aos seguintes critérios
+en	Search for observations that match the following criteria
+
+ExploreFilterExplain
+pt	deixe todos os critérios em branco para recuperar todas as observações
+en	leave all criteria blank to retrieve all records
+
+PendingsFilter
+pt	Buscar por observações que atendam aos seguintes critérios
+en	Search for observations that match the following criteria
+
+PendingsFilterExplain
+pt	aqui podem ser feitas buscas pelas plantas e animais que precisam de
+	identificação ou validação, independentemente do grupo em que você
+	está cadastrado como especialista
+en	here one can search for plants and animals that require identification or
+	validation, regardless of the group you are assigned to as a specialist
+
+UsersFilter
+pt	filtro
+en	filter
+
+UsersSort
+pt	lista
+en	list
+
+List
+pt	Listar
+en	List
+
+ShowPendings
+pt	Listar observações com
+en	List observations with
+
+listOfRecords
+pt	Lista de registros
+en	List of records
+
+mapOfRecords
+pt	Mapa dos registros
+en	Map of records
+
+downloadOfRecords
+pt	Download dos registros
+en	Download of records
+
+list_of_species
+pt	listas
+en	lists
+
+list_of_speciesTip
+pt	Tenha acesso às observações registradas por meio de listas
+en	Access to the registered observations as a list
+
+list_of_plants_x_animals_title
+pt	Lista da interação plantas e animais
+en	List of the interaction between plants and animals
+
+list_of_animals_x_plants_title
+pt	Lista da interação animais e plantas 
+en	List of the interaction between animals and plants 
+
+list_of_plants_title
+pt	Lista de plantas observadas 
+en	List of observed plants
+
+list_of_animals_title
+pt	Lista de animais observados 
+en	List of observed animals
+
+images_of_species
+pt	fotos
+en	photos
+
+images_of_plants
+pt	plantas
+en	plants
+
+images_of_animals
+pt	animais
+en	animals
+
+images_of_speciesTip
+pt	Tenha acesso às imagens das interações observadas
+en	Access to the images of interactions observed
+
+images_of_plants_title
+pt	fotos das plantas registrados nas interações observadas
+en	photos of plants registered in the observed interactions
+
+images_of_animals_title
+pt	fotos dos animais registrados nas interações observadas
+en	photos of animals registered in the observed interactions
+
+
+graph
+pt	gráficos
+en	graphics
+
+graphTip
+pt	Tenha acesso às observações registradas por meio de gráficos
+en	Access to graphics of registered observations
+Tenha acesso às observações registradas por meio de gráficos
+
+clear
+pt	limpar
+en	clear
+
+searchButton
+pt	buscar
+en	search
+
+searchExplain
+pt	Incluir no resultado apenas observações...
+en	Only include observations in the result...
+
+madeIn
+pt	local da observação
+en	Place of observation	
+
+madeOn
+pt	data e hora da observação
+en	Observation time and date	
+
+madeOn_tip
+pt	Preencha apenas a linha "de" para data/hora exatas, ou as duas para intervalos
+en	Fill out only the "from" line for exact date/time, or both for intervals
+
+day
+pt	dia
+en	day
+
+month
+pt	mês
+en	month
+
+year
+pt	ano
+en	year
+
+madeBy
+pt	observações feitas por
+en	observations made by
+
+identifiedBy
+pt	identificadas por
+en	identified by
+
+new_identification_title
+pt	Nova identificação
+en	New identification
+
+family
+pt	família
+en	family
+
+genus
+pt	gênero
+en	genus
+
+scientificName
+pt	nome da espécie
+en	species name
+
+any
+pt	qualquer
+en	any
+
+anywhere
+pt	qualquer lugar
+en	anywhere
+
+anybody
+pt	qualquer guardião
+en	any guardian
+
+noid
+pt	sem identificação
+en	no identification
+
+notes
+pt	observações
+en	observations
+
+identifyYourself
+pt	Entrar nos Guardiões
+en	login
+
+e-mail
+pt	E-mail
+en	E-mail
+
+password
+pt	Senha
+en	Password
+
+unsubscribe:lc
+pt	Encerrar conta
+en	Close account
+
+unsubscribeCall
+pt	O encerramento da conta desativará seu perfil e você não poderá mais acessá-lo.<br/>
+	Se você realmente deseja encerrar a conta, <a href='/unsubscribe'>clique aqui</a>.
+en	Closing your account will deactivate your profile and you will not be able to access it again.<br/>
+	If you really wish to close your account, <a href='/unsubscribe'>click here</a>.
+
+unsubscribeTitle
+pt	Encerrar conta nos Guardiões da Biodiversidade
+en	Close my account in the Guardiões da Biodiversidade
+
+unsubscribeExplain
+pt	O encerramento da conta desativará seu perfil e você não poderá mais acessá-lo.
+	Todos os dados enviados por você ao sistema, incluindo fotos e identificações, serão preservados
+	e continuarão visíveis para as pessoas.<p/>
+	Se você realmente deseja encerrar a conta, preencha os campos abaixo com o e-mail e a senha cadastrados
+	no sistema, e encerre a conta. Caso não tenha uma senha cadastrada, cadastre uma em
+	<a href='/register'>meu cadastro</a> e repita a operação.<p/>
+	Você poderá reativar sua conta entrando em contato no
+	<a href='http://w2.cria.org.br/feedback/pt/index?guardioes.cria.org.br'>fale conosco</a>.
+en	Closing your account will deactivate your profile and you will not be able to access it again. All data sent by you
+        to the system, including photos and identifications, will be preserved and will continue to be visible to users.<p/>
+	If you really wish to close your account, fill out the fields below with your email and password and close your account.
+	If you don't have a registered password, register one at <a href='/register'>my account</a> and repeat the operation.<p/>
+	You can reactivate your account by contacting us at
+	<a href='http://w2.cria.org.br/feedback/pt/index?guardioes.cria.org.br'>feedback</a>.
+
+unsubscribeConfirm
+pt	Confirmo ter lido e entendido os termos dessa operação
+en	I confirm that I have read and understood the terms of this operation
+
+
+specialist_off_title
+pt	Deixar de colaborar como especialista
+en	Stop collaborating as an specialist
+
+specialist_off_text
+pt	Se você deseja deixar de colaborar com os Guardiões da Biodiversidade como especialista, mesmo que temporariamente, marque essa opção e clique em Salvar.
+	Você ainda poderá participar do sistema como um guardião e poderá voltar a colaborar como especialista a qualquer momento.
+en	If you no longer wish to collaborate with the Guardiões da Biodiversidade as an specialist, even if temporarily, check this option and click Save.
+	You will still be able to collaborate as a guardian and can become an specialist again at any time.
+
+goodbyeTitle
+pt	Agradecemos sua participação nos Guardiões da Biodiversidade!<p/>
+en	We thank you for your participation in the Guardiões da Biodiversidade!<p/>
+
+goodbyeText
+pt	A partir de agora, sua conta está desativada.<p/>
+	Caso deseje reativá-la, entre em contato no
+	<a href='http://w2.cria.org.br/feedback/pt/index?guardioes.cria.org.br'>fale conosco</a>.
+en	From now on your account is disabled.<p/>
+	If you wish to reactivate it, contact us at
+	<a href='http://w2.cria.org.br/feedback/pt/index?guardioes.cria.org.br'>feedback</a>.
+
+fillFormCorrectly
+pt	Preencha corretamente os dados
+en	Fill the form correctly and retry
+
+unexpectedError
+pt	Ocorreu um erro inesperado no sistema.
+	Favor entrar em contato conosco <a href='http://w2.cria.org.br/feedback/pt/index?guardioes.cria.org.br'>clicando aqui</a>.
+en	An unexpected error has occurred.
+	Please contact us by <a href='http://w2.cria.org.br/feedback/pt/index?guardioes.cria.org.br'>clicking here</a>.
+
+notAGuardian
+pt	Ainda não é um guardião?
+en	Not a guardian yet?
+
+registerYourself
+pt	Faça seu cadastro!
+en	Register now!
+
+forgotPassword
+pt	Esqueceu sua senha?
+en	Forgot your password?
+
+forgotPasswordText
+pt	Digite o e-mail cadastrado nos Guardiões da Biodiversidade e clique no botão enviar abaixo.<p/>
+	Você receberá, nesse email, uma mensagem com um link para redefinir sua senha.
+en	Type your e-mail as registered in this system and click send below.<p/>
+	You will receive a message with a link to redefine your password.
+
+userRegisteredMsg
+pt	Usuário já cadastrado
+en	User already registered
+
+invalidAppMsg
+pt	Aplicativo já registrado em nome de outro usuário
+en	App installation already registered to another user
+
+cancel
+pt	cancelar
+en	cancel
+
+orNetAccess
+pt	ou acesse com
+en	or login using
+
+clickToDownload
+pt	Clique no ícone ao lado para baixar a planilha no padrão MS-Excel.
+en	Click the icon at the left side to download the MS-Excel spreadsheet.
+
+notify
+pt	notificar
+en	notify
+
+notify_title
+pt	Pedido de identificação ou validação
+en	Identification or validation request
+
+notify_explain
+pt	Enviar mensagem para especialista pedindo ajuda para
+	identificação de espécime em registro dos Guardiões da Biodiversidade.
+en	Send a message to a specialist asking for help on the
+	identification of the specimen in a record at Guardiões da Biodiversidade.
+
+Email_to
+pt	Para
+en	To
+
+Email_name
+pt	nome
+en	name
+
+Email_email
+pt	email
+en	email
+
+Email_subject
+pt	Assunto
+en	Subject
+
+Email_subject_text
+pt	Guardiões da Biodiverdidade - Pedido de identificação ou validação
+en	Guardiões da Biodiverdidade - Identification or validation request
+
+Email_message
+pt	Mensagem
+en	Message
+
+notify_new_specialist
+pt	Nome não encontrado. Novo especialista.
+en	Name not found. New specialist.
+
+notify_message_body
+pt	Caro <b>%especialista%</b>,<p/>
+	Pedimos a gentileza de tentar identificar o espécime pertencente ao grupo do qual você é especialista, presente
+	<a href='https://guardioes.cria.org.br/%rid%'><span class='high'>nesta observação</span></a>
+	enviada aos Guardiões da Biodiversidade. Caso o espécime esteja identificado, pedimos a gentileza de validar ou não o nome.<p/>
+	<blockquote>%record_data%</blockquote>
+	Se ainda não for cadastrado como especialista no sistema, é necessário primeiro fazer o cadastro para depois colaborar com as identificações. Para isso, basta entrar <a href="https://guardioes.cria.org.br/register">aqui</a>.<p/>
+	Em caso de dúvidas, consulte nossas
+	<a href='https://guardioes.cria.org.br/faq'><span class='high'>perguntas frequentes</span></a>
+	ou entre em contato no
+	<a href='http://w2.cria.org.br/feedback/pt/index?guardioes.cria.org.br'><span class='high'>fale conosco</span></a>.<p/>
+en	Dear %especialista%,<p/>
+	We ask you to identify a specimen of a group for which you are a specialist. The photo was sent to Guardiões da Biodiversidade in
+	this <a href='https://guardioes.cria.org.br/%rid%'><span class='high'>observation</span></a>. If this specimen has a valid identification, we ask you to please validate it.<p/>
+	<blockquote>%record_data%</blockquote>
+	If you are not registered as a specialist in the system, it is necessary to first register to be able to collaborate with the identifications.
+	All you have to do is enter <a href="https://guardioes.cria.org.br/register"><span class='high'>here</span></a>.<p/>
+	Should you have any questions, consult our <a href='https://guardioes.cria.org.br/faq'><span class='high'>FAQ</span></a> or contact us at <a href='http://w2.cria.org.br/feedback/pt/index?guardioes.cria.org.br'>feedback</a>.<p/>
+
+notify_message_foot
+pt	<p/>
+	Obrigad[o|a]<br/>
+	%username%
+en	<p/>
+	Thank you<br/>
+	%username%
+
+notify_success
+pt	Mensagem enviada com sucesso para %to%.
+en	Message sent sucessfully to %to%.
+
+notify_error
+pt	ERRO: Mensagem não enviada.
+en	ERROR: Message not sent.
+
+newIdent
+pt	nova&#160;identificação
+en	new&#160;identification
+
+ident_incorrect_tip
+pt	Marcar essa identificação como incorreta
+en	Mark this identification as incorrect
+
+ident_incorrect
+pt	incorreto
+en	incorrect
+
+ident_validate_tip
+pt	Validar essa identificação como correta	
+en	Validate this identification as correct
+
+ident_validate
+pt	validar
+en	validate
+
+asWork
+pt	com ferramentas de edição
+en	with edit tools
+
+ident_invalid_tip
+pt	Identificação recusada pelo especialista
+en	Identification refused by specialist
+
+ident_invalid
+pt	incorreta
+en	incorrect
+
+ident_validated_tip
+pt      Identificação validada pelo especialista
+en      Identification validated by specialist
+
+ident_validated
+pt      validada
+en      validated
+
+ident_pending_tip
+pt	Identificação aguardando validação de um especialista
+en	Identification awaiting validation from a specialist
+
+ident_pending
+pt	pendente
+en	pending
+
+ident_delete_tip
+pt	Apagar definitivamente essa identificação
+en	Delete this identification permanently 
+
+ident_delete
+pt	apagar
+en	delete
+
+record_delete_tip
+pt	Apagar definitivamente esse registro
+en	Delete this record permanently
+
+record_delete
+pt	apagar&#160;registro
+en	delete&#160;record
+
+record_habit_tip
+pt	Alterar o hábito da planta
+en	Change the plant habit
+
+record_taxgrp_tip
+pt	Alterar o grupo do animal
+en	Change the animal group
+
+record_interaction_tip
+pt	Alterar o tipo de interação observado
+en	Change the observed interaction type
+
+record_new_animalia_ident_tip
+pt	Fazer uma nova identificação para o animal
+en	New indentification for the animal
+
+record_new_plantae_ident_tip
+pt	Fazer nova identificação para a planta
+en	New identification for the plant
+
+reset_password_notice
+pt	E-mail enviado para endereço fornecido. Verifique caixa de SPAM.
+en	E-mail sent to address provided. Check your spam.
+
+reset_password_subject
+pt	Guardiões da Biodiversidade - restaurar senha
+en	Guardiões da Biodiversidade - reset password
+
+help
+pt	ajuda
+en	help
+
+glossary
+pt	glossário
+en	glossary
+
+form
+pt	formulário
+en	form
+
+required
+pt	obrigatório
+en	required
+
+required_field
+pt	Campo de preenchimento obrigatório
+en	Required field
+
+optional
+pt	opcional
+en	optional
+
+info
+pt	info
+en	info
+
+optional_field
+pt	Campo de preenchimento não obrigatório. Preencha se souber informar.
+en	Optional field
+
+optional_filling
+pt	Preenchimento não obrigatório
+en	Optional field
+
+automatic
+pt	automático
+en	automatic
+automatic_field
+pt	Campo de preenchimento automático. Será preenchido com dados extraídos da imagem ou através da localização informada no mapa.
+en	Automatic field. Data will be retrieved from the image or through the location informed in the map.
+
+sci_info
+pt	Para o preenchimento do nome científico, você pode começar a digitar partes do nome e escolher um dos nomes apresentados. 
+en	Para o preenchimento do nome científico, você pode começar a digitar partes do nome e escolher um dos nomes apresentados. 
+
+fam_info
+pt	para o preenchimento do nome da família, você pode começar a digitar o nome e escolher um dos apresentados. 
+en	para o preenchimento do nome da família, você pode começar a digitar o nome e escolher um dos apresentados. 
+
+list_of_records
+pt	observações
+en	observations
+
+list_of_recordsTip
+pt	Tenha acesso às informações completas das observações recuperadas
+en	Access to complete information from the observations retrieved
+
+map_of_records
+pt	mapa
+en	map
+
+map_of_recordsTip
+pt	Explore o mapa com as interações observadas
+en	Explore the map with the observed interactions
+
+list_of_animals_x_plants
+pt	animais e plantas
+en	animals and plants
+
+list_of_plants_x_animals
+pt	plantas e animais
+en	plants and animals
+
+list_of_animals
+pt	animais
+en	animals
+
+list_of_plants
+pt	plantas
+en	plants
+
+download_records
+pt	download
+en	download
+
+download_recordsTip
+pt	Baixe os dados das observações em formato comptível com MS-Excel
+en	Download the observations data in MS-Excel compatible format
+
+ucs
+pt	unidades federais de conservação
+en	federal conservation units
+
+ucs_tip
+pt	<b>unidades federais de conservação</b><br/> são mostradas as observações registradas nos locais que correspondem ao território das unidades de conservação segundo o Instituto Chico Mendes de Conservação da Biodiversidade (ICMBio). O ICMBio é vinculado ao Ministério do Meio Ambiente e é responsável por propor, implantar, gerir, proteger, fiscalizar e monitorar as unidades de conservação instituídas no Brasil.
+en	<b>federal conservation units</b><br/> All registered observations of the places that correspond to the territories of conservation units according to the 
+	Instituto Chico Mendes de Conservação da Biodiversidade (ICMBio). ICMBio is part of the Ministry of the Environment and is resposible for proposing, implementing,
+	managing, protecting, inspecting and monitoring conservation units in Brazil. 
+
+prj
+pt	área dos projetos associados
+en	associated projects area
+
+prj_tip
+pt	<b>área dos projetos associados</b><br/>são mostradas as observações registradas nos locais que correspondem ao território onde atuam os projetos parceiros dos Guardiões da Biodiversidade.
+en	<b>associated project areas</b><br/>registered observations are shown of places that correspond to the territory where partner projects of the Guardiões da Biodiversidade.
+
+ufs
+pt	estados do Brasil
+en	states of Brazil
+
+animal_noid
+pt	animal(s) sem identificação
+en	animal(s) without identification
+
+plant_noid
+pt	planta(s) sem identificação
+en	plant(s) without identification
+
+animal_noval
+pt	animal(s) aguardando validação
+en	animal(s) waiting for validation
+
+plant_noval
+pt	planta(s) aguardando validação
+en	animal(s) waiting for validation
+
+alert_period_title
+pt	notificações
+en	notifications
+
+alert_period_label
+pt	Quero receber notificações por e-email sobre pendências de identificação:
+en	Send me notifications by e-mail about pending identifications:
+
+alert_never
+pt	não quero receber notificações
+en	do not send me notifications
+
+alert_day
+pt	diariamente
+en	daily
+
+alert_week
+pt	semanalmente
+en	weekly
+
+alert_month
+pt	mensalmente
+en	monthly
+
+noid
+pt	sem identificalção
+en	without identification
+
+noval
+pt	aguardando validação
+en	waiting for validation
+
+rec_noid_title
+pt	Observações sem identificação
+en	Observations without identification
+
+rec_noid_tip
+pt	observações para as quais ainda não existe identificação do nome da espécie.
+en	observations for which there is no identification for the species
+
+rec_noval_title
+pt	Identificações aguardando validação
+en	Identifications waiting for validation
+
+rec_noval_tip
+pt	observações com identificação aguardando validação do especialista.
+en	observations with identification waiting for the specialist validation.
+
+users_waiting_title
+pt	Especialistas aguardando aprovação
+en	Specialists waiting for approval
+
+users_waiting_tip
+pt	usuários cadastrados como especialistas aguardando aprovação
+en	users registered as specialists waiting for approval
+
+especialista_msg
+pt	Você está cadastrad[o|a] como especialista.
+en	You are registered as a specialist.
+
+especialista_pendente_msg
+pt	Você está cadastrad[o|a] como "guardião" até que seu cadastro como especialista seja aprovado.
+en	You are registered as a guardian until your registration as specilist is approved.
+
+admin_msg
+pt	Você é um[|a] administrador[|a].
+en	You are an administrator.
+
+super_msg
+pt	Você é um[|a] super usuári[o|a].
+en	You are a super-user.
+
+graph_of_habit
+pt	hábito da planta
+en	plant habit
+
+graph_of_habit_title
+pt	distribuição das interações observadas por hábito da planta
+en	distribution of the observed interactions according to plant habit
+
+graph_of_interaction
+pt	tipos de interação
+en	type of interaction
+
+graph_of_interaction_title
+pt	distribuição das interações observadas por tipo de interação
+en	distribution of the observed interactions according to the type of interaction
+
+graph_of_eventtime
+pt	hora do dia
+en	hour of day
+
+graph_of_eventtime_title
+pt	distribuição das interações observadas por hora do dia
+en	distribution of the observed interactions by hour of day
+
+graph_of_months
+pt	meses do ano
+en	months of year
+
+graph_of_months_title
+pt	distribuição das interações observadas por meses do ano
+en	distribution of the observed interactions by months of year
+
+graph_of_plant_family
+pt	famílias de plantas
+en	plant families
+
+graph_of_plant_family_title
+pt	distribuição das interações observadas por família de plantas
+en	distribution of the observed interactions by plant families
+
+graph_of_animal_family
+pt	famílias de animais
+en	animal families
+
+graph_of_animal_family_title
+pt	distribuição das interações observadas por família de animais
+en	distribution of the observed interactions by animal families
+
+not_informed
+pt	não informado
+en	not informed
+
+not_informed_graph
+pt	NI
+en	NI
+
+tables
+pt	tabelas
+en	tables
+
+tablesTip
+pt	tabelas diversas
+en	various tables 
+
+table_spp_month
+pt	ocorrência de interações
+en	occurrence of interactions
+
+table_spp_month_title
+pt	ocorrência das interações observadas ao longo do ano
+en	occurrence of interactions observed throughout the year
+
+notification_subject
+pt	Guardiões da Biodiversidade - notificação de pendências
+en	Guardiões da Biodiversidade - pendings notifications
+
+notification_salutation
+pt	Prezad[o|a] %user_name%, a seguir listamos as pendências atuais no sistema Guardiões da Biodiversidade.
+en	Dear %user_name%, please find a list of pendencies 
+
+observation
+pt	observação
+en	observation
+
+observations
+pt	observações
+en	observations
+
+others
+pt	outros
+en	others
+
+from
+pt	de
+en	from
+
+to
+pt	até
+en	to
+
+edit
+pt	editar
+en	edit
+
+done
+pt	concluído
+en	done
+
+ALPHA
+pt	em ordem alfabética
+en	in alphabetical order
+
+TOP_REC
+pt	por observações em 30 dias
+en	by observations carried out in the last 30 days
+
+TOP_ID
+pt	por identificações em 30 dias
+en	by identifications carried out in the last 30 days
+
+RANK_REC
+pt	por observações enviadas
+en	by observations sent
+
+RANK_ID
+pt	por identificações realizadas
+en	by identifications made
+
+guardioesTitle
+pt	Lista de guardiões
+en	List of guardians
+
+guardioesTitle_ALPHA
+pt	todos
+en	all
+
+guardioesTitle_RANK_REC
+pt	total de observações enviadas
+en	list of guardians by observations sent
+
+guardioesTitle_TOP_REC
+pt	observações enviadas nos últimos 30 dias
+en	list of guardians that sent records in the last 30 days
+
+guardioesTitle_RANK_ID
+pt	total de identificações feitas
+en	list of guardians by identifications made
+
+guardioesTitle_TOP_ID
+pt	identificações feitas nos últimos 30 dias
+en	list of guardians by the number of identifications made in the last 30 days
+
+denunciar
+pt	denunciar
+en	report
+
+denunciar_title
+pt	Denunciar conteúdo inapropriado
+en	Report inappropriate content
+
+denunciar_text
+pt	Agradecemos por fazer um alerta sobre esta fotografia.
+	Após análise, os Guardiões da Biodiversidade podem remover qualquer
+	conteúdo que considerem inapropriado.<p/>
+	Esta denúncia é anônima, mas se desejar, você pode preencher os
+	campos ao lado e explicar os motivos da denúncia.
+en	Thank you for sending your alert about this photo.
+	After review, the Guardiões da Biodiversidade may remove any content considered inappropriate.<p/>
+	This report is anonymous, but if you wish, you can fill in the fields and
+	explain the reasons for the complaint.
+
+denunciar_result
+pt	Mensagem enviada com sucesso.<p/>
+	Obrigado por colaborar!
+en	Message sent successfully.<p/>
+	Thanks for collaborating!
+
+quero_participar
+pt	Venha ser um guardião!
+en	Join us!
+
+theme_choose_title
+pt	Escolha um tema
+en	Choose a theme
+
+theme_list
+pt	tema
+en	theme
+
+faleconosco
+pt	fale conosco
+en	contact us

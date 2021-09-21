@@ -1,0 +1,82 @@
+* {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    box-sizing: border-box;
+}
+
+#map_container
+	{ position: relative;
+	  width: 500px; height: 500px;
+	}
+#mapa {
+    position: absolute;
+    width: 500px;
+    height: 450px;
+    top: 50px;
+    border: 1px solid transparent;
+    box-shadow: 2px 2px 5px #888888;
+    border-radius: 4px;
+}
+
+
+.ol-mouse-position {
+    top: auto;
+    bottom: 40px;
+    color: #111111;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+#layers-base {
+    position: absolute;
+    background-color: rgba(90, 90, 90, 0.7);
+    box-shadow: 2px 2px 5px #888888;
+    border-radius: 4px;
+    font-family: Candara, Arial, Helvetica, sans-serif;
+    color: #fff;
+    padding: 5px 10px;
+    font-size: 12px;
+    left: 380px;
+    top: 60px;
+}
+
+#layers-base > ul {
+    list-style: none;
+}
+
+#bar, #coordinates  {
+   position: absolute;
+   background-color: rgba(255, 255, 255, 0.8);
+   margin: 10px 0px 0px 2px;
+   font-size: 12px;
+}
+
+#bar > p {
+    padding: 5px 16px;
+    display: inline-block;
+    color: #fff;
+    background-color: #0489B1;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#bar > p:hover, #bar > p.active {
+    background-color: #086A87;
+    border-color: #aaa;
+}
+
+#coordinates {
+    margin-top: 60px;
+    margin-left: 45px;
+}
+
+#inputs {
+    margin-left: 10px;
+}
+#inputs > input[type="text"] {
+    border: 1px solid #bbb;
+    padding: 7px;
+    border-radius: 4px;
+}

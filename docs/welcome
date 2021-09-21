@@ -1,0 +1,182 @@
+#!/usr/local/bin/perl
+$|=1;
+use strict;
+use lib "../lib";
+use GUARDIOES;
+
+my $cfg = new GUARDIOES({ loginRequired => 1 });
+my $dic = $cfg->dic();
+
+my $script = <<EOM;
+<script type="text/javascript" src="/js/highslide/highslide/highslide.js"></script>
+<link rel="stylesheet" type="text/css" href="/js/highslide/highslide/highslide.css" />
+<script type="text/javascript">
+    hs.graphicsDir = '/js/highslide/highslide/graphics/';
+    hs.outlineType = null;
+    hs.wrapperClassName = 'colored-border';
+</script>
+<script type="text/javascript" src="/js/usersForm.js"></script>
+EOM
+
+print $cfg->html_head({ script => $script });
+
+my $user = $cfg->get_user_info();
+my $dic = $cfg->dic();
+
+
+print $cfg->div_top_banner({ page => 'welcome' });
+
+my $msg = '';
+if (	!$user->{'name'}	|| !$user->{'nickname'} ||
+	!$user->{'birthday'}	|| !$user->{'gender'} ||
+	!$user->{'education'}) { $msg = $dic->{'completeYourData'} } 
+
+#counts
+my $counts = $cfg->counts();
+
+my $page = $user->{'category'} eq 'guardiao' ? 'welcome_guardiao' :
+	   $user->{'category'} eq 'especialista' ? 'welcome_especialista' : 'welcome_admin';
+
+$page = $cfg->get_page({ page => $page,
+			 nickname	=> $user->{'nickname'},
+			 num_rec	=> $counts->{$user->{'id'}}{'num_rec'},
+			 num_ident	=> $counts->{$user->{'id'}}{'idents_by:plantae'}+$counts->{$user->{'id'}}{'idents_by:animalia'},
+			 spp_id		=> $counts->{$user->{'id'}}{'spp_id:animalia'} + $counts->{$user->{'id'}}{'spp_id:plantae'},
+			 num_images	=> $counts->{$user->{'id'}}{'num_image:interacao'} + $counts->{$user->{'id'}}{'num_image:planta'},
+			 pending	=> $user->{'status'} eq 'pendente' ? "( $dic->{'pendente'} )" : '',
+			 user_id	=> $user->{'id'},
+			 my_obs_url	=> $counts->{$user->{'id'}}{'num_rec'} ?
+					"$cfg->{'home_url'}/search?action=search&usr_id=$user->{'id'}" : "javascript:void(0)"
+		      });
+
+print <<EOM;
+<div id='divMain'>
+<TABLE class='w100'>
+<TR>
+<TD class='w30'>
+$page
+$msg
+</TD>
+EOM
+
+my $sql = $cfg->connect();
+
+# user is expert. Check for records without identifications
+
+my $img = $cfg->user_svg($user->{'id'});
+
+print <<EOM;
+<TD style='width: 350px; text-align: left'>$img</TD>
+<TD>
+EOM
+
+if ($cfg->{'is_especialista'})
+{ print <<EOM;
+<table class='w90'>
+<tr><td class='h3'>$dic->{'pendings'}</td><td align='right'><a href='/pendings'><b>$dic->{'pendings_link'}</b></a></td></tr>
+</table><p/>
+<table>
+<tr><td colspan='3'><b>$dic->{'rec_noid_title'}</b></td></tr>
+<tr><td width='10px'></td><td colspan='2'>$dic->{'rec_noid_tip'}</td></tr>
+EOM
+  my %p = $sql->query("select grupo,key from def_expertise where id in (select expertise_id from expertises where user_id = $user->{'id'})");
+  my $np = $sql->nRecords;
+
+  foreach (0..$np-1)
+  { if ($p{$_}{'grupo'} eq 'animalia')	# animalia
+    { my $key = "rec_noid:animalia:$p{$_}{'key'}";
+      next if ! $counts->{0}{$key};
+
+      my $url = "taxgrp=$p{$_}{'key'}&action=pendings&report=list_of_records&mode=work&animalia_scientificname=noid";
+      my $key_str =	$counts->{0}{$key} == 1 ? $dic->{$p{$_}{'key'}} :
+			$dic->{$p{$_}{'key'}.'s'} || $dic->{$p{$_}{'key'}}.'s';
+      print <<EOM;
+<tr><td></td><td width='25px' align='right'>$counts->{0}{$key}</td><td><a 
+   href="$cfg->{'home_url'}/search?$url">$key_str</a></td></tr>
+EOM
+    }
+    else	# plantae
+    { my $key = "rec_noid:plantae";
+      next if ! $counts->{0}{$key};
+
+      my $url = "action=pendings&report=list_of_records&mode=work&plantae_scientificname=noid";
+
+      my $key_str =	$counts->{0}{$key} == 1 ? $dic->{$p{$_}{'key'}} :
+			$dic->{$p{$_}{'key'}.'s'} || $dic->{$p{$_}{'key'}}.'s';
+      print <<EOM;
+<tr><td></td><td width='25px' align='right'>$counts->{0}{$key}</td><td><a 
+   href="$cfg->{'home_url'}/search?$url">$key_str</a></td></tr>
+EOM
+    }
+  }
+  print "</table>";
+
+# user is expert. Check for identifications waiting for validation
+
+  print <<EOM;
+<p/>
+<table>
+<tr><td colspan='3'><b>$dic->{'rec_noval_title'}</b></td></tr>
+<tr><td width='10px'></td><td colspan='2'>$dic->{'rec_noval_tip'}</td></tr>
+EOM
+  foreach (0..$np-1)
+  { if ($p{$_}{'grupo'} eq 'animalia')	# animalia
+    { my $key = "rec_noval:animalia:$p{$_}{'key'}";
+      next if ! $counts->{0}{$key};
+
+      my $url = "taxgrp=$p{$_}{'key'}&action=pendings&report=list_of_records&mode=work&animalia_name=noval";
+      my $key_str =	$counts->{0}{$key} == 1 ? $dic->{$p{$_}{'key'}} :
+			$dic->{$p{$_}{'key'}.'s'} || $dic->{$p{$_}{'key'}}.'s';
+      print <<EOM;
+<tr><td></td><td width='25px' align='right'>$counts->{0}{$key}</td><td><a 
+   href="$cfg->{'home_url'}/search?$url">$key_str</a></td></tr>
+EOM
+    }
+    else	# plantae
+    { my $key = "rec_noval:plantae";
+      next if ! $counts->{0}{$key};
+
+      my $url = "action=pendings&report=list_of_records&mode=work&plantae_name=noval";
+
+      my $key_str =	$counts->{0}{$key} == 1 ? $dic->{$p{$_}{'key'}} :
+			$dic->{$p{$_}{'key'}.'s'} || $dic->{$p{$_}{'key'}}.'s';
+      print <<EOM;
+<tr><td></td><td width='25px' align='right'>$counts->{0}{$key}</td><td><a 
+   href="$cfg->{'home_url'}/search?$url">$key_str</a></td></tr>
+EOM
+    }
+  }
+  print "</table>";
+
+}
+
+# user is admin or root. Check for pending users
+  if ($user->{'is_admin'} || $user->{'is_super'})
+  { print <<EOM;
+<p/>
+<table>
+<tr><td colspan='3'><b>$dic->{'users_waiting_title'}</b></td></tr>
+<tr><td width='10px'></td><td colspan='2'>$dic->{'users_waiting_tip'}</td></tr>
+EOM
+
+    my %p = $sql->query("select id,name from users where status = 'pendente'");
+    if ($sql->nRecords)
+    { print "<table>";
+      foreach (0..$sql->nRecords-1)
+      { print <<EOM;
+<tr><td colspan='2' width='35px'><td><a href="$cfg->{'home_url'}/users?uid=$p{$_}{'id'}">$p{$_}{'name'}</a></td></tr>
+EOM
+      } 
+      print "</table>";
+    }
+  }
+  print "</TD>";
+
+print <<EOM;
+</TR>
+
+</TABLE>
+EOM
+
+print $cfg->html_foot();
+

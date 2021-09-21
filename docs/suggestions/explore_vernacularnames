@@ -1,0 +1,48 @@
+#!/usr/local/bin/perl
+# --------------------------------------------------------------
+# utiliza a tabela de identificações para sugerir nomes comuns
+# --------------------------------------------------------------
+$|=1;
+use strict;
+use JSON;
+use lib "../../lib";
+use GUARDIOES;
+my $cfg = new GUARDIOES();
+
+my $par = $cfg->param();
+
+my $search_string = lc $par->data('search_string');
+my $item	  = lc $par->data('item');
+my $kingdom	  = lc $par->data('kingdom');
+
+die if $item !~ /vernacularname/;
+
+if ($search_string)
+{ my $sql = $cfg->connect();
+  my $limit = 35; my $cmd = '';
+
+  $search_string =~ s/^\s+|\s+$//g; $search_string =~ s/\s+/ /g;
+  my $where = ''; foreach (split(' ',$search_string)) { $where .= "unaccent(vernacularname) ~* unaccent('^$_| $_') and " }
+
+  $cmd = <<EOM;
+select	distinct lower(vernacularname) as vernacularname
+from	ident_view
+where	$where
+	kingdom = '$kingdom'
+order by 1
+limit $limit
+EOM
+
+  my %p = $sql->query($cmd);
+
+  my $hash = { results => [] };
+
+  foreach my $i (0..$sql->nRecords-1)
+  { $p{$i}{'vernacularname'} =~ s/\s+/ /g; $p{$i}{'vernacularname'} =~ s/^\s+|\s+$//g;
+
+    push @{$hash->{'results'}}, { id => $i, value => $p{$i}{'vernacularname'}, info => '' };
+  }
+
+  my $json = new JSON();
+  print "Content-Type: application/json\n\n".$json->encode( $hash );
+}

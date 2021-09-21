@@ -1,0 +1,522 @@
+#!/usr/local/bin/perl
+$|=1;
+use strict;
+use MIME::Base64;
+use Image::Magick;
+use JSON;
+use lib "../lib";
+use GUARDIOES;
+use Encode;
+use Data::Dumper;
+
+if (!$ENV{'CONTENT_LENGTH'})
+{ my $doc = 'apisrv-doc.html';
+  open (FH, $doc) || printERROR(500, '<h1>Failed to locate documentation</h1>');
+  print <<EOM;
+Content-type: text/html; charset=UTF-8
+
+EOM
+  while (<FH>) {
+    print (<FH>);
+  }
+  close FH;
+  exit 0;
+}
+
+printERROR() if $ENV{'REQUEST_METHOD'} ne 'POST';
+
+my $json = new JSON();
+
+read(STDIN,my $json_text,$ENV{'CONTENT_LENGTH'});
+Encode::_utf8_on($json_text);
+
+$json_text =~ s/^\s+|\s+$//g; 
+
+my $param = $json_text ? $json->decode( $json_text ) : {};
+
+my $action = $param->{'action'};
+
+my $cfg = new GUARDIOES; # ATENÇÃO! Precisa vir depois do read STDIN acima!
+
+my $sql = new dSQL(host => $cfg->{'db_api_host'}, user => $cfg->{'db_api_user'}, database => $cfg->{'db_api_name'});
+
+#---------------------
+# database cleanup: deletes everything last touched before one week
+$sql->exec("delete from session where age(now(),last_call) > interval '1 week'");
+#---------------------
+
+#------------------------------------------------------------------------------------- SESSION_START
+if ($action eq 'session_start')
+{ printERROR(400, 'Missing appcode') if !$param->{'appcode'};
+  printERROR(400, 'Invalid appcode') if  $param->{'appcode'} =~ /[^0-9]/;
+
+  my $user_id = $cfg->verify_appcode($param->{'appcode'});
+  printERROR(404, 'Unknown user') if !$user_id;
+
+  my $token = $cfg->new_key();
+
+  $sql->exec("insert into session (session_id,user_id) values ('$token',$user_id)");
+  printERROR(500, 'Failed to start session') if $sql->error();
+
+  printJSON( $json->encode( { status => "ok", session_id => "$token" } ));
+  $cfg->log({ user_id => $user_id, action => 'apisrv', detail => 'session_start' });
+}
+#------------------------------------------------------------------------------------- PROFILE
+elsif ($action eq 'profile')
+{ printERROR(400, 'Missing appcode') if !$param->{'appcode'};
+  printERROR(400, 'Invalid appcode') if  $param->{'appcode'} =~ /[^0-9]/;
+
+  my $user_id = $cfg->verify_appcode($param->{'appcode'});
+  printERROR(404, 'Unknown user') if !$user_id;
+
+  my $user = $cfg->get_user_info({user_id => $user_id});
+
+  my $picture = '';
+  if ($user->{'picture'})
+  { my $picture_path = $cfg->{'user_dir'}.'/'.$user->{'user_key'}.'/'.$user->{'picture'};
+
+    if (open(IMAGE, $picture_path))
+    { my $raw_string = do{ local $/ = undef; <IMAGE>; };
+      $picture = encode_base64($raw_string);
+      # Parece que não adianta - talvez a codificação json é que acrescente os \n
+      $picture =~ s/\\n//g;
+    }
+  }
+
+  my @ids = keys $user->{'expertise'};
+
+  my $data = {
+      status       => "ok", 
+      name         => "$user->{'name'}",
+      nickname     => "$user->{'nickname'}", 
+      email        => "$user->{'email'}",
+      gender       => "$user->{'gender'}",
+      education    => "$user->{'education'}",
+      comments     => "$user->{'comments'}",
+      language     => "$user->{'language'}",
+      birth_day    => "$user->{'birth_day'}",
+      birth_month  => "$user->{'birth_month'}",
+      birth_year   => "$user->{'birth_year'}",
+      picture      => "$picture",
+      curriculum   => "$user->{'curriculum'}",
+      agreement    => "$user->{'agreement'}",
+      alert_period => "$user->{'alert_period'}",
+      expertise   => \@ids
+    };
+
+  printJSON( $json->encode($data) );
+  $cfg->log({ user_id => $user_id, action => 'apisrv', detail => 'profile' });
+}
+#-------------------------------------------------------------------------------------	UPDATE_PROFILE
+elsif ($action eq 'update_profile')
+{ printERROR(400, 'Missing appcode') if !$param->{'appcode'};
+  printERROR(400, 'Invalid appcode') if  $param->{'appcode'} =~ /[^0-9]/;
+  printERROR(400, 'Missing name') if (!$param->{'name'} || $param->{'name'} eq '');
+  printERROR(400, 'Missing education') if (!$param->{'education'} || $param->{'education'} eq '');
+
+  my $user_id = $cfg->verify_appcode($param->{'appcode'});
+  printERROR(404, 'Unknown user') if !$user_id;
+
+  my $data = $cfg->prepare_user_data($param);
+
+  $data->{'user_id'} = $user_id;
+
+  if ($cfg->update_user_info($data))  # update OK
+  { 
+    # Update profile picture too
+    my $user = $cfg->get_user_info({user_id => $user_id});
+
+    # Only when picture is passed as parameter
+    if ($param->{'picture'})
+    { my $save_new_image = 0;
+
+      # Convert current image to base64
+      my $picture_path = $cfg->{'user_dir'}.'/'.$user->{'user_key'}.'/'.$user->{'picture'};
+
+      if (open(IMAGE, $picture_path))
+      { my $raw_string = do{ local $/ = undef; <IMAGE>; };
+        my $local_picture = encode_base64($raw_string);
+        $local_picture =~ s/\R//g;
+
+        # Compare the two strings
+        $save_new_image = 1 if $local_picture ne $param->{'picture'};
+      }
+      else
+      { $save_new_image = 1;
+      }
+   
+      if ($save_new_image)
+      {
+        my $decoded= MIME::Base64::decode_base64($param->{'picture'});
+        # note: no rollback on other stuff if picture update fails...
+        open my $fh, '+>', $picture_path or printJSON( $json->encode( { status => "fail" } ));
+        binmode $fh;
+        print $fh $decoded;
+        close $fh;
+      }
+    }
+
+    printJSON( $json->encode( { status => "ok" } )); 
+  }
+  else # update failed
+  { printJSON( $json->encode( { status => "fail" } ));
+  }
+  $cfg->log({ user_id => $user_id, action => 'apisrv', detail => 'update_profile' });
+}
+#-------------------------------------------------------------------------------------	LOGIN
+elsif ($action eq 'login')
+{ printERROR(400, 'Missing appcode') if !$param->{'appcode'};
+  printERROR(400, 'Invalid appcode') if  $param->{'appcode'} =~ /[^0-9]/;
+  printERROR(400, 'Missing email') if !$param->{'email'};
+  printERROR(400, 'Missing password') if !$param->{'password'};
+
+  if ($cfg->password_matches({email=> $param->{'email'}, password => $param->{'password'}})) # clear password
+  { # Chama o login para cadastrar appcode se necessário e talvez atualizar outras coisas
+    my $data = {
+      'network'  => 'guardioes',
+      'appcode'  => $param->{'appcode'},
+      'email'    => $param->{'email'},
+      'password' => crypt($param->{'password'}, time())
+    };
+
+    my ($session_id,$user_status) = $cfg->login($data); # crypted password 
+
+    printJSON( $json->encode( { status => 'ok', uid => $cfg->current_user_id() } ));
+  }
+  else
+  { printJSON( $json->encode( { status => 'retry' } ));
+  }
+  #$cfg->log({ user_id => $user_id, action => 'apisrv', detail => 'login' });
+}
+#-------------------------------------------------------------------------------------	REGISTER
+elsif ($action eq 'register')
+{ printERROR(400, 'Missing appcode') if !$param->{'appcode'};
+  printERROR(400, 'Invalid appcode') if  $param->{'appcode'} =~ /[^0-9]/;
+  printERROR(400, 'Missing network') if !$param->{'network'};
+
+  my $day;
+  my $month;
+  my $year;
+  
+  if ($param->{'network'} eq 'guardioes')
+  { printERROR(400, 'Missing email') if !$param->{'email'};
+    printERROR(400, 'Missing name') if !$param->{'name'};
+    printERROR(400, 'Missing nickname') if !$param->{'nickname'};
+    printERROR(400, 'Missing password') if !$param->{'password'};
+    printERROR(400, 'Missing birthday') if !$param->{'birthday'};
+    if ($param->{'birthday'} =~ /^([0-9]{2})\/([0-9]{2})\/([0-9]{4})$/)
+    { ($day, $month, $year) = ($1, $2, $3);
+    }
+    else
+    { printERROR(400, 'Invalid birthday');
+    }
+    printERROR(400, 'Missing education') if (!$param->{'education'} || $param->{'education'} eq '');
+    printERROR(400, 'Missing gender') if (!$param->{'gender'} || $param->{'gender'} eq '');
+    printERROR(400, 'Invalid gender') if ($param->{'gender'} ne 'male' and $param->{'gender'} ne 'female');
+    printERROR(400, 'Missing language') if !$param->{'language'};
+  }
+  else
+  { printERROR(400, 'Missing netid') if !$param->{'netid'};
+  }
+
+  my $data = {
+    'network' => $param->{'network'},
+    'netid'   => $param->{'netid'},
+    'appcode' => $param->{'appcode'}
+  };
+
+  $data->{'password'}            = crypt($param->{'password'},time()) if $param->{'password'};
+  $data->{'nickname'}            = $param->{'nickname'} if $param->{'nickname'};
+  $data->{'name'}                = $param->{'name'} if $param->{'name'};
+  $data->{'email'}               = $param->{'email'} if $param->{'email'};
+  $data->{'picture'}             = $param->{'picture'} if $param->{'picture'};
+  if ($param->{'network'} eq 'guardioes')
+  { $data->{'birthday'} = $year.$month.$day;
+  }
+  else
+  { $data->{'birthday'}          = $param->{'birthday'} if $param->{'birthday'};
+  }
+  $data->{'education'}           = $param->{'education'} if $param->{'education'};
+  $data->{'access_token'}        = $param->{'access_token'} if $param->{'access_token'};
+  $data->{'access_token_secret'} = $param->{'access_token_secret'} if $param->{'access_token_secret'};
+
+  my ($session_id,$user_status) = $cfg->login($data); # crypted password
+
+  printJSON( $json->encode( { status => $user_status, uid => $cfg->current_user_id() } ));
+} 
+#-------------------------------------------------------------------------------------	RECORD_START
+elsif ($action eq 'record_start')
+{ printERROR(400, 'Missing session_id') if !$param->{'session_id'};
+
+  my $user_id = checkSessionId($param->{'session_id'}) || printERROR(500, 'Invalid session');
+ 
+  my $token = $cfg->new_key();
+
+  $sql->exec("insert into record (session_id,record_id) values ('$param->{'session_id'}','$token')");
+
+  printERROR(500, 'Failed to create record') if $sql->error();
+
+  printJSON( $json->encode( { status => "ok", record_id => $token } ));
+  $cfg->log({ user_id => $user_id, action => 'apisrv', detail => 'record_start' })
+}
+#-------------------------------------------------------------------------------------	RECORD_DATA
+elsif ($action eq 'record_data')
+{ printERROR(400, 'Missing record_id') if !$param->{'record_id'};
+  my $user_id = checkRecordId($param->{'record_id'}) || printERROR(404, 'Unknown record');
+
+  my $cmd = '';
+  $cmd .= " country			= '$param->{'country'}',"			if $param->{'country'};
+  $cmd .= " stateprovince		= '$param->{'stateprovince'}',"			if $param->{'stateprovince'};
+  $cmd .= " municipality		= '$param->{'municipality'}',"			if $param->{'municipality'};
+  $cmd .= " locality			= '$param->{'locality'}',"			if $param->{'locality'};
+  $cmd .= " decimallatitude		= '$param->{'decimallatitude'}',"		if $param->{'decimallatitude'};
+  $cmd .= " decimallongitude		= '$param->{'decimallongitude'}',"		if $param->{'decimallongitude'};
+  $cmd .= " elevation			= '$param->{'elevation'}',"			if $param->{'elevation'};
+  $cmd .= " verbatimeventdate		= '$param->{'verbatimeventdate'}',"		if $param->{'verbatimeventdate'};
+  $cmd .= " eventdate			= '$param->{'eventdate'}',"			if $param->{'eventdate'};
+  $cmd .= " eventtime			= '$param->{'eventtime'}',"			if $param->{'eventtime'};
+  $cmd .= " eventremarks		= '$param->{'eventremarks'}',"			if $param->{'eventremarks'};
+  $cmd .= " taxgrp			= '$param->{'taxgrp'}',"			if $param->{'taxgrp'};
+  $cmd .= " habit			= '$param->{'habit'}',"				if $param->{'habit'};
+  $cmd .= " interaction			= '$param->{'interaction'}',"			if $param->{'interaction'};
+
+  $cmd .= " a_family			= '$param->{'a_family'}',"			if $param->{'a_family'};
+  $cmd .= " a_vernacularname		= '$param->{'a_vernacularname'}',"		if $param->{'a_vernacularname'};
+  $cmd .= " a_scientificname		= '$param->{'a_scientificname'}',"		if $param->{'a_scientificname'};
+  $cmd .= " a_identificationremarks	= '$param->{'a_identificationremarks'}',"	if $param->{'a_identificationremarks'};
+
+  $cmd .= " p_family			= '$param->{'p_family'}',"			if $param->{'p_family'};
+  $cmd .= " p_vernacularname		= '$param->{'p_vernacularname'}',"		if $param->{'p_vernacularname'};
+  $cmd .= " p_scientificname		= '$param->{'p_scientificname'}',"		if $param->{'p_scientificname'};
+  $cmd .= " p_identificationremarks	= '$param->{'p_identificationremarks'}',"	if $param->{'p_identificationremarks'};
+
+  $cmd =~ s/,$//;
+  $cmd = "update record set $cmd where record_id = '$param->{'record_id'}'" if $cmd;
+
+  printERROR(500, 'Failed to prepare record update') if !$cmd;
+
+  $sql->exec($cmd);
+  printERROR(500, 'Failed to update record', $sql->message) if $sql->error();
+
+  printJSON( $json->encode( { status => "ok" } ));
+  $cfg->log({ user_id => $user_id, action => 'apisrv', detail => 'record_data' })
+}
+#-------------------------------------------------------------------------------------	RECORD_IMAGE
+elsif ($action eq 'record_image')
+{ printERROR(400, 'Missing record_id') if !$param->{'record_id'};
+  printERROR(400, 'Missing number') if $param->{'number'} eq '';
+  printERROR(400, 'Missing data') if !$param->{'data'};
+  my $user_id = checkRecordId($param->{'record_id'}) || printERROR(404, 'Unknown record');
+
+  if (my $format = checkImage($param->{'data'}))
+  { my $token = $cfg->new_key();
+    my $cmd = <<EOM;
+insert into image (image_id,record_id,number,data,format)
+values ('$token','$param->{'record_id'}',$param->{'number'},'$param->{'data'}','$format');
+EOM
+    $sql->exec($cmd);
+    printERROR(500, 'Failed to save image', $sql->message) if $sql->error();
+    printJSON( $json->encode( { status => "ok" } ));
+  }
+  else
+  { printJSON( $json->encode( { status => "resend" } )) }
+  
+  $cfg->log({ user_id => $user_id, action => 'apisrv', detail => 'record_image' })
+}
+#-------------------------------------------------------------------------------------	RECORD_SAVE
+elsif ($action eq 'record_save')
+{ printERROR(400, 'Missing record_id') if !$param->{'record_id'};
+  # verifica a consistencia das informacoes e salva o registro
+
+# retrieve basic info from db
+
+  my %p = $sql->query("select r.*,s.user_id from record r left join session s on (r.session_id = s.session_id) where r.record_id = '$param->{'record_id'}'");
+  printERROR(500, 'Failed to fetch record data', $sql->message) if $sql->error();
+  printERROR(404, 'Unknown record', $sql->message) if !$sql->nRecords();
+
+  $cfg->{'user_id'} = $p{0}{'user_id'};	# bypass pq nao está logado por sessão
+
+  my $data = { };
+
+  foreach ( qw ( record_id country stateprovince municipality locality user_id
+                 decimallatitude decimallongitude elevation taxgrp interaction habit
+                 verbatimeventdate eventdate eventtime eventremarks
+		 a_family a_vernacularname a_scientificname a_identificationremarks 
+		 p_family p_vernacularname p_scientificname p_identificationremarks 
+		)
+          )
+  { $data->{$_} = $p{0}{$_} }
+
+  printERROR(404, 'Unknown user') if !$data->{'user_id'};
+  my $lon = $data->{'decimallongitude'};
+  my $lat = $data->{'decimallatitude'};
+  $data->{'point'} = "ST_GeomFromText('POINT($lon $lat)',4326)";
+
+  if (!$data->{'eventdate'} && $data->{'verbatimeventdate'} =~ /^(\d{4}):(\d{2}):(\d{2})/) { $data->{'eventdate'} = "$3/$2/$1" }
+
+# fotos
+
+  $data->{'images'} = [];
+
+  my %q = $sql->query("select * from image where record_id = '$param->{'record_id'}'");
+  
+  foreach my $i (0..$sql->nRecords-1)
+  { my $image_of = $q{$i}{'number'} < 4 ? 'interacao' : 'planta';
+
+    # $data->{'image'}[0] ...
+    push @{$data->{'images'}}, $cfg->save_image({ content => $q{$i}{'format'}, data => MIME::Base64::decode($q{$i}{'data'}), image_of => $image_of });
+  }
+
+  my $record_id = $cfg->put_record($data);
+
+  if ($data->{'p_vernacularname'} || $data->{'p_scientificname'} || $data->{'p_identificationremarks'})
+  { my $idata = {   record_id               => $record_id,
+                user_id                 => $data->{'user_id'},
+                kingdom                 => 'plantae',
+                status                  => 'pendente',	# $cfg->{'user_level'} > 1 ? 'valido' : 'pendente',
+                identifiedby_id         => $data->{'user_id'},
+                family                  => $data->{'p_family'},
+                vernacularname          => $data->{'p_vernacularname'},
+                scientificname          => $data->{'p_scientificname'},
+                identificationremarks   => $data->{'p_identificationremarks'}
+            };
+    my $ident_id = $cfg->put_ident($idata);
+  }
+
+  if ($data->{'a_vernacularname'} || $data->{'a_scientificname'} || $data->{'a_identificationremarks'})
+  { my $idata = {   record_id               => $record_id,
+                user_id                 => $data->{'user_id'},
+                kingdom                 => 'animalia',
+                status                  => 'pendente',	# $cfg->{'user_level'} > 1 ? 'valido' : 'pendente',
+                identifiedby_id         => $data->{'user_id'},
+                family                  => $data->{'a_family'},
+                vernacularname          => $data->{'a_vernacularname'},
+                scientificname          => $data->{'a_scientificname'},
+                identificationremarks   => $data->{'a_identificationremarks'}
+            };
+    my $ident_id = $cfg->put_ident($idata);
+  }
+
+  printJSON( $json->encode( { status => "ok" } ));
+  $cfg->log({ user_id => $data->{'user_id'}, action => 'apisrv', detail => 'record_save' })
+}
+#-------------------------------------------------------------------------------------	RECORD_DISCARD
+elsif ($action eq 'record_discard')
+{ printERROR(400, 'Missing record_id') if !$param->{'record_id'};
+  my $user_id = checkRecordId($param->{'record_id'}) || printERROR(404, 'Unknown record');
+
+  $sql->exec("delete from record where record_id = '$param->{'record_id'}'");
+  printERROR(500, 'Failed to remove record') if $sql->error();
+
+  printJSON( $json->encode( { status => "ok" } ));
+  $cfg->log({ user_id => $user_id, action => 'apisrv', detail => 'record_discard' })
+}
+#-------------------------------------------------------------------------------------	SESSION_STOP
+elsif ($action eq 'session_stop')
+{ printERROR(400, 'Missing session_id') if !$param->{'session_id'};
+  my $user_id = checkSessionId($param->{'session_id'}) || printERROR(404, 'Unknown session');
+
+  $sql->exec("delete from session where session_id = '$param->{'session_id'}'");
+  printERROR(500, 'Failed to stop session') if $sql->error();
+
+  printJSON( $json->encode( { status => "ok" } ));
+  $cfg->log({ user_id => $user_id, action => 'apisrv', detail => 'session_stop' })
+}
+#-------------------------------------------------------------------------------------	GET_CONFIG
+elsif ($action eq 'get_config')
+{ my $version = $cfg->get_def_version();
+  my $hash = { version => $version, expertise => [], interaction => [], habit => [], status => 'ok' };
+
+  if (!$param->{'version'} || ($version > $param->{'version'}))
+  { my $dic_pt = $cfg->dic({ language => 'pt', forced => 1 });
+    my $dic_en = $cfg->dic({ language => 'en', forced => 1 });
+
+# expertise
+    my $ex = $cfg->expertise();
+    foreach ( keys %$ex )
+    { push @{$hash->{'expertise'}}, { id => $_, key => $ex->{$_}{'key'}, group => $ex->{$_}{'group'}, value => { pt => $dic_pt->{$ex->{$_}{'key'}}, en => $dic_en->{$ex->{$_}{'key'}} } } }
+
+# interaction
+
+    my ($in,$s) = $cfg->interaction();
+    foreach ( keys %$in )
+    { push @{$hash->{'interaction'}},  { id => $in->{$_}, key => $_, value => { pt => $dic_pt->{$_}, en => $dic_en->{$_} } } }
+
+# habit
+
+    my $hb = $cfg->habit();
+    foreach ( keys %$hb )
+    { push @{$hash->{'habit'}}, { id => $hb->{$_}, key => $_, value => { pt => $dic_pt->{$_}, en => $dic_en->{$_} } } }
+  }
+
+  printJSON( $json->encode( $hash ));
+}
+#-------------------------------------------------------------------------------------	RESET_PASSWORD
+elsif ($action eq 'reset_password')
+{  printERROR(400, 'Missing email') if !$param->{'email'};
+
+  $cfg->send_reset_password_email({ email => $param->{'email'} });
+  printJSON( $json->encode( { status => 'ok' } ));
+}
+#-------------------------------------------------------------------------------------	ANYTHING ELSE
+else
+{ printERROR(400, 'Undefined action') }
+
+
+#=============================================================
+sub printJSON
+{ print <<EOM;
+Content-type: application/json
+
+@_
+EOM
+
+exit 0;
+}
+#=============================================================
+sub printERROR
+{ my ($code,$msg,$debug_txt) = @_;
+  $code = 404 if not defined $code;
+  $msg = '' if not defined $msg;
+  $debug_txt = '' if not defined $debug_txt;
+  my %titles = (
+     404 => 'Not Found',
+     400 => 'Bad Request',
+     500 => 'Internal Server Error',
+  );
+  print <<EOM;
+Status: $code $titles{$code}
+Content-type: text/html; charset=utf-8
+
+$msg
+EOM
+ print STDERR "[$msg]\n" if $msg;
+ print STDERR "[$debug_txt]\n" if $debug_txt;
+ print STDERR "[$json_text]\n" if $json_text;
+ exit 0;
+}
+#=============================================================
+sub checkImage
+{ my $img = Image::Magick->New();
+  $img->BlobToImage(MIME::Base64::decode($_[0]));
+
+  my $format = $img->Get('mime');
+
+  return $format =~ /tif/ ? 'tif' :
+	 $format =~ /png/ ? 'png' :
+	 $format =~ /gif/ ? 'gif' : 'jpg';
+}
+#=============================================================
+sub checkSessionId
+{ my $session_id = shift;
+  my %p = $sql->query("select user_id from session where session_id = '$session_id'");
+  return $p{0}{'user_id'};
+}
+#=============================================================
+sub checkRecordId
+{ my $record_id = shift;
+  my %p = $sql->query("select user_id from session where session_id = (select session_id from record where record_id = '$record_id' limit 1)");
+  return $p{0}{'user_id'};
+}
+
+

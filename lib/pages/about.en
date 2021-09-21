@@ -1,0 +1,39 @@
+<table>
+<tr><td>
+<h1>About the system</h1>
+<blockquote>
+The system aims to provide an environment where people can share their photos, information and knowledge about 
+Brazilian biodiversity, focusing on animal-plant interaction. 
+Photos and associated information can be sent directly to the online system or through an
+application developed for mobile devices, which also lets you record the interactions in real time.
+In addition, the system allows shared information 
+to be explored and analyzed visually in the form of lists, graphs and tables, according to the user's search criteria.
+Images and associated data are freely and openly accessible to all interested, who can also contribute with their 
+criticisms and suggestions, in identifying errors and proposing new ways of viewing the content. 
+Every user may also report inappropriate images to the purpose of the system. Collaborating partners include:
+<ul>
+
+<li><b>guardians:</b> 
+are volunteers interested in photographing interactions between animals and plants and in sharing their photographs 
+and associated information through a public information system.
+Each guardian is responsible for their data, treated in the system as observations, and can submit, 
+edit, or delete their data online. Guardians can also identify the species observed in their data records, 
+but that information needs to be validated by a specialist also registered in the system.
+</li><br/>
+
+<li><b>specialists:</b> 
+are volunteers specialists in  certain groups of plants or animals,
+responsible for identifying the species documented in the system, assigning their accepted scientific name 
+or validating the identification determined by the guardian. An expert can also be a guardian.
+</li><br/>
+
+</ul>
+As the system is of free access, it allows all interested to have access to all observations registered, associated
+information and analytical tools.
+
+</blockquote>
+</td>
+
+<td>%IMGS%</td>
+</tr>
+</table>
