@@ -37,7 +37,7 @@ ln -s ../users users
 ```
 
 Faça as alterações necessárias no seu servidor web de forma que o conteúdo dos diretórios 
-docs, imgs e html fiquem acessíveis e que os scripts Perl funcionem (no caso do Apache,
+docs e html fiquem acessíveis e que os scripts Perl funcionem (no caso do Apache,
 instale e habilite o mod-perl).
 
 Crie os bancos de dados e rode o script com as definições do esquema de cada um:
@@ -48,7 +48,7 @@ createdb guardioes_api
 createdb guardioes_log
 createdb sp_dic
 psql guardioes
-\i guardioes-schema.pgdumpdb
+\i guardioes-schema.pgdump
 \c guardioes_api
 \i guardioes_api-schema.pgdump
 \c guardioes_log
@@ -61,7 +61,7 @@ Obs: O dicionário de dados contendo descrição das tabelas e campos encontra-s
 Renomeie o arquivo lib/CFG_blank.pm para CFG.pm, em seguida editando 
 o arquivo para colocar todas as configurações necessárias (acesso ao banco, diretórios, etc.)
 
-Observe que para que o login através de redes sociais funcione, é necessário obter uma chave de
+Observe que para que o login através de redes sociais funcione é necessário obter uma chave de
 API para cada uma delas: Facebook, Twitter, Instagram e Google. Além disso é necessária uma
 chave de API para usar o Google Maps.
 
@@ -74,7 +74,8 @@ Reinicie seu servidor web e teste.
 
 # APISRV
 
-API responsável pela comunicação com o aplicativo móvel
+Serviço/API responsável pela comunicação com o aplicativo móvel
+
 Utiliza o banco de dados posgresql guardioes_api
 
 Documentação disponível ao abrir o próprio script pelo navegador: apisrv
