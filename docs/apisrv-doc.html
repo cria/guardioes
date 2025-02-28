@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+<title>Serviço Web</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+<link href="//fonts.googleapis.com/css?family=Roboto:500,400italic,300,700,500italic,400" rel="stylesheet">
+<style>
+body { font-family: Arial, Helvetica, sans-serif; font-size: 11px; }
+h1 { font-size: 20px; color: darkred; margin-top: 15px; }
+h2 { font-size: 16px; color: darkred; }
+fieldset { border: 1px solid #CED377; background-color: #f5f5dc; padding: 5px 10px; }
+legend { font-size: 16px; color: darkred; width: auto; margin: 5px; }
+</style>
+</head>
+<body class="mobile">
+<div class="container">
+<h1>Serviço Web - Guardiões da Biodiversidade</h1>
+<p>Este serviço foi criado para permitir a comunicação entre aplicativo e site do projeto Guardiões da Biodiversidade. Sua funcionalidade abrange essencialmente tarefas de cadastramento de usuário e envio de imagens. Todas as chamadas devem ser feitas via HTTP POST com parâmetros em formato JSON incluidos no próprio corpo da mensagem. Os parâmetros devem seguir o seguinte padrão:</p>
+<p>{action: 'nome da operação', (parâmetros extras...)}</p>
+<h1>Operações relacionadas ao cadastro de usuários</h1>
+<fieldset>
+<legend>register</legend><!-- ####### REGISTER ####### -->
+<p>Registra um novo usuário.</p>
+<p>Parâmetros extras:</p>
+<ul>
+ <li><b><u>appcode</u>:</b> identificador global único da instalação do aplicativo, composto apenas por dígitos.</li>
+ <li><b><u>network</u>:</b> origem do cadastro (facebook, google, twitter, instagram ou guardioes).</li>
+ <li><u>netid</u>: identificador do usuário na network (obrigatório para todas as networks, menos guardioes).</li>
+ <li><u>email</u>: e-mail do usuário (obrigatório para network guardioes).</li>
+ <li><u>name</u>: nome completo do usuário (obrigatório para network guardioes).</li>
+ <li><u>nickname</u>: apelido do usuário (obrigatório para network guardioes).</li>
+ <li><u>birthday</u>: data de nascimento do usuário (dd/mm/yyyy, obrigatório para network guardioes).</li>
+ <li><u>education</u>: escolaridade do usuário ('fundamental', 'medio', 'superior', ou 'pos', obrigatório para network guardioes).</li>
+ <li><u>gender</u>: gênero do usuário ('male' ou 'female', obrigatório para network guardioes).</li>
+ <li><u>language</u>: idioma preferido do usuário ('pt' ou 'en', obrigatório para network guardioes).</li>
+ <li><u>password</u>: senha do usuário (SEM criptografia, obrigatório para network guardioes).</li>
+ <li><u>picture</u>: url da imagem do usuário.</li>
+ <li><u>agreement</u>: aceitação dos termos de uso (1 ou 0).</li>
+ <li><u>curriculum</u>: URL do currículo do usuário.</li>
+ <li><u>alert_period</u>: Frequência com a qual o usuário prefere receber notificações ('never', 'day', 'week' ou 'month').</li>
+ <li><u>comments</u>: Comentários do usuário.</li>
+ <li><u>expertise</u>: Especialidades do usuário (array de especialidades - ver retorno da operação get_config).</li>
+ <li><u>access_token</u>: token de acesso aos serviços da network.</li>
+ <li><u>access_token_secret</u>: chave do token de acesso aos serviços da network.</li>
+</ul>
+<p>Retorno:</p>
+<ul>
+ <li>200
+  <ul>
+    <li>{ <b><u>status</u></b>: status do usuário ('new' quando o novo usuário foi cadastrado com sucesso, 'old' quando o usuário já existe, 'retry' quando o email/senha não conferem, 'invalid_app' quando o appcode já está sendo usado por outro usuário), <b><u>uid</u></b>: identificador do usuário }</li>
+  </ul>
+ </li>
+ <li>400
+  <ul>
+    <li>Missing appcode</li>
+    <li>Invalid appcode</li>
+    <li>Missing network</li>
+    <li>Missing email</li>
+    <li>Missing name</li>
+    <li>Missing nickname</li>
+    <li>Missing password</li>
+    <li>Missing birthday</li>
+    <li>Invalid birthday</li>
+    <li>Missing education</li>
+    <li>Missing gender</li>
+    <li>Invalid gender</li>
+    <li>Missing language</li>
+    <li>Missing netid</li>
+  </ul>
+ </li>
+</ul>
+</fieldset>
+<fieldset>
+<legend>login</legend><!-- ####### LOGIN ####### -->
+<p>Loga o usuário no sistema.</p>
+<p>Parâmetros extras:</p>
+<ul>
+ <li><b><u>appcode</u>:</b> identificador global único da instalação do aplicativo, composto apenas por dígitos.</li>
+ <li><b><u>email</u>:</b> e-mail do usuário.</li>
+ <li><b><u>password</u>:</b> senha do usuário SEM criptografia.</li>
+</ul>
+<p>Retorno:</p>
+<ul>
+ <li>200
+  <ul>
+    <li>{ <b><u>status</u></b>: status do usuário ('ok' quando o login foi feito com sucesso, 'retry' quando o email/senha não conferem), <b><u>uid</u></b>: identificador do usuário (apenas quando o login foi feito com sucesso) }</li>
+  </ul>
+ </li>
+ <li>400
+  <ul>
+    <li>Missing appcode</li>
+    <li>Invalid appcode</li>
+    <li>Missing email</li>
+    <li>Missing password</li>
+  </ul>
+ </li>
+</ul>
+</fieldset>
+<fieldset>
+<legend>update_profile</legend><!-- ####### UPDATE_PROFILE ####### -->
+<p>Atualiza o cadastro de usuário.</p>
+<p>Parâmetros extras:</p>
+<ul>
+ <li><b><u>appcode</u>:</b> identificador global único da instalação do aplicativo, composto apenas por dígitos.</li>
+ <li><b><u>name</u>:</b> nome completo do usuário.</li>
+ <li><b><u>education</u>:</b> escolaridade do usuário ('fundamental', 'medio', 'superior', ou 'pos').</li>
+ <li><u>picture</u>: string base 64 da imagem do usuário.</li>
+ <li><u>email</u>: e-mail do usuário.</li>
+ <li><u>nickname</u>: apelido do usuário.</li>
+ <li><u>birth_day</u>: dia da data de nascimento do usuário.</li>
+ <li><u>birth_month</u>: mês da data de nascimento do usuário.</li>
+ <li><u>birth_year</u>: ano da data de nascimento do usuário.</li>
+ <li><u>gender</u>: gênero do usuário ('male' ou 'female').</li>
+ <li><u>language</u>: idioma preferido do usuário ('pt' ou 'en').</li>
+ <li><u>password</u>: senha do usuário (SEM criptografia).</li>
+ <li><u>curriculum</u>: URL do currículo do usuário.</li>
+ <li><u>alert_period</u>: Frequência com a qual o usuário prefere receber notificações ('never', 'day', 'week' ou 'month').</li>
+ <li><u>comments</u>: Comentários do usuário.</li>
+ <li><u>expertise</u>: Especialidades do usuário (array de especialidades - ver retorno da operação get_config).</li>
+</ul>
+<p>Retorno:</p>
+<ul>
+ <li>200
+  <ul>
+    <li>{ <b><u>status</u></b>: status da operação ('ok' sucesso ou 'fail' falha }</li>
+  </ul>
+ </li>
+ <li>400
+  <ul>
+    <li>Missing appcode</li>
+    <li>Invalid appcode</li>
+    <li>Missing name</li>
+    <li>Missing education</li>
+  </ul>
+ </li>
+ <li>404
+  <ul>
+    <li>Unknown user</li>
+  </ul>
+ </li>
+</ul>
+</fieldset>
+<fieldset>
+<legend>profile</legend><!-- ####### PROFILE ####### -->
+<p>Retorna os dados cadastrais de um usuário.</p>
+<p>Parâmetros extras:</p>
+<ul>
+ <li><b><u>appcode</u>:</b> identificador global único da instalação do aplicativo, composto apenas por dígitos.</li>
+</ul>
+<p>Retorno:</p>
+<ul>
+ <li>200
+  <ul>
+    <li>{ <b><u>status</u></b>: status da operação ('ok'), <b><u>name</u>:</b> nome completo do usuário, <b><u>education</u>:</b> escolaridade do usuário ('fundamental', 'medio', 'superior', ou 'pos'), <b><u>picture</u></b>: string base 64 da imagem do usuário, <b><u>email</u></b>: e-mail do usuário, <b><u>nickname</u></b>: apelido do usuário, <b><u>birth_day</u></b>: dia da data de nascimento do usuário, <b><u>birth_month</u></b>: mês da data de nascimento do usuário, <b><u>birth_year</u></b>: ano da data de nascimento do usuário, <b><u>gender</u></b>: gênero do usuário ('male' ou 'female'), <b><u>language</u></b>: idioma preferido do usuário ('pt' ou 'en'), <b><u>password</u></b>: senha do usuário (SEM criptografia), <b><u>curriculum</u></b>: URL do currículo do usuário, <b><u>alert_period</u></b>: Frequência com a qual o usuário prefere receber notificações ('never', 'day', 'week' ou 'month'), <b><u>comments</u></b>: Comentários do usuário, <b><u>expertise</u></b>: Especialidades do usuário (array de especialidades - ver retorno da operação get_config). }</li>
+  </ul>
+ </li>
+ <li>400
+  <ul>
+    <li>Missing appcode</li>
+    <li>Invalid appcode</li>
+  </ul>
+ </li>
+ <li>404
+  <ul>
+    <li>Unknown user</li>
+  </ul>
+ </li>
+</ul>
+</fieldset>
+<fieldset>
+<legend>reset_password</legend><!-- ####### RESET PASSWORD ####### -->
+<p>Envia link para usuário redefinir a senha.</p>
+<p>Parâmetros extras:</p>
+<ul>
+ <li><b><u>email</u>:</b> e-mail do usuário.</li>
+</ul>
+<p>Retorno:</p>
+<ul>
+ <li>200
+  <ul>
+    <li>{ <b><u>status</u></b>: status da operação ('ok') }</li>
+  </ul>
+ </li>
+ <li>400
+  <ul>
+    <li>Missing email</li>
+  </ul>
+ </li>
+</ul>
+</fieldset>
+<h1>Operações relacionadas ao envio de imagens</h1>
+<fieldset>
+<legend>session_start</legend><!-- ####### SESSION START ####### -->
+<p>Inicia uma sessão para envio de registros de observação.</p>
+<p>Parâmetros extras:</p>
+<ul>
+ <li><b><u>appcode</u>:</b> identificador global único da instalação do aplicativo, composto apenas por dígitos.</li>
+</ul>
+<p>Retorno:</p>
+<ul>
+ <li>200
+  <ul>
+    <li>{ <b><u>status</u></b>: status da operação ('ok'), <b><u>token</u></b>: token da sessão }</li>
+  </ul>
+ </li>
+ <li>400
+  <ul>
+    <li>Missing appcode</li>
+    <li>Invalid appcode</li>
+  </ul>
+ </li>
+ <li>404
+  <ul>
+    <li>Unknown user</li>
+  </ul>
+ </li>
+ <li>500
+  <ul>
+    <li>Failed to start session</li>
+  </ul>
+ </li>
+</ul>
+</fieldset>
+<fieldset>
+<legend>record_start</legend><!-- ####### RECORD START ####### -->
+<p>Obtem um identificador para um novo registro de observação a ser enviado.</p>
+<p>Parâmetros extras:</p>
+<ul>
+ <li><b><u>session_id</u>:</b> token da sessão.</li>
+</ul>
+<p>Retorno:</p>
+<ul>
+ <li>200
+  <ul>
+    <li>{ <b><u>status</u></b>: status da operação ('ok'), <b><u>record_id</u></b>: identificador atribuido ao registro }</li>
+  </ul>
+ </li>
+ <li>400
+  <ul>
+    <li>Missing session_id</li>
+  </ul>
+ </li>
+ <li>500
+  <ul>
+    <li>Failed to create record</li>
+  </ul>
+ </li>
+</ul>
+</fieldset>
+<fieldset>
+<legend>record_data</legend><!-- ####### RECORD DATA ####### -->
+<p>Envia os dados de um registro de observação.</p>
+<p>Parâmetros extras:</p>
+<ul>
+ <li><b><u>record_id</u>:</b> identificador do registro.</li>
+ <li><u>country</u>: país.</li>
+ <li><u>stateprovince</u>: estado.</li>
+ <li><u>municipality</u>: município.</li>
+ <li><u>locality</u>: localidade.</li>
+ <li><u>decimallatitude</u>: latitude em graus decimais.</li>
+ <li><u>decimallongitude</u>: longitude em graus decimais.</li>
+ <li><u>elevation</u>: elevação em metros acima do nível do mar.</li>
+ <li><u>verbatimeventdate</u>: data no formato original do registro.</li>
+ <li><u>eventdate</u>: data da observação (formato ???).</li>
+ <li><u>eventtime</u>: hora da observação (formato ???).</li>
+ <li><u>eventremarks</u>: observações.</li>
+ <li><u>taxgrp</u>: ???.</li>
+ <li><u>habit</u>: hábito da planta (ver opções em get_config).</li>
+ <li><u>interaction</u>: tipo de interação (ver opções em get_config).</li>
+ <li><u>a_family</u>: família do animal visto.</li>
+ <li><u>a_vernacularname</u>: nome comum do animal visto.</li>
+ <li><u>a_scientificname</u>: nome científico do animal visto.</li>
+ <li><u>a_identificationremarks</u>: observações sobre o animal.</li>
+ <li><u>p_family</u>: família da planta.</li>
+ <li><u>p_vernacularname</u>: nome comum da planta.</li>
+ <li><u>p_scientificname</u>: nome científico da planta.</li>
+ <li><u>p_identificationremarks</u>: observações sobre a planta.</li>
+</ul>
+<p>Retorno:</p>
+<ul>
+ <li>200
+  <ul>
+    <li>{ <b><u>status</u></b>: status da operação ('ok') }</li>
+  </ul>
+ </li>
+ <li>400
+  <ul>
+    <li>Missing record_id</li>
+  </ul>
+ </li>
+ <li>404
+  <ul>
+    <li>Unknown record</li>
+  </ul>
+ </li>
+ <li>500
+  <ul>
+    <li>Failed to prepare record update</li>
+    <li>Failed to update record</li>
+  </ul>
+ </li>
+</ul>
+</fieldset>
+<fieldset>
+<legend>record_image</legend><!-- ####### RECORD IMAGE ####### -->
+<p>Envia uma foto de um registro de observação.</p>
+<p>Parâmetros extras:</p>
+<ul>
+ <li><b><u>record_id</u>:</b> identificador do registro.</li>
+ <li><b><u>number</u>:</b> número sequencial da foto.</li>
+ <li><b><u>data</u>:</b> imagem em string base 64.</li>
+</ul>
+<p>Retorno:</p>
+<ul>
+ <li>200
+  <ul>
+    <li>{ <b><u>status</u></b>: status da operação ('ok' ou 'resend') }</li>
+  </ul>
+ </li>
+ <li>400
+  <ul>
+    <li>Missing record_id</li>
+    <li>Missing number</li>
+    <li>Missing data</li>
+  </ul>
+ </li>
+ <li>404
+  <ul>
+    <li>Unknown record</li>
+  </ul>
+ </li>
+ <li>500
+  <ul>
+    <li>Failed to save image</li>
+  </ul>
+ </li>
+</ul>
+</fieldset>
+<fieldset>
+<legend>record_save</legend><!-- ####### RECORD SAVE ####### -->
+<p>Salva um registro de observação cujos dados foram enviados previamente, incluindo imagens.</p>
+<p>Parâmetros extras:</p>
+<ul>
+ <li><b><u>record_id</u>:</b> identificador do registro.</li>
+</ul>
+<p>Retorno:</p>
+<ul>
+ <li>200
+  <ul>
+    <li>{ <b><u>status</u></b>: status da operação ('ok') }</li>
+  </ul>
+ </li>
+ <li>400
+  <ul>
+    <li>Missing record_id</li>
+  </ul>
+ </li>
+ <li>404
+  <ul>
+    <li>Unknown record</li>
+    <li>Unknown user</li>
+  </ul>
+ </li>
+ <li>500
+  <ul>
+    <li>Failed to fetch record data</li>
+    <li>Failed to perge record storage</li>
+  </ul>
+ </li>
+</ul>
+</fieldset>
+<fieldset>
+<legend>record_discard</legend><!-- ####### RECORD DISCARD ####### -->
+<p>Descarta um registro caso tenha havido algum problema no envio.</p>
+<p>Parâmetros extras:</p>
+<ul>
+ <li><b><u>record_id</u>:</b> identificador do registro.</li>
+</ul>
+<p>Retorno:</p>
+<ul>
+ <li>200
+  <ul>
+    <li>{ <b><u>status</u></b>: status da operação ('ok') }</li>
+  </ul>
+ </li>
+ <li>400
+  <ul>
+    <li>Missing record_id</li>
+  </ul>
+ </li>
+ <li>404
+  <ul>
+    <li>Unknown record</li>
+  </ul>
+ </li>
+ <li>500
+  <ul>
+    <li>Failed to remove record</li>
+  </ul>
+ </li>
+</ul>
+</fieldset>
+<fieldset>
+<legend>session_stop</legend><!-- ####### SESSION STOP ####### -->
+<p>Finaliza uma sessão de envio de registros de observação.</p>
+<p>Parâmetros extras:</p>
+<ul>
+ <li><b><u>session_id</u>:</b> token da sessão.</li>
+</ul>
+<p>Retorno:</p>
+<ul>
+ <li>200
+  <ul>
+    <li>{ <b><u>status</u></b>: status da operação ('ok') }</li>
+  </ul>
+ </li>
+ <li>400
+  <ul>
+    <li>Missing session_id</li>
+  </ul>
+ </li>
+ <li>404
+  <ul>
+    <li>Unknown session</li>
+  </ul>
+ </li>
+ <li>500
+  <ul>
+    <li>Failed to stop session</li>
+  </ul>
+ </li>
+</ul>
+</fieldset>
+<h1>Outras operações</h1>
+<fieldset>
+<legend>get_config</legend><!-- ####### GET CONFIG ####### -->
+<p>Retorna as opções de todos os campos com vocabulário controlado.</p>
+<p>Parâmetros extras:</p>
+<ul>
+ <li><b><u>version</u>:</b> versão do vocabulário controlado usada pelo aplicativo.</li>
+</ul>
+<p>Retorno:</p>
+<ul>
+ <li>200
+  <ul>
+    <li>{ <b><u>status</u></b>: status da operação ('ok'), <b><u>interaction</u></b>: array vazio caso a versão no aplicativo esteja atualizada, caso contrário array contendo {id: identificador, key: chave, value: {pt: conteúdo em português, en: conteúdo em inglês}} , <b><u>expertise</u></b>: array vazio caso a versão no aplicativo esteja atualizada, caso contrário array contendo {id: identificador, key: chave, group: ???, value: {pt: conteúdo em português, en: conteúdo em inglês}}, <b><u>version</u></b>: versão atual do vocabulário controlado, <b><u>habit</u></b>: array vazio caso a versão no aplicativo esteja atualizada, caso contrário array contendo {id: identificador, key: chave, value: {pt: conteúdo em português, en: conteúdo em inglês}} }</li>
+  </ul>
+ </li>
+</ul>
+</fieldset>
+</div>
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+</body>
+</html>
