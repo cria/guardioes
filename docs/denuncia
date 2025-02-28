@@ -128,13 +128,13 @@ h2      { font-size: 14px; font-weight: bold; }
 </html>
 EOM
 
-  my %mail = (  To              => 'sidnei@cria.org.br',
-                'Reply-to'      => $par->{'email'} || 'sidnei@cria.org.br',
-                From            => 'web@guardioes.cria.org.br',
+  my %mail = (  To              => 'email@de.destino',
+                'Reply-to'      => $par->{'email'} || 'email@de.destino',
+                From            => 'email@usado.como.remetente',
                 Subject         => $dic->{'denunciar_title'},
                 Message         => $text,
                 'Content-type'  => 'text/html; charset=utf-8',
-                smtp            => 'zimbra.cria.org.br'
+                smtp            => 'endereco.smtp'
              );
 
   my $result = "<b class='success'>$dic->{'denunciar_result'}";
