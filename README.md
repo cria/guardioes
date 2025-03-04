@@ -43,11 +43,13 @@ instale e habilite o mod-perl).
 Crie os bancos de dados e rode o script com as definições do esquema de cada um:
 
 ```
+sudo su - postgres
 createdb guardioes
 createdb guardioes_api
 createdb guardioes_log
 createdb sp_dic
 psql guardioes
+CREATE EXTENSION postgis;
 \i guardioes-schema.pgdump
 \c guardioes_api
 \i guardioes_api-schema.pgdump
