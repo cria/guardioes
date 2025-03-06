@@ -23,12 +23,18 @@ sub new # ({ loginRequired => 0|1 })
 # retrieve session cookie information
 
   my $session_id = '';
+  my $session_cookie_name = 'GuardioesSessionId';
+  if ($cfg->{'home_url'} =~ /^https:\/\//)
+  { 
+    $session_cookie_name = ' __Host-' . $session_cookie_name;
+  }
+
   if ($ENV{'HTTP_COOKIE'})
   { my @cookie = split(';',$ENV{'HTTP_COOKIE'});
     foreach(@cookie)
     { $_ =~ s/^\s+|\s+$//;
       my ($a,$b) = split('=');
-      $session_id		= $b if $a eq '__Host-GuardioesSessionId' && $b;
+      $session_id		= $b if $a eq $session_cookie_name        && $b;
       $cfg->{'search_string'}	= $b if $a eq 'guardioesSearchString'	  && $b;
       $cfg->{'cookie_lang'}	= $b if $a eq 'guardioesCookieLang'	  && $b;
       $cfg->{'palette_id'}	= $b if $a eq 'guardioesPalette'	  && $b;
