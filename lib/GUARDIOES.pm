@@ -1079,9 +1079,14 @@ sub unsubscribe
 #=====================================================================
 sub set_cookie
 { my ($cfg,$session_id,$location) = @_;
-  my $secure = ($cfg->{'home_url'} =~ /^https:\/\//) ? ' Secure;' : '';
+  my $secure = '';
+  my $cookie_name = 'GuardioesSessionId';
+  if ($cfg->{'home_url'} =~ /^https:\/\//)
+  { $secure =' Secure;';
+    $cookie_name = ' __Host-' . $cookie_name;
+  }
   return <<EOM;
-Set-Cookie: __Host-GuardioesSessionId=$session_id;$secure HttpOnly; SameSite=Lax; Path=/; Max-Age=2592000
+Set-Cookie: $cookie_name=$session_id;$secure HttpOnly; SameSite=Lax; Path=/; Max-Age=2592000
 Location: $cfg->{'home_url'}/$location
 
 EOM
