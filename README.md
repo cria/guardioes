@@ -30,7 +30,7 @@ tar xvzf guardioes-src.tar.gz
 Crie um diretório "html" e dentro dele um link simbólico para o diretório "users":
 
 ```
-cd guardioes
+cd guardioes/docs
 mkdir html
 cd html
 ln -s ../users users 
