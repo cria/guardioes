@@ -33,7 +33,7 @@ Crie um diretório "html" e dentro dele um link simbólico para o diretório "us
 cd guardioes/docs
 mkdir html
 cd html
-ln -s ../users users 
+ln -s ../../users users 
 ```
 
 Faça as alterações necessárias no seu servidor web de forma que o conteúdo dos diretórios 
