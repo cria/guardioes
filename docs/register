@@ -1,7 +1,7 @@
 #!/usr/local/bin/perl
 $|=1;
 use strict;
-use Encode
+use Encode;
 use lib "../lib";
 use GUARDIOES;
 
