@@ -1,6 +1,7 @@
 #!/usr/local/bin/perl
 $|=1;
 use strict;
+use Encode
 use lib "../lib";
 use GUARDIOES;
 
@@ -390,16 +391,16 @@ EOM
 #-------------------------------------
 sub prepare_data
 { my $data = {};
-  $data->{'name'}		= $par->data('name'); $data->{'name'} =~ s/^\s+|\s+$//g;
-  $data->{'nickname'}		= $par->data('nickname');
+  $data->{'name'}		= decode_utf8($par->data('name')); $data->{'name'} =~ s/^\s+|\s+$//g;
+  $data->{'nickname'}		= decode_utf8($par->data('nickname'));
   $data->{'email'}		= $par->data('email');
-  $data->{'password'}		= $par->data('password') ? crypt($par->data('password'),time()) : '';
+  $data->{'password'}		= decode_utf8($par->data('password')) ? crypt($par->data('password'),time()) : '';
   $data->{'gender'}		= $par->data('gender');
   $data->{'education'}		= $par->data('education');
   $data->{'agreement'}		= $par->data('agreement') || 0;
   $data->{'specialist_off'}	= $par->data('specialist_off') || 0;
   $data->{'curriculum'}		= $par->data('curriculum');
-  $data->{'comments'}		= $par->data('comments');
+  $data->{'comments'}		= decode_utf8($par->data('comments'));
   $data->{'language'}		= $par->data('language');
   $data->{'alert_period'}	= $par->data('alert_period');
 
