@@ -510,7 +510,7 @@ sub dic
 
   my $dic = {}; my $tok = ''; my $txt = ''; my $lan;
 
-  open(IN,"<:encoding(latin1)",$par->{'dictionary'} ? "$cfg->{'lib_dir'}/$par->{'dictionary'}" : "$cfg->{'lib_dir'}/guardioes.dic");
+  open(IN,$par->{'dictionary'} ? "$cfg->{'lib_dir'}/$par->{'dictionary'}" : "$cfg->{'lib_dir'}/guardioes.dic");
 
   while (my $L = <IN>)
   { chomp $L;
