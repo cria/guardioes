@@ -993,8 +993,8 @@ EOM
 insert into users (name,nickname,email,password,birthday,gender,language,education,
 		   curriculum,category,status,comments,alert_period,agreement,terms_guardiao,terms_especialista)
 	values (
-fixInitCap('$data->{'name'}'),
-fixInitCap(	'$data->{'nickname'}'),
+        '$data->{'name'}',
+        '$data->{'nickname'}',
 	'$data->{'email'}',
 	'$data->{'password'}',
 	$data->{'birthday'},
@@ -1167,8 +1167,8 @@ sub update_user_info
 
   my $cmd = <<EOM;
 update users set
-	name		= fixInitCap('$new_data->{'name'}'),
-	nickname	= fixInitCap('$new_data->{'nickname'}'),
+	name		= '$new_data->{'name'}',
+	nickname	= '$new_data->{'nickname'}',
 	email		= '$new_data->{'email'}',
 	birthday	= $new_data->{'birthday'},
 	gender		= '$new_data->{'gender'}',
