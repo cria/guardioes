@@ -967,11 +967,11 @@ EOM
    
 
 #-------- for debug purposes only - start
-my $fuser_id = $cfg->format_user_id($user_id);
-open(DBG,">>$cfg->{'user_dir'}/$fuser_id/$data->{'network'}.data");
-print DBG "---------------------------------------\n";
-print DBG Dumper $data,"\n";
-close(DBG);
+#my $fuser_id = $cfg->format_user_id($user_id);
+#open(DBG,">>$cfg->{'user_dir'}/$fuser_id/$data->{'network'}.data");
+#print DBG "---------------------------------------\n";
+#print DBG Dumper $data,"\n";
+#close(DBG);
 #-------- for debug purposes only - stop
 
     foreach (keys %$data) { clean($data->{$_}) } 
