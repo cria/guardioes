@@ -510,7 +510,7 @@ sub dic
 
   my $dic = {}; my $tok = ''; my $txt = ''; my $lan;
 
-  open(IN,"<:encoding(UTF-8)",$par->{'dictionary'} ? "$cfg->{'lib_dir'}/$par->{'dictionary'}" : "$cfg->{'lib_dir'}/guardioes.dic");
+  open(IN,"<:encoding(latin1)",$par->{'dictionary'} ? "$cfg->{'lib_dir'}/$par->{'dictionary'}" : "$cfg->{'lib_dir'}/guardioes.dic");
 
   while (my $L = <IN>)
   { chomp $L;
@@ -2495,7 +2495,7 @@ sub get_page
 
   return '' if ! -r $page;
 
-  open(IN,"<:encoding(UTF-8)",$page);
+  open(IN,"<:encoding(latin1)",$page);
   read(IN,my $text,(-s $page));
   close(IN);
 
