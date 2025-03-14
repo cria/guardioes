@@ -21,10 +21,10 @@
 
 ## Instalação
 
-Depois de instalar os programas acima, descompacte o arquivo contendo o código fonte:
+Depois de instalar os programas acima e o pacote git, baixe o código fonte do github:
 
 ```
-tar xvzf guardioes-src.tar.gz
+git clone https://github.com/cria/guardioes.git
 ```
 
 Crie um diretório "html" e dentro dele um link simbólico para o diretório "users":
