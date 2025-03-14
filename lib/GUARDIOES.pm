@@ -8,6 +8,8 @@ use PARAMETERS;
 use Data::Dumper;
 use Mail::Sendmail;
 
+binmode STDOUT, ":utf8";
+
 #===================================================================== NEW
 # construtor do CFG
 #=====================================================================
@@ -180,6 +182,7 @@ sub connect # ()
 { my ($cfg,$par) = @_;
 
   $cfg->{'sql'} = new dSQL(host => $cfg->{'db_host'}, user => $cfg->{'db_user'}, database => $cfg->{'db_name'}, debug => $cfg->{'debug'}) if !$cfg->{'sql'};
+  $cfg->{'sql'}->exec("set client_encoding='utf8'");
   return $cfg->{'sql'};
 }
 
@@ -191,6 +194,7 @@ sub connect_log # ()
 { my ($cfg,$par) = @_;
 
   $cfg->{'sql_log'} = new dSQL(host => $cfg->{'db_host'}, user => $cfg->{'db_user'}, database => $cfg->{'db_name'}.'_log', debug => $cfg->{'debug'}) if !$cfg->{'sql_log'};
+  $cfg->{'sql_log'}->exec("set client_encoding='utf8'");
   return $cfg->{'sql_log'};
 }
 
@@ -205,6 +209,7 @@ sub connect_dic # ()
 				user	 => $cfg->{'sp_dic_user'},
 				database => $cfg->{'sp_dic_name'},
 				debug	 => $cfg->{'debug'}) if !$cfg->{'sql_dic'};
+  $cfg->{'sql_dic'}->exec("set client_encoding='utf8'");
   return $cfg->{'sql_dic'};
 }
 
@@ -307,6 +312,7 @@ sub get_user_info # ( { user_id => 23 } )
   
   # retrieves the information from the database 
   my $sql =  $cfg->connect();
+  $sql->exec("set client_encoding='UTF8'");
   my $cmd = "select *,unaccent(name) as uname from users where id = $user_id;";
   my %p = $sql->query($cmd);
   return undef if !$sql->nRecords;	# user_id does not exist in database
@@ -511,6 +517,7 @@ sub dic
   my $dic = {}; my $tok = ''; my $txt = ''; my $lan;
 
   open(IN,$par->{'dictionary'} ? "$cfg->{'lib_dir'}/$par->{'dictionary'}" : "$cfg->{'lib_dir'}/guardioes.dic");
+  binmode IN, ":utf8";
 
   while (my $L = <IN>)
   { chomp $L;
@@ -2495,7 +2502,8 @@ sub get_page
 
   return '' if ! -r $page;
 
-  open(IN,"<:encoding(latin1)",$page);
+  open(IN,$page);
+  binmode IN, ":utf8";
   read(IN,my $text,(-s $page));
   close(IN);
 
