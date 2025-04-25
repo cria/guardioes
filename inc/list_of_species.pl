@@ -9,7 +9,7 @@ sub list_of_species
 		$list eq 'list_of_animals_x_plants'	? ('animalia','plantae') :
 		$list eq 'list_of_plants_x_animals' 	? ('plantae','animalia') : ();			
 
-  my $menu = search_menu({ active => $list, total => scalar keys $records });
+  my $menu = search_menu({ active => $list, total => scalar keys %{$records} });
   print <<EOM;
 <div id='divMain'>
 <blockquote>
