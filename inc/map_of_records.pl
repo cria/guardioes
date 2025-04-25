@@ -10,7 +10,7 @@ sub map_of_records
   my $ufs	= $par->{'ufs'};
 
   my $xml = "html/tmp/map_".time()."_".$$.".xml";
-  open(OUT,">:encoding(UTF-8)$cfg->{'home_dir'}/$xml");
+  open(OUT,">:encoding(UTF-8)","$cfg->{'home_dir'}/$xml");
   print OUT "<markers>";
   foreach my $id (keys %{$records})
   { my $data = $cfg->get_record($id,1); # single id
