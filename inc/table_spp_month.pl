@@ -4,7 +4,7 @@ sub table_spp_month
 
   my $dic = $cfg->dic();
 
-  my $menu = search_menu({ active => $report, total => scalar keys $records });
+  my $menu = search_menu({ active => $report, total => scalar keys %{$records} });
 
   print <<EOM;
 <div id='divMain'>
