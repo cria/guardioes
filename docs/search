@@ -5,6 +5,8 @@ use lib "../lib";
 use GUARDIOES;
 use Excel::Writer::XLSX;
 use Encode;
+use utf8;
+binmode STDOUT, ":utf8";
 
 my $PRG = 'search';
 
