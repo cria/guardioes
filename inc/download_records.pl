@@ -13,7 +13,7 @@ sub download_records
   }
   #----------------------------------
 
-  my $menu = search_menu({ active => 'download_records', total => scalar keys $records });
+  my $menu = search_menu({ active => 'download_records', total => scalar keys %{$records} });
   print <<EOM;
 <div id='divMain'>
 <blockquote>
