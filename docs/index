@@ -11,7 +11,7 @@ my $user = $cfg->get_user_info();
 
 my $hex  = $cfg->get_random_thumbs(2,0,'interacao');
 my $circ;
-   do { $circ = $cfg->get_random_thumbs(2,0,'planta') } until !@$circ || !@$hex || $$circ->[0]{'user_id'} != $hex->[0]{'user_id'};
+   do { $circ = $cfg->get_random_thumbs(2,0,'planta') } until !@$circ || !@$hex || $circ->[0]{'user_id'} != $hex->[0]{'user_id'};
 
 my @covers = glob "svg/capa??.svg";
 my $k = int(rand($#covers+1));
