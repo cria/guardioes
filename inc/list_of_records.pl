@@ -7,7 +7,7 @@ sub list_of_records
 
   my $work_mode = $par->{'mode'} eq 'work';
 
-  print "<div id='divMain'><center>".search_menu({ active => 'list_of_records', offset => $offset, total => scalar keys $records } ) if ! $par->{'ajax'};
+  print "<div id='divMain'><center>".search_menu({ active => 'list_of_records', offset => $offset, total => scalar keys %{$records} } ) if ! $par->{'ajax'};
 
   # RECORDS LOOP START
   my $nrec = -1;
