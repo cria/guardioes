@@ -28,7 +28,7 @@ sub new # ({ loginRequired => 0|1 })
   my $session_cookie_name = 'GuardioesSessionId';
   if ($cfg->{'home_url'} =~ /^https:\/\//)
   { 
-    $session_cookie_name = ' __Host-' . $session_cookie_name;
+    $session_cookie_name = '__Host-' . $session_cookie_name;
   }
 
   if ($ENV{'HTTP_COOKIE'})
@@ -1096,7 +1096,7 @@ sub set_cookie
   my $cookie_name = 'GuardioesSessionId';
   if ($cfg->{'home_url'} =~ /^https:\/\//)
   { $secure =' Secure;';
-    $cookie_name = ' __Host-' . $cookie_name;
+    $cookie_name = '__Host-' . $cookie_name;
   }
   return <<EOM;
 Set-Cookie: $cookie_name=$session_id;$secure HttpOnly; SameSite=Lax; Path=/; Max-Age=2592000
