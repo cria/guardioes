@@ -1,3 +1,6 @@
+use utf8;
+binmode STDOUT, ":utf8";
+
 #====================================================
 sub map_of_records
 { my ($cfg,$par) = @_;
