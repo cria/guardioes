@@ -23,7 +23,7 @@ sub graph_of_records
 
   my $dic = $cfg->dic();
 
-  my $menu = search_menu({ active => $report, total => scalar keys $records });
+  my $menu = search_menu({ active => $report, total => scalar keys %{$records} });
 
   my $sql = $cfg->connect();
 
