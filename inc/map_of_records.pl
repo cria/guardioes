@@ -72,7 +72,7 @@ EOM
 #https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png
 #http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|00D900
 
-  my $menu = search_menu({ active => 'map_of_records', total => scalar keys $records });
+  my $menu = search_menu({ active => 'map_of_records', total => scalar keys %{$records} });
   print <<EOM;
 <div id='divMain' style='height: calc(100% - 180px) !important'>
 $menu
