@@ -5,7 +5,7 @@ sub images_of_species
 
   my $image_of = $report eq 'images_of_animals'		? 'interacao' : 'planta';
 
-  my $menu = search_menu({ active => $report, total => scalar keys $records });
+  my $menu = search_menu({ active => $report, total => scalar keys %{$records} });
   print <<EOM;
 <div id='divMain'>
 <blockquote>
