@@ -270,7 +270,7 @@ EOM
 <TR><TD><table class='w100'>
 	<tr>
 	   <td><span class='h2'>$dic->{'Observations'}$optional</span><br/>$dic->{'Observations_explain'}</td>
-	   <td align='right'><input type='button' onClick="top.consist('$cfg->{'user_lang'}')" value='$dic->{'send'}' class='send'/></td>
+	   <td align='right'><input type='button' onClick="top.consist('$cfg->{'user_lang'}')" value='$dic->{'send'}' class='send' id='sendButton'/></td>
 	</tr>
 	</table>
     </TD>
