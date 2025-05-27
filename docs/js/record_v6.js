@@ -1,5 +1,5 @@
 // DateTimeOriginal format is "YYYY:MM:DD HH:MM:SS"+0x00, total 20bytes.
-//GPSLatitude and GPSLongitude: Indicates the latitude. The latitude is expressed as three RATIONAL values giving the degrees, min
+//GPSLatitude and GPSLongitude: Indicates the latitude. The latitude is expressed as three RATIONAL values giving the degrees, minutes, and seconds, respectively. When degrees, minutes and seconds are expressed, the format is dd/1,mm/1,ss/1. When degrees and minutes are used and, for example, fractions of minutes are given up to two decimal places, the format is dd/1,mmmm/100,0/1.
 
 var hasCoords = false;
 var badCoords = false;
@@ -68,19 +68,19 @@ function getSingleExif(e,n,file)
           (f.decimallongitude.value && ((Math.abs(f.decimallongitude.value) - Math.abs(lon))) > 0.01))
       { if (!badCoords)
         { message({ msg: 'Coordenadas entre as fotos são muito diferentes. Por favor use o mapa para marcar o local correto da observação.',type: 'warn' });
-          badCoords = true;
-        }
+	  badCoords = true;
+	}
       }
 
-      if (lat)  { f.decimallatitude.value       = lat }
-      if (lon)  { f.decimallongitude.value      = lon }
-      if (alt)  { f.elevation.value             = alt }
-      if (datum)        { f.datum.value         = datum }
-        if (! top.marker)
-        { top.placeMarker(new google.maps.LatLng( Number(lat),Number(lon)),map);
-          top.fillGeoInfo(false);
-          if (Number(lat) && Number(lon)) { message({ msg: 'Coordenadas da coleta detectadas da foto', type: 'info' }) }
-        }
+      if (lat)	{ f.decimallatitude.value	= lat }
+      if (lon)	{ f.decimallongitude.value	= lon }
+      if (alt)	{ f.elevation.value		= alt }
+      if (datum)	{ f.datum.value		= datum }
+	if (! top.marker)
+	{ top.placeMarker(new google.maps.LatLng( Number(lat),Number(lon)),map);
+	  top.fillGeoInfo(false);
+	  if (Number(lat) && Number(lon)) { message({ msg: 'Coordenadas da coleta detectadas da foto', type: 'info' }) }
+	}
     }
 
     if (dt)
@@ -88,7 +88,7 @@ function getSingleExif(e,n,file)
       f.eventdate.value = d[2]+'/'+d[1]+'/'+d[0];
 
       var t = dt.match(/\d\d:\d\d:\d\d$/).toString().split(":");
-      f.verbatimeventdate.value = dt.toString();
+      f.verbatimeventdate.value	= dt.toString();
 
       f.eventtime.selectedIndex = Math.floor(t[0]/2);
     }
@@ -123,41 +123,41 @@ var openFile = function(n,file)
 function consist(lang)
 { var f = document.recordForm;
 
-  var messages = { pt:  { Intro         : 'Favor fornecer todos os dados obrigatórios:',
-                          Images        : 'carregue pelo menos uma imagem de planta e uma da interação observada',
-                          TaxGroup      : 'informe "Que animal é esse?"',
-                          Location      : 'use o mapa para informar a "Localização" da observação',
-                          EventDate     : 'informe a data da observação',
-                        },
-                   en:  { Intro         : 'Please provide all the mandatory information:',
-                          Images        : 'upload at least one image of the plant and one of the observed inteaction',
-                          TaxGroup      : 'inform the taxonomic group of the anima',
-                          Location      : 'use the map to inform location of the observation',
-                          EventDate     : 'inform the date of the observation',
-                        }
-                 };
+  var messages = { pt:	{ Intro		: 'Favor fornecer todos os dados obrigatórios:',
+			  Images	: 'carregue pelo menos uma imagem de planta e uma da interação observada',
+			  TaxGroup	: 'informe "Que animal é esse?"',
+			  Location	: 'use o mapa para informar a "Localização" da observação',
+			  EventDate	: 'informe a data da observação',
+			},
+		   en:	{ Intro		: 'Please provide all the mandatory information:',
+			  Images	: 'upload at least one image of the plant and one of the observed inteaction',
+			  TaxGroup	: 'inform the taxonomic group of the anima',
+			  Location	: 'use the map to inform location of the observation',
+			  EventDate	: 'inform the date of the observation',
+			}
+		 };
 
   var error = false; var msg = {};
 
   if (f.country.value == '')
   { f.country.style.backgroundColor = '#fdd'; error = true; msg.Location = 1 }
-  else { f.country.style.backgroundColor = '#dfd' }
+  else { f.country.style.backgroundColor = '#dfd' } 
 
   if (f.stateprovince.value == '')
   { f.stateprovince.style.backgroundColor = '#fdd'; error = true; msg.Location = 1 }
-  else { f.stateprovince.style.backgroundColor = '#dfd' }
+  else { f.stateprovince.style.backgroundColor = '#dfd' } 
 
   if (f.municipality.value == '')
   { f.municipality.style.backgroundColor = '#fdd'; error = true; msg.Location = 1 }
-  else { f.municipality.style.backgroundColor = '#dfd' }
+  else { f.municipality.style.backgroundColor = '#dfd' } 
 
   if (f.decimallatitude.value == '')
   { f.decimallatitude.style.backgroundColor = '#fdd'; error = true; msg.Location = 1 }
-  else { f.decimallatitude.style.backgroundColor = '#dfd' }
+  else { f.decimallatitude.style.backgroundColor = '#dfd' } 
 
   if (f.decimallongitude.value == '')
   { f.decimallongitude.style.backgroundColor = '#fdd'; error = true; msg.Location = 1 }
-  else { f.decimallongitude.style.backgroundColor = '#dfd' }
+  else { f.decimallongitude.style.backgroundColor = '#dfd' } 
 
   var ed = f.eventdate.value;
   if (ed == '')
@@ -165,14 +165,14 @@ function consist(lang)
   else
   { var d = ed.split("\/");
     if (isValidDate(d[0],d[1],d[2]) && notFutureDate(d[0],d[1],d[2]))
-    { f.eventdate.style.backgroundColor = '#dfd' }
+    { f.eventdate.style.backgroundColor = '#dfd' } 
     else
     { f.eventdate.style.backgroundColor = '#fdd'; error = true; msg.EventDate = 1 }
   }
 
   if (f.taxgrp.selectedIndex == 0)
   { f.taxgrp.style.backgroundColor = '#fdd'; error = true; msg.TaxGroup = 1 }
-  else { f.taxgrp.style.backgroundColor = '#dfd' }
+  else { f.taxgrp.style.backgroundColor = '#dfd' } 
 
 // interacao
 
@@ -235,7 +235,6 @@ function getCoords(elem) {
 
   return { top: Math.round(top), left: Math.round(left) };
 }
-
 // Drop de arquivos
 function handleFileDrop(e) {
   var parts = e.target.id.split('_');
@@ -293,4 +292,4 @@ function showDiv(d)
 
 function pergunta()
 { alert('?');
-}                                                                                                                295,1         Bot
+}
