@@ -560,7 +560,7 @@ sub script
 	};
 </script>
 <script type='text/javascript' src='/js/exif_v1.js'></script>
-<script type='text/javascript' src='/js/record_v5.js'></script>
+<script type='text/javascript' src='/js/record_v6.js'></script>
 <script type="text/javascript" src="/js/autosuggest_v2.1.3/js/bsn.AutoSuggest_2.1.3_comp.js" charset="utf-8"></script>
 <link rel="stylesheet" href="/js/autosuggest_v2.1.3/css/autosuggest_inquisitor.css" type="text/css" media="screen" charset="utf-8" />
 
