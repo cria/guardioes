@@ -67,7 +67,7 @@ function getSingleExif(e,n,file)
     { if ((f.decimallatitude.value && ((Math.abs(f.decimallatitude.value) - Math.abs(lat))) > 0.01) ||
           (f.decimallongitude.value && ((Math.abs(f.decimallongitude.value) - Math.abs(lon))) > 0.01))
       { if (!badCoords)
-        { message({ msg: 'Coordenadas entre as fotos são muito diferentes. Por favor use o mapa para marcar o local correto da obs
+        { message({ msg: 'Coordenadas entre as fotos são muito diferentes. Por favor use o mapa para marcar o local correto da observação.',type: 'warn' });
           badCoords = true;
         }
       }
