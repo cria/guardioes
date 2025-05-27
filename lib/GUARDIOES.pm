@@ -1251,7 +1251,7 @@ $http_status
 <!DOCTYPE html>
 <html>
 <head>
-<script language='text/javascript'>onload = function { var userLang = '$cfg->{'user_lang'}' }</script>
+<script language='text/javascript'>onload = function () { var userLang = '$cfg->{'user_lang'}' }</script>
 <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
 <title>+$dic->{'Guardioes_Title'}</title>
 $viewport
