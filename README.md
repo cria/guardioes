@@ -38,7 +38,11 @@ ln -s ../../users users
 
 Faça as alterações necessárias no seu servidor web de forma que o conteúdo dos diretórios 
 docs e html fiquem acessíveis e que os scripts Perl funcionem (no caso do Apache,
-instale e habilite o mod-perl).
+instale e habilite o mod-perl). Um detalhe importante é que o servidor web deve ser configurado para chamar o script "notfound" em caso de erro 404. Isso porque existe um padrão de URL no sistema associado a visualização de detalhes de registros que é tratado pelo notfound. Para o Apache, a configuração é a seguinte:
+
+```
+ErrorDocument 404 /notfound
+```
 
 Crie os bancos de dados e rode o script com as definições do esquema de cada um:
 
