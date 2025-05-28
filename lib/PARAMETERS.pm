@@ -26,6 +26,23 @@ sub new
 #print OUT $buf;
 #close OUT;
 
+    # Tratamento para UTF8
+    foreach my $key (keys %{$self->{'data'}}) {
+      foreach my $i (0..$#{$self->{'data'}->{$key}}) {
+        # Não decodifica se houver um campo filename correspondente (ou seja, se for um arquivo)
+        next if defined $self->{'filename'}->{$key}[$i];
+
+        my $val = $self->{'data'}->{$key}[$i];
+
+        # Decodifica string como UTF-8
+        if (!Encode::is_utf8($val)) {
+          $val = Encode::decode('utf-8', $val);
+        }
+
+        $self->{'data'}->{$key}[$i] = $val;
+      }
+    }
+
     if ($encode)
     { my $buf1 = Encode::decode('utf-8',$buf,Encode::FB_HTMLCREF);
       $buf = $buf1 if $buf1;
