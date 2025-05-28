@@ -20,7 +20,7 @@ sub new
 
     $self->{'_method_'} = 'post';
 
-    binmode(STDIN, ':encoding(UTF-8)');
+    binmode(STDIN);
     read(STDIN,my $buf,$ENV{'CONTENT_LENGTH'});
 #open(OUT,'>>/system/guardioes/tmp/PARAMETERS.debug');
 #print OUT $buf;
