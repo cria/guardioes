@@ -3,7 +3,7 @@
 ## Requisitos
 
 * PostgreSQL (v11.1) com a extensão postgis habilitada
-* ImageMagick (v6.7.8-9)
+* ImageMagick (v6.7.8-9) - importante que seja a versão 6
 * Sendmail
 * Perl (v5.16.3)
 * Módulo Perl DBD::Pg
