@@ -76,6 +76,13 @@ cp lib/CFG_blank.pm lib/CFG.pm
 vim lib/CFG.pm
 ```
 
+Importante: os programas em linha de comando do ImageMagick "identify" e "convert" precisam estar em /usr/bin. Caso tenha compilado e instalado o ImageMagick num local direfente, lembre-se de criar um link simbólico nesse local. Por exemplo, se os programas estiverem em /usr/local/bin, rode:
+
+```
+ln -s /usr/local/bin/identify /usr/bin/identify
+ln -s /usr/local/bin/convert /usr/bin/convert
+```
+
 Reinicie seu servidor web e teste.
 
 # APISRV
